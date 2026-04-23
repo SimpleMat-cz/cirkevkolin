@@ -1,0 +1,18 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "vendor/bin/sail",
+            "args": [
+                "artisan",
+                "boost:mcp"
+            ]
+        },
+        "tailwindcss": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@tailwindcss/mcp"
+            ]
+        }
+    }
+}
