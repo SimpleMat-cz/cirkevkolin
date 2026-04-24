@@ -83,6 +83,7 @@
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php scripts/ensure-vercel-stubs.php",
             "@php artisan package:discover --ansi",
             "@php artisan filament:upgrade"
         ],
