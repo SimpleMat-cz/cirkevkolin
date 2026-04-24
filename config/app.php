@@ -123,4 +123,18 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Autoloaded Service Providers
+    |--------------------------------------------------------------------------
+    |
+    | Vercel's PHP runtime runs `composer install --no-scripts`, takže
+    | `package:discover` nespouští a `ServiceProvider::defaultProviders()`
+    | se nevolá správně. Výchozí core providery proto explicitně vypíšeme,
+    | aby se registroval View, Session, Session atd.
+    |
+    */
+
+    'providers' => Illuminate\Support\ServiceProvider::defaultProviders()->toArray(),
+
 ];
