@@ -62,7 +62,7 @@ const faqs = [
                     <div
                         v-for="(faq, index) in faqs"
                         :key="index"
-                        :class="['reveal overflow-hidden rounded-2xl bg-brand-cream ring-1 ring-brand-ink/5 transition-colors', openFaq === index && 'ring-brand-primary/20']"
+                        :class="['overflow-hidden rounded-2xl bg-brand-cream ring-1 ring-brand-ink/5 transition-colors', openFaq === index && 'ring-brand-primary/20']"
                     >
                         <dt>
                             <button
