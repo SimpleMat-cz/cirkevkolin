@@ -61,4 +61,33 @@ $_SERVER['HTTPS'] = 'on';
 //    čímž composerRequire*() skip.
 $GLOBALS['__composer_autoload_files']['6d4419a22bfb72a20b561583f68f48b3'] = true;
 
+// DIAGNOSTIC — vypíšeme první výjimku z Laravelu namísto prázdného 500.
+if (isset($_GET['__diag'])) {
+    ini_set('display_errors', '1');
+    error_reporting(E_ALL);
+    try {
+        require __DIR__.'/../public/index.php';
+    } catch (\Throwable $e) {
+        header('Content-Type: text/plain; charset=utf-8', true, 500);
+        echo "EXCEPTION: ".get_class($e)."\n";
+        echo "MSG: ".$e->getMessage()."\n";
+        echo "FILE: ".$e->getFile().":".$e->getLine()."\n\n";
+        echo $e->getTraceAsString()."\n\n";
+        if ($prev = $e->getPrevious()) {
+            echo "---PREVIOUS---\n";
+            echo get_class($prev)."\n".$prev->getMessage()."\n";
+            echo $prev->getFile().":".$prev->getLine()."\n";
+        }
+        echo "\n---ENV---\n";
+        foreach (['APP_ENV', 'APP_KEY', 'APP_DEBUG', 'APP_STORAGE', 'DB_CONNECTION', 'DB_DATABASE', 'VIEW_COMPILED_PATH'] as $k) {
+            echo $k.'='.(getenv($k) ? (str_starts_with($k, 'APP_KEY') ? '(set)' : getenv($k)) : '(empty)')."\n";
+        }
+        echo "\n---FILES---\n";
+        echo 'bootstrap/cache/packages.php: '.(is_file(__DIR__.'/../bootstrap/cache/packages.php') ? 'yes' : 'no')."\n";
+        echo 'database/database.sqlite (repo): '.(is_file(__DIR__.'/../database/database.sqlite') ? 'yes' : 'no')."\n";
+        echo '/tmp/database.sqlite: '.(is_file('/tmp/database.sqlite') ? 'yes' : 'no')."\n";
+    }
+    exit;
+}
+
 require __DIR__.'/../public/index.php';
