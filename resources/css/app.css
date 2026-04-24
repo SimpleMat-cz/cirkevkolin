@@ -1,0 +1,329 @@
+@import 'tailwindcss';
+
+@import 'tw-animate-css';
+
+/* Brand typography
+   - Display (logo + headlines): Archivo Black — free Google Fonts substitute
+     for proprietary Archia Bold specified in logo manual.
+   - Body: Archivo / Inter — clean humanist sans.
+*/
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&display=swap');
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-sans:
+        'Archivo', 'Inter', ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+    --font-display: 'Archivo Black', 'Archivo', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'Archivo', 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+    /* Brand palette — církev kolín (z logomanuálu) */
+    --color-brand-primary: #0eb0e5;         /* logo blue */
+    --color-brand-primary-dark: #0880a8;
+    --color-brand-coral: #ff8c69;           /* warm primary accent */
+    --color-brand-coral-dark: #f06a40;
+    --color-brand-teal: #4db6ac;
+    --color-brand-mint: #8cc9a0;
+    --color-brand-sunny: #f7d75c;
+    --color-brand-cream: #fdf9ee;           /* slightly warmer cream than #f5f5dc */
+    --color-brand-cream-deep: #f5f0df;
+    --color-brand-ink: #2a2a2a;
+    --color-brand-ink-soft: #4a4a4a;
+
+    --radius-lg: var(--radius);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-sm: calc(var(--radius) - 4px);
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+
+    --color-sidebar: var(--sidebar-background);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
+    }
+}
+
+@layer utilities {
+    body,
+    html {
+        --font-sans:
+            'Archivo', 'Inter', ui-sans-serif, system-ui, sans-serif,
+            'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+            'Noto Color Emoji';
+        background-color: var(--color-brand-cream);
+    }
+    body {
+        font-feature-settings: 'ss01', 'cv11';
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Display utility that guarantees Archivo Black for logos + display H1s */
+    .font-display {
+        font-family: 'Archivo Black', 'Archivo', sans-serif;
+        font-weight: 900;
+        letter-spacing: -0.01em;
+    }
+
+    /* Hero display — huge, uppercase, generous line-height pro vzduch */
+    .hero-display {
+        font-family: 'Archivo Black', sans-serif;
+        font-weight: 900;
+        line-height: 1.02;
+        letter-spacing: -0.03em;
+        text-transform: uppercase;
+    }
+
+    /* Looser variant pro méně dominantní nadpisy (2řádkové) */
+    .hero-display-loose {
+        font-family: 'Archivo Black', sans-serif;
+        font-weight: 900;
+        line-height: 1.12;
+        letter-spacing: -0.02em;
+        text-transform: uppercase;
+    }
+
+    /* Scroll-reveal base — consumed by useReveal composable */
+    .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition:
+            opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+            transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+        will-change: opacity, transform;
+    }
+    .reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 80ms; }
+    .reveal-delay-2 { transition-delay: 160ms; }
+    .reveal-delay-3 { transition-delay: 240ms; }
+    .reveal-delay-4 { transition-delay: 320ms; }
+    .reveal-delay-5 { transition-delay: 400ms; }
+
+    /* Marquee band for repeated decorative text */
+    .marquee-track {
+        animation: marquee 40s linear infinite;
+    }
+
+    /* Subtle hover lift used on cards */
+    .hover-lift {
+        transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
+                    box-shadow 300ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .hover-lift:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px -20px rgba(42, 42, 42, 0.2);
+    }
+
+    /* Coral button shine */
+    .btn-coral {
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+    }
+    .btn-coral::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.35) 50%, transparent 100%);
+        transform: translateX(-100%);
+        transition: transform 700ms ease;
+        z-index: -1;
+    }
+    .btn-coral:hover::after {
+        transform: translateX(100%);
+    }
+}
+
+/* Pomalé continuous rotation + mírný float pro organický pohyb */
+@keyframes blob-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+@keyframes blob-spin-reverse {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(-360deg); }
+}
+
+@keyframes blob-float {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50%      { transform: translate3d(8px, -10px, 0); }
+}
+
+@keyframes blob-float-slow {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50%      { transform: translate3d(-12px, 16px, 0); }
+}
+
+@keyframes blob-morph {
+    0%, 100% { border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%; }
+    25%      { border-radius: 40% 60% 40% 60% / 60% 40% 60% 40%; }
+    50%      { border-radius: 55% 45% 65% 35% / 45% 55% 45% 55%; }
+    75%      { border-radius: 50% 50% 40% 60% / 40% 60% 50% 50%; }
+}
+
+@keyframes float-y {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-12px); }
+}
+
+@keyframes fade-up {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+
+@keyframes wave-slide {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+:root {
+    --background: hsl(46 70% 96%);       /* cream */
+    --foreground: hsl(0 0% 16%);
+    --card: hsl(0 0% 100%);
+    --card-foreground: hsl(0 0% 16%);
+    --popover: hsl(0 0% 100%);
+    --popover-foreground: hsl(0 0% 16%);
+    --primary: hsl(196 88% 48%);         /* brand blue */
+    --primary-foreground: hsl(0 0% 100%);
+    --secondary: hsl(46 44% 92%);
+    --secondary-foreground: hsl(0 0% 16%);
+    --muted: hsl(46 30% 94%);
+    --muted-foreground: hsl(0 0% 40%);
+    --accent: hsl(17 100% 70%);          /* coral */
+    --accent-foreground: hsl(0 0% 100%);
+    --destructive: hsl(0 84.2% 60.2%);
+    --destructive-foreground: hsl(0 0% 98%);
+    --border: hsl(46 30% 88%);
+    --input: hsl(46 30% 88%);
+    --ring: hsl(196 88% 48%);
+    --chart-1: hsl(12 76% 61%);
+    --chart-2: hsl(173 58% 39%);
+    --chart-3: hsl(197 37% 24%);
+    --chart-4: hsl(43 74% 66%);
+    --chart-5: hsl(27 87% 67%);
+    --radius: 0.75rem;
+    --sidebar-background: hsl(0 0% 98%);
+    --sidebar-foreground: hsl(240 5.3% 26.1%);
+    --sidebar-primary: hsl(0 0% 10%);
+    --sidebar-primary-foreground: hsl(0 0% 98%);
+    --sidebar-accent: hsl(0 0% 94%);
+    --sidebar-accent-foreground: hsl(0 0% 30%);
+    --sidebar-border: hsl(0 0% 91%);
+    --sidebar-ring: hsl(217.2 91.2% 59.8%);
+    --sidebar: hsl(0 0% 98%);
+}
+
+.dark {
+    --background: hsl(0 0% 3.9%);
+    --foreground: hsl(0 0% 98%);
+    --card: hsl(0 0% 3.9%);
+    --card-foreground: hsl(0 0% 98%);
+    --popover: hsl(0 0% 3.9%);
+    --popover-foreground: hsl(0 0% 98%);
+    --primary: hsl(0 0% 98%);
+    --primary-foreground: hsl(0 0% 9%);
+    --secondary: hsl(0 0% 14.9%);
+    --secondary-foreground: hsl(0 0% 98%);
+    --muted: hsl(0 0% 16.08%);
+    --muted-foreground: hsl(0 0% 63.9%);
+    --accent: hsl(0 0% 14.9%);
+    --accent-foreground: hsl(0 0% 98%);
+    --destructive: hsl(0 84% 60%);
+    --destructive-foreground: hsl(0 0% 98%);
+    --border: hsl(0 0% 14.9%);
+    --input: hsl(0 0% 14.9%);
+    --ring: hsl(0 0% 83.1%);
+    --chart-1: hsl(220 70% 50%);
+    --chart-2: hsl(160 60% 45%);
+    --chart-3: hsl(30 80% 55%);
+    --chart-4: hsl(280 65% 60%);
+    --chart-5: hsl(340 75% 55%);
+    --sidebar-background: hsl(0 0% 7%);
+    --sidebar-foreground: hsl(0 0% 95.9%);
+    --sidebar-primary: hsl(360, 100%, 100%);
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-accent: hsl(0 0% 15.9%);
+    --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
+    --sidebar-border: hsl(0 0% 15.9%);
+    --sidebar-ring: hsl(217.2 91.2% 59.8%);
+    --sidebar: hsl(240 5.9% 10%);
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+    body {
+        @apply text-foreground;
+        background-color: var(--color-brand-cream);
+    }
+
+    /* Respect prefers-reduced-motion globally */
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.001ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.001ms !important;
+            scroll-behavior: auto !important;
+        }
+    }
+}
