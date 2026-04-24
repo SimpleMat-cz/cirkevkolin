@@ -3,27 +3,34 @@
     "name": "laravel/vue-starter-kit",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
-    "keywords": [
-        "laravel",
-        "framework"
-    ],
+    "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "filament/filament": "^4.0",
+        "guzzlehttp/guzzle": "*",
         "inertiajs/inertia-laravel": "^2.0",
         "laravel/fortify": "^1.34",
         "laravel/framework": "^13.0",
+        "laravel/scout": "^10.0",
         "laravel/tinker": "^3.0",
-        "laravel/wayfinder": "^0.1.14"
+        "laravel/wayfinder": "^0.1.14",
+        "meilisearch/meilisearch-php": "*",
+        "rikudou/qr-payment-interface": "*",
+        "rikudou/qr-payment-qr-code-provider": "*",
+        "spatie/laravel-medialibrary": "^11.0",
+        "spatie/laravel-permission": "^6.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",
         "laravel/boost": "^2.0",
+        "laravel/dusk": "*",
         "laravel/pail": "^1.2.5",
         "laravel/pint": "^1.27",
         "laravel/sail": "^1.53",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.9",
+        "nunomaduro/larastan": "^3.0",
         "phpunit/phpunit": "^12.5.12"
     },
     "autoload": {
@@ -76,7 +83,8 @@
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "@php artisan package:discover --ansi",
+            "@php artisan filament:upgrade"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
