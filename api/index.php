@@ -79,9 +79,12 @@ spl_autoload_register(function (string $class): void {
     $isProvider = str_contains($shortName, 'ServiceProvider');
     $extends = $isProvider ? 'extends \\Illuminate\\Support\\ServiceProvider' : '';
     // Common no-op methods libraries expect on Testing helpers.
+    // Stub třídy musí mít všechny metody s volitelnými argumenty — Livewire/Filament
+    // je inspectuje přes Reflection a volá s libovolnou aritou. Variadic NE stačí
+    // (Reflection vidí required=1), proto používáme default hodnoty.
     $methods = $isProvider
         ? 'public function register(): void {} public function boot(): void {}'
-        : 'public static function mixin(...$args) {} public function __construct(...$args) {} public function __call($m, $args) {} public static function __callStatic($m, $args) {}';
+        : 'public static function mixin($m = null) {} public function __construct() {}';
     @eval("namespace {$namespace}; class {$shortName} {$extends} { {$methods} }");
 }, true, true);
 
