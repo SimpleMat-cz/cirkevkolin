@@ -56,11 +56,21 @@ if (getenv('DB_CONNECTION') === false || getenv('DB_CONNECTION') === '') {
 // 4) Vercel posílá host přes x-forwarded-*, Laravel tím naučit trust.
 $_SERVER['HTTPS'] = 'on';
 
-// 5) Ověř existenci filament helpers.php (NFT bundling glitch). Pokud chybí, vytvoříme
-//    stub v /tmp a přesměrujeme autoload identifier jako již načtený.
+// 5) Ověř existenci filament helpers.php (NFT bundling glitch). Pokud chybí, označíme
+//    Composer autoload identifier jako už načtený.
 $filamentHelpers = __DIR__.'/../vendor/filament/notifications/src/Testing/helpers.php';
 if (! is_file($filamentHelpers)) {
     $GLOBALS['__composer_autoload_files']['6d4419a22bfb72a20b561583f68f48b3'] = true;
+}
+
+// 6) Composer autoloader musí být načtený PŘED registrací stub tříd.
+require_once __DIR__.'/../vendor/autoload.php';
+
+// 7) ParallelTestingServiceProvider z illuminate/testing mizí z Vercel bundlu.
+//    Pokud třídu autoloader nenajde, vytvoříme stejnojmenný stub, aby
+//    FoundationServiceProvider nefailnul.
+if (! class_exists(\Illuminate\Testing\ParallelTestingServiceProvider::class, true)) {
+    eval('namespace Illuminate\\Testing; class ParallelTestingServiceProvider extends \\Illuminate\\Support\\ServiceProvider { public function register(): void {} public function boot(): void {} }');
 }
 
 // DIAGNOSTIC — vypíšeme první výjimku/chybu z Laravelu namísto prázdného 500.
