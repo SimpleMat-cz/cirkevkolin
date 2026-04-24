@@ -3,7 +3,7 @@ import { Head, Link, router } from '@inertiajs/vue3'
 import PublicLayout from '@/layouts/public.vue'
 import EventCard from '@/components/EventCard.vue'
 import Wave from '@/components/Wave.vue'
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 
 interface Event {
     id: number
@@ -14,6 +14,7 @@ interface Event {
     ends_at?: string
     category?: string
     location?: string
+    is_recurring?: boolean
 }
 
 interface Paginator {
@@ -26,6 +27,7 @@ interface Paginator {
 
 const props = defineProps<{
     events: Paginator
+    recurring: Event[]
     filters: { category?: string }
 }>()
 
@@ -34,6 +36,15 @@ const category = ref(props.filters.category ?? '')
 
 watch(category, (val) => {
     router.get('/akce', { category: val || undefined }, { preserveState: true, replace: true })
+})
+
+// Merge one-time and recurring events, sorted by starts_at
+const allEvents = computed(() => {
+    const combined = [
+        ...props.events.data,
+        ...props.recurring,
+    ]
+    return combined.sort((a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime())
 })
 </script>
 
@@ -75,14 +86,14 @@ watch(category, (val) => {
 
         <section class="bg-white py-12">
             <div class="mx-auto max-w-2xl px-4 sm:px-6">
-                <div v-if="events.data.length" class="flex flex-col gap-3">
-                    <EventCard v-for="event in events.data" :key="event.id" :event="event" />
+                <div v-if="allEvents.length" class="flex flex-col gap-3">
+                    <EventCard v-for="(event, i) in allEvents" :key="`${event.id}-${i}`" :event="event" />
                 </div>
                 <div v-else class="py-16 text-center text-brand-ink/40">
                     Žádné akce nenalezeny.
                 </div>
 
-                <!-- Pagination -->
+                <!-- Pagination for one-time events -->
                 <div v-if="events.last_page > 1" class="mt-10 flex justify-center gap-2">
                     <Link
                         v-if="events.prev_page_url"

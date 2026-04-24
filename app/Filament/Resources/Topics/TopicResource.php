@@ -18,7 +18,15 @@ class TopicResource extends Resource
 {
     protected static ?string $model = Topic::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
+
+    protected static ?string $navigationLabel = 'Témata';
+
+    protected static ?string $modelLabel = 'Téma';
+
+    protected static ?string $pluralModelLabel = 'Témata';
+
+    protected static ?int $navigationSort = 4;
 
     public static function form(Schema $schema): Schema
     {
@@ -30,11 +38,14 @@ class TopicResource extends Resource
         return TopicsTable::configure($table);
     }
 
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return 'Kázání';
+    }
+
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

@@ -18,7 +18,15 @@ class SeriesResource extends Resource
 {
     protected static ?string $model = Series::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
+
+    protected static ?string $navigationLabel = 'Série';
+
+    protected static ?string $modelLabel = 'Série';
+
+    protected static ?string $pluralModelLabel = 'Série';
+
+    protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
     {
@@ -30,11 +38,14 @@ class SeriesResource extends Resource
         return SeriesTable::configure($table);
     }
 
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return 'Kázání';
+    }
+
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

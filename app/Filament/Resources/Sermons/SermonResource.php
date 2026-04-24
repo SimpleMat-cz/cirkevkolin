@@ -18,7 +18,15 @@ class SermonResource extends Resource
 {
     protected static ?string $model = Sermon::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedVideoCamera;
+
+    protected static ?string $navigationLabel = 'Kázání';
+
+    protected static ?string $modelLabel = 'Kázání';
+
+    protected static ?string $pluralModelLabel = 'Kázání';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {
@@ -30,11 +38,14 @@ class SermonResource extends Resource
         return SermonsTable::configure($table);
     }
 
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return 'Kázání';
+    }
+
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

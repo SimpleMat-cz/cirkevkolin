@@ -18,7 +18,15 @@ class SpeakerResource extends Resource
 {
     protected static ?string $model = Speaker::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMicrophone;
+
+    protected static ?string $navigationLabel = 'Kazatelé';
+
+    protected static ?string $modelLabel = 'Kazatel';
+
+    protected static ?string $pluralModelLabel = 'Kazatelé';
+
+    protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
     {
@@ -30,11 +38,14 @@ class SpeakerResource extends Resource
         return SpeakersTable::configure($table);
     }
 
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return 'Kázání';
+    }
+
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

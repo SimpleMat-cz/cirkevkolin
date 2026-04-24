@@ -6,8 +6,9 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 class EventsTable
@@ -15,39 +16,49 @@ class EventsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort('starts_at', 'asc')
             ->columns([
                 TextColumn::make('title')
-                    ->searchable(),
-                TextColumn::make('slug')
-                    ->searchable(),
-                TextColumn::make('starts_at')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('ends_at')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('rrule')
-                    ->searchable(),
+                    ->label('Název')
+                    ->searchable()
+                    ->limit(40),
                 TextColumn::make('category')
-                    ->searchable(),
+                    ->label('Kategorie')
+                    ->badge()
+                    ->color(fn (?string $state) => match ($state) {
+                        'neděle' => 'info',
+                        'wyldlife' => 'danger',
+                        'kidztown' => 'success',
+                        'skupinky' => 'warning',
+                        default => 'gray',
+                    }),
+                TextColumn::make('starts_at')
+                    ->label('Začátek')
+                    ->dateTime('j. n. Y H:i')
+                    ->sortable(),
                 TextColumn::make('location')
-                    ->searchable(),
-                ImageColumn::make('image_url'),
+                    ->label('Místo')
+                    ->searchable()
+                    ->toggleable(),
                 IconColumn::make('has_registration')
+                    ->label('Reg.')
                     ->boolean(),
                 IconColumn::make('is_published')
+                    ->label('Pub.')
                     ->boolean(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                TernaryFilter::make('is_published')
+                    ->label('Publikováno'),
+                SelectFilter::make('category')
+                    ->label('Kategorie')
+                    ->options([
+                        'neděle' => 'Nedělní setkání',
+                        'wyldlife' => 'WyldLife',
+                        'kidztown' => 'Kidztown',
+                        'skupinky' => 'Skupinky',
+                        'akce' => 'Akce',
+                    ]),
             ])
             ->recordActions([
                 EditAction::make(),

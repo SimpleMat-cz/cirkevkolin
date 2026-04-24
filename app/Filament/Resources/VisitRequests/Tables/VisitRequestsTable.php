@@ -7,6 +7,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 class VisitRequestsTable
@@ -14,33 +15,37 @@ class VisitRequestsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('name')
+                    ->label('Jméno')
                     ->searchable(),
                 TextColumn::make('email')
-                    ->label('Email address')
+                    ->label('Email')
                     ->searchable(),
                 TextColumn::make('phone')
-                    ->searchable(),
+                    ->label('Telefon')
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('people_count')
+                    ->label('Počet osob')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('planned_visit_date')
-                    ->date()
+                    ->label('Plánovaná návštěva')
+                    ->date('j. n. Y')
                     ->sortable(),
                 IconColumn::make('was_contacted')
+                    ->label('Kontaktováno')
                     ->boolean(),
                 TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->label('Přišlo')
+                    ->dateTime('j. n. Y H:i')
+                    ->sortable(),
             ])
             ->filters([
-                //
+                TernaryFilter::make('was_contacted')
+                    ->label('Kontaktováno'),
             ])
             ->recordActions([
                 EditAction::make(),

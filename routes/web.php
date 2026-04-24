@@ -9,6 +9,7 @@ use App\Http\Controllers\KdoJsmeController;
 use App\Http\Controllers\KontaktController;
 use App\Http\Controllers\NedeleController;
 use App\Http\Controllers\PrispetController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\VisitRequestController;
 use Illuminate\Support\Facades\Route;
 
@@ -45,6 +46,8 @@ Route::get('/kontakt', [KontaktController::class, 'index'])->name('kontakt');
 Route::get('/prispet', [PrispetController::class, 'index'])->name('prispet');
 
 Route::post('/jsem-tu-poprve/prihlaseni', [VisitRequestController::class, 'store'])->name('visit-request.store');
+
+Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 
 // Auth & settings
 Route::middleware(['auth', 'verified'])->group(function () {

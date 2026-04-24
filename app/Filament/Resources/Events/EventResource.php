@@ -18,7 +18,15 @@ class EventResource extends Resource
 {
     protected static ?string $model = Event::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
+
+    protected static ?string $navigationLabel = 'Akce';
+
+    protected static ?string $modelLabel = 'Akce';
+
+    protected static ?string $pluralModelLabel = 'Akce';
+
+    protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
     {
@@ -30,11 +38,14 @@ class EventResource extends Resource
         return EventsTable::configure($table);
     }
 
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return 'Obsah';
+    }
+
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

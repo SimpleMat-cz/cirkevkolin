@@ -18,7 +18,15 @@ class VisitRequestResource extends Resource
 {
     protected static ?string $model = VisitRequest::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserPlus;
+
+    protected static ?string $navigationLabel = 'Návštěvy';
+
+    protected static ?string $modelLabel = 'Žádost o návštěvu';
+
+    protected static ?string $pluralModelLabel = 'Žádosti o návštěvu';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {
@@ -30,11 +38,14 @@ class VisitRequestResource extends Resource
         return VisitRequestsTable::configure($table);
     }
 
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return 'Komunita';
+    }
+
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
