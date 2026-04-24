@@ -1,0 +1,19 @@
+# Nixpacks konfigurace pro Railway (PHP 8.3 + Node 20 + SQLite)
+[phases.setup]
+nixPkgs = ["php83", "php83Extensions.pdo_sqlite", "php83Extensions.sqlite3", "php83Extensions.intl", "php83Extensions.mbstring", "php83Extensions.gd", "php83Extensions.bcmath", "php83Extensions.zip", "nodejs_20", "npm-9_x"]
+aptPkgs = ["git"]
+
+[phases.install]
+cmds = [
+  "curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer",
+  "composer install --no-dev --optimize-autoloader --ignore-platform-reqs",
+  "npm install --legacy-peer-deps",
+]
+
+[phases.build]
+cmds = [
+  "npm run build",
+]
+
+[start]
+cmd = "php artisan migrate --force --no-interaction || true && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
