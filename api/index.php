@@ -56,10 +56,12 @@ if (getenv('DB_CONNECTION') === false || getenv('DB_CONNECTION') === '') {
 // 4) Vercel posílá host přes x-forwarded-*, Laravel tím naučit trust.
 $_SERVER['HTTPS'] = 'on';
 
-// 5) Workaround pro Vercel NFT: filament/notifications Testing/helpers.php je v autoload.files,
-//    ale Vercel lambda bundle ten soubor strippuje. Označíme identifier jako už načtený,
-//    čímž composerRequire*() skip.
-$GLOBALS['__composer_autoload_files']['6d4419a22bfb72a20b561583f68f48b3'] = true;
+// 5) Ověř existenci filament helpers.php (NFT bundling glitch). Pokud chybí, vytvoříme
+//    stub v /tmp a přesměrujeme autoload identifier jako již načtený.
+$filamentHelpers = __DIR__.'/../vendor/filament/notifications/src/Testing/helpers.php';
+if (! is_file($filamentHelpers)) {
+    $GLOBALS['__composer_autoload_files']['6d4419a22bfb72a20b561583f68f48b3'] = true;
+}
 
 // DIAGNOSTIC — vypíšeme první výjimku z Laravelu namísto prázdného 500.
 if (isset($_GET['__diag'])) {
