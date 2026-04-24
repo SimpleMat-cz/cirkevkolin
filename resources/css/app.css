@@ -12,6 +12,18 @@
         Instrument Sans, ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
+    --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+    /* Brand palette — církev kolín */
+    --color-brand-primary: #0eb0e5;
+    --color-brand-primary-dark: #0880a8;
+    --color-brand-coral: #ff8c69;
+    --color-brand-teal: #4db6ac;
+    --color-brand-mint: #8cc9a0;
+    --color-brand-cream: #f5f5dc;
+    --color-brand-sunny: #f7d75c;
+    --color-brand-ink: #333333;
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
