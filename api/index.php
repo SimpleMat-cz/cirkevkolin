@@ -81,7 +81,7 @@ spl_autoload_register(function (string $class): void {
     // Common no-op methods libraries expect on Testing helpers.
     $methods = $isProvider
         ? 'public function register(): void {} public function boot(): void {}'
-        : 'public static function mixin($m): void {} public function __construct(...$args) {} public function __call($m, $args) {} public static function __callStatic($m, $args) {}';
+        : 'public static function mixin(...$args) {} public function __construct(...$args) {} public function __call($m, $args) {} public static function __callStatic($m, $args) {}';
     @eval("namespace {$namespace}; class {$shortName} {$extends} { {$methods} }");
 }, true, true);
 
