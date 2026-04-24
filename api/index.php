@@ -57,15 +57,9 @@ if (getenv('DB_CONNECTION') === false || getenv('DB_CONNECTION') === '') {
 $_SERVER['HTTPS'] = 'on';
 
 // 5) Force NFT static analysis to include Composer autoload files, které by jinak
-//    Vercelí bundler ořezal (zvlášť filament helpers z autoload.files).
-$forcedPaths = [
-    __DIR__.'/../vendor/filament/notifications/src/Testing/helpers.php',
-    __DIR__.'/../vendor/filament/notifications/src/Testing/TestsNotifications.php',
-];
-foreach ($forcedPaths as $path) {
-    if (is_file($path)) {
-        require_once $path;
-    }
-}
+//    Vercelí bundler ořezal (zvlášť filament helpers registrovaný v autoload.files).
+//    Použijeme literal require s potlačením errorů (file tam je jen kvůli trace).
+@require_once __DIR__.'/../vendor/filament/notifications/src/Testing/helpers.php';
+@require_once __DIR__.'/../vendor/filament/notifications/src/Testing/TestsNotifications.php';
 
 require __DIR__.'/../public/index.php';
