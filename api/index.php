@@ -72,6 +72,10 @@ require_once __DIR__.'/../vendor/autoload.php';
 if (! class_exists(\Illuminate\Testing\ParallelTestingServiceProvider::class, true)) {
     eval('namespace Illuminate\\Testing; class ParallelTestingServiceProvider extends \\Illuminate\\Support\\ServiceProvider { public function register(): void {} public function boot(): void {} }');
 }
+// Inertia checks for TestResponse class existence. Stub ho též.
+if (! class_exists(\Illuminate\Testing\TestResponse::class, true)) {
+    eval('namespace Illuminate\\Testing; class TestResponse { public static function mixin($m) {} }');
+}
 
 // DIAGNOSTIC — vypíšeme první výjimku/chybu z Laravelu namísto prázdného 500.
 if (isset($_GET['__diag'])) {
