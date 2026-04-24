@@ -56,4 +56,9 @@ if (getenv('DB_CONNECTION') === false || getenv('DB_CONNECTION') === '') {
 // 4) Vercel posílá host přes x-forwarded-*, Laravel tím naučit trust.
 $_SERVER['HTTPS'] = 'on';
 
+// 5) Workaround pro Vercel NFT: filament/notifications Testing/helpers.php je v autoload.files,
+//    ale Vercel lambda bundle ten soubor strippuje. Označíme identifier jako už načtený,
+//    čímž composerRequire*() skip.
+$GLOBALS['__composer_autoload_files']['6d4419a22bfb72a20b561583f68f48b3'] = true;
+
 require __DIR__.'/../public/index.php';
