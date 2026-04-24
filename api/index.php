@@ -56,4 +56,16 @@ if (getenv('DB_CONNECTION') === false || getenv('DB_CONNECTION') === '') {
 // 4) Vercel posílá host přes x-forwarded-*, Laravel tím naučit trust.
 $_SERVER['HTTPS'] = 'on';
 
+// 5) Force NFT static analysis to include Composer autoload files, které by jinak
+//    Vercelí bundler ořezal (zvlášť filament helpers z autoload.files).
+$forcedPaths = [
+    __DIR__.'/../vendor/filament/notifications/src/Testing/helpers.php',
+    __DIR__.'/../vendor/filament/notifications/src/Testing/TestsNotifications.php',
+];
+foreach ($forcedPaths as $path) {
+    if (is_file($path)) {
+        require_once $path;
+    }
+}
+
 require __DIR__.'/../public/index.php';
