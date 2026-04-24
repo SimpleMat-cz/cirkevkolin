@@ -73,13 +73,30 @@ if (isset($_GET['__diag'])) {
         require_once __DIR__.'/../vendor/autoload.php';
         /** @var \Illuminate\Foundation\Application $app */
         $app = require_once __DIR__.'/../bootstrap/app.php';
-        echo "APP: booted\n";
-        echo "PROVIDERS loaded: ".count($app->getLoadedProviders())."\n";
+
+        // Run full bootstrappers (simulace toho, co dělá handleRequest).
+        $bootstrappers = [
+            \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
+            \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
+            \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
+            \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
+            \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
+            \Illuminate\Foundation\Bootstrap\BootProviders::class,
+        ];
+        foreach ($bootstrappers as $b) {
+            try {
+                $app->make($b)->bootstrap($app);
+                echo "OK: $b\n";
+            } catch (\Throwable $e) {
+                echo "FAIL: $b\n  ".get_class($e).": ".$e->getMessage()."\n";
+                echo "  ".$e->getFile().':'.$e->getLine()."\n";
+                break;
+            }
+        }
+
+        echo "\nPROVIDERS loaded: ".count($app->getLoadedProviders())."\n";
         echo "view bound: ".($app->bound('view') ? 'yes' : 'no')."\n";
-        echo "config.app.providers count: ".count($app->make('config')->get('app.providers', []))."\n";
-        $providers = $app->make('config')->get('app.providers', []);
-        echo "first 5 providers:\n  - ".implode("\n  - ", array_slice($providers, 0, 5))."\n";
-        echo "Illuminate\\View\\ViewServiceProvider in config? ".(in_array('Illuminate\\View\\ViewServiceProvider', $providers, true) ? 'yes' : 'no')."\n";
+        echo "config bound: ".($app->bound('config') ? 'yes' : 'no')."\n";
     } catch (\Throwable $e) {
         echo "BOOT FAILED: ".get_class($e).": ".$e->getMessage()."\n";
         echo $e->getTraceAsString()."\n";
