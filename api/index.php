@@ -63,8 +63,32 @@ if (! is_file($filamentHelpers)) {
     $GLOBALS['__composer_autoload_files']['6d4419a22bfb72a20b561583f68f48b3'] = true;
 }
 
-// DIAGNOSTIC — vypíšeme první výjimku z Laravelu namísto prázdného 500.
+// DIAGNOSTIC — vypíšeme první výjimku/chybu z Laravelu namísto prázdného 500.
 if (isset($_GET['__diag'])) {
+    header('Content-Type: text/plain; charset=utf-8', true, 500);
+    ini_set('display_errors', '1');
+    error_reporting(E_ALL);
+
+    try {
+        require_once __DIR__.'/../vendor/autoload.php';
+        /** @var \Illuminate\Foundation\Application $app */
+        $app = require_once __DIR__.'/../bootstrap/app.php';
+        echo "APP: booted\n";
+        echo "PROVIDERS loaded: ".count($app->getLoadedProviders())."\n";
+        echo "view bound: ".($app->bound('view') ? 'yes' : 'no')."\n";
+        echo "config.app.providers count: ".count($app->make('config')->get('app.providers', []))."\n";
+        $providers = $app->make('config')->get('app.providers', []);
+        echo "first 5 providers:\n  - ".implode("\n  - ", array_slice($providers, 0, 5))."\n";
+        echo "Illuminate\\View\\ViewServiceProvider in config? ".(in_array('Illuminate\\View\\ViewServiceProvider', $providers, true) ? 'yes' : 'no')."\n";
+    } catch (\Throwable $e) {
+        echo "BOOT FAILED: ".get_class($e).": ".$e->getMessage()."\n";
+        echo $e->getTraceAsString()."\n";
+    }
+    exit;
+}
+
+// Legacy diag
+if (isset($_GET['__diag_old'])) {
     ini_set('display_errors', '1');
     error_reporting(E_ALL);
     try {
