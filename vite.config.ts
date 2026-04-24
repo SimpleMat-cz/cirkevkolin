@@ -4,6 +4,11 @@ import vue from '@vitejs/plugin-vue';
 import laravel from 'laravel-vite-plugin';
 import { defineConfig } from 'vite';
 
+// Wayfinder potřebuje PHP CLI, které na Vercelu při npm run build není k dispozici.
+// Vygenerované soubory (`resources/js/actions`, `resources/js/routes`) commitujeme do repa,
+// plugin proto na CI/Vercelu vypneme a spoléháme na statická routes.
+const useWayfinder = process.env.VERCEL !== '1' && process.env.CI !== 'true';
+
 export default defineConfig({
     plugins: [
         laravel({
@@ -20,8 +25,6 @@ export default defineConfig({
                 },
             },
         }),
-        wayfinder({
-            formVariants: true,
-        }),
+        ...(useWayfinder ? [wayfinder({ formVariants: true })] : []),
     ],
 });
