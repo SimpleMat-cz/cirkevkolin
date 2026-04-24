@@ -76,10 +76,13 @@ spl_autoload_register(function (string $class): void {
     $parts = explode('\\', $class);
     $shortName = array_pop($parts);
     $namespace = implode('\\', $parts);
-    // Stub class with common methods that mixin/boot chains expect.
-    $code = "namespace {$namespace}; class {$shortName} extends \\Illuminate\\Support\\ServiceProvider { public function register(): void {} public function boot(): void {} public static function mixin(\$m): void {} }";
-    // Pro třídy, které nejsou providery (čisté stuby), extends stále funguje — SP je bezpečná base.
-    @eval($code);
+    $isProvider = str_contains($shortName, 'ServiceProvider');
+    $extends = $isProvider ? 'extends \\Illuminate\\Support\\ServiceProvider' : '';
+    // Common no-op methods libraries expect on Testing helpers.
+    $methods = $isProvider
+        ? 'public function register(): void {} public function boot(): void {}'
+        : 'public static function mixin($m): void {} public function __construct(...$args) {} public function __call($m, $args) {} public static function __callStatic($m, $args) {}';
+    @eval("namespace {$namespace}; class {$shortName} {$extends} { {$methods} }");
 }, true, true);
 
 // DIAGNOSTIC — vypíšeme první výjimku/chybu z Laravelu namísto prázdného 500.
