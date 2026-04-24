@@ -66,19 +66,21 @@ if (! is_file($filamentHelpers)) {
 // 6) Composer autoloader musí být načtený PŘED registrací stub tříd.
 require_once __DIR__.'/../vendor/autoload.php';
 
-// 7) ParallelTestingServiceProvider z illuminate/testing mizí z Vercel bundlu.
-//    Pokud třídu autoloader nenajde, vytvoříme stejnojmenný stub, aby
-//    FoundationServiceProvider nefailnul.
-if (! class_exists(\Illuminate\Testing\ParallelTestingServiceProvider::class, true)) {
-    eval('namespace Illuminate\\Testing; class ParallelTestingServiceProvider extends \\Illuminate\\Support\\ServiceProvider { public function register(): void {} public function boot(): void {} }');
-}
-// Inertia checks for TestResponse class existence. Stub ho i s TestResponseMacros.
-if (! class_exists(\Illuminate\Testing\TestResponse::class, true)) {
-    eval('namespace Illuminate\\Testing; class TestResponse { public static function mixin($m) {} }');
-}
-if (! class_exists(\Inertia\Testing\TestResponseMacros::class, true)) {
-    eval('namespace Inertia\\Testing; class TestResponseMacros {}');
-}
+// 7) Fallback autoloader pro Testing třídy, které Vercel NFT ořezal.
+//    Testing/* třídy z Laravelu, Filamentu, Inertie atd. nejsou v lambda bundlu.
+//    Knihovny je ale volají i v produkci (Testable::mixin), takže bez stubů rozbije boot.
+spl_autoload_register(function (string $class): void {
+    if (! preg_match('~\\\\Testing\\\\[^\\\\]+$~', $class)) {
+        return;
+    }
+    $parts = explode('\\', $class);
+    $shortName = array_pop($parts);
+    $namespace = implode('\\', $parts);
+    // Stub class with common methods that mixin/boot chains expect.
+    $code = "namespace {$namespace}; class {$shortName} extends \\Illuminate\\Support\\ServiceProvider { public function register(): void {} public function boot(): void {} public static function mixin(\$m): void {} }";
+    // Pro třídy, které nejsou providery (čisté stuby), extends stále funguje — SP je bezpečná base.
+    @eval($code);
+}, true, true);
 
 // DIAGNOSTIC — vypíšeme první výjimku/chybu z Laravelu namísto prázdného 500.
 if (isset($_GET['__diag'])) {
