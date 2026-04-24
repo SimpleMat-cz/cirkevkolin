@@ -135,6 +135,13 @@ return [
     |
     */
 
-    'providers' => Illuminate\Support\ServiceProvider::defaultProviders()->toArray(),
+    /*
+    | ParallelTestingServiceProvider žije v `illuminate/testing`, což Composer
+    | odstraní při `--no-dev` buildu (Vercel). Explicitně ho odfiltrujeme.
+    */
+    'providers' => array_values(array_filter(
+        Illuminate\Support\ServiceProvider::defaultProviders()->toArray(),
+        fn ($p) => $p !== \Illuminate\Testing\ParallelTestingServiceProvider::class,
+    )),
 
 ];
