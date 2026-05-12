@@ -11,7 +11,7 @@ withDefaults(
         title: string
         titleAccent?: string
         description?: string
-        accentColor?: 'coral' | 'teal' | 'sunny' | 'mint'
+        accentColor?: 'coral' | 'teal' | 'sunny' | 'mint' | 'primary'
     }>(),
     {
         accentColor: 'coral',
@@ -23,6 +23,7 @@ const accentMap = {
     teal: 'text-brand-teal',
     sunny: 'text-brand-sunny',
     mint: 'text-brand-mint',
+    primary: 'text-brand-primary',
 }
 
 const blobMap = {
@@ -30,6 +31,7 @@ const blobMap = {
     teal: { primary: '#4db6ac', secondary: '#8cc9a0' },
     sunny: { primary: '#f7d75c', secondary: '#ff8c69' },
     mint: { primary: '#8cc9a0', secondary: '#4db6ac' },
+    primary: { primary: '#54a8d6', secondary: '#4db6ac' },
 }
 </script>
 

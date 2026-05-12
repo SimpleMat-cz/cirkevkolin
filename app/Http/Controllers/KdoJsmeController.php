@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Page;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class KdoJsmeController extends Controller
 {
-    public function index(): \Inertia\Response
+    public function index(): Response
     {
-        return \Inertia\Inertia::render('KdoJsme');
+        return Inertia::render('KdoJsme', [
+            'page' => Page::findBySlug('kdo-jsme'),
+        ]);
     }
 }

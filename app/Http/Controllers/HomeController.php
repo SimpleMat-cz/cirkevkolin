@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\Page;
 use App\Models\Sermon;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -26,6 +27,7 @@ class HomeController extends Controller
             ->get();
 
         return Inertia::render('Home', [
+            'page' => Page::findBySlug('home'),
             'latestSermons' => $latestSermons,
             'upcomingEvents' => $upcomingEvents,
         ]);

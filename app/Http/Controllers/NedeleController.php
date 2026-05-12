@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Page;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class NedeleController extends Controller
 {
-    public function index(): \Inertia\Response
+    public function index(): Response
     {
-        return \Inertia\Inertia::render('Nedele');
+        return Inertia::render('Nedele', [
+            'page' => Page::findBySlug('nedele'),
+        ]);
     }
 }

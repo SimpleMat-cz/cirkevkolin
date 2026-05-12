@@ -5,7 +5,9 @@ import Blob from '@/components/Blob.vue'
 import SermonCard from '@/components/SermonCard.vue'
 import EventCard from '@/components/EventCard.vue'
 import { computed, ref } from 'vue'
-import { Calendar, Coffee, Heart, Users, Sparkles, Play, ArrowRight, MapPin, Youtube, ChevronDown, Film, Mountain, Sun, Briefcase, Flame } from 'lucide-vue-next'
+import { Calendar, Coffee, Heart, Users, Play, ArrowRight, MapPin, Youtube, ChevronDown, Film, Mountain, Sun, Briefcase, Flame } from 'lucide-vue-next'
+import { useSiteSettings } from '@/composables/useSiteSettings'
+import type { Page } from '@/types'
 
 const jsonLd = JSON.stringify({
     '@context': 'https://schema.org',
@@ -31,6 +33,7 @@ const jsonLd = JSON.stringify({
 })
 
 const props = defineProps<{
+    page?: Page | null
     latestSermons: Array<{
         id: number
         title: string
@@ -54,7 +57,17 @@ const props = defineProps<{
     }>
 }>()
 
+const { site } = useSiteSettings()
+
 const heroSermon = computed(() => props.latestSermons?.[0])
+
+const heroEyebrow = computed(() => props.page?.hero_eyebrow ?? `${site('service.weekday', 'Neděle')} ${site('service.time_start', '10:00')} · živě i online`)
+const heroTitle = computed(() => props.page?.hero_title ?? 'Pojď dál')
+const heroTitleAccent = computed(() => props.page?.hero_title_accent ?? 'a buď tu jako doma.')
+const heroDescription = computed(() => props.page?.hero_description ?? 'Otevřená komunita Apoštolské církve v Kolíně.')
+const heroAddress = computed(() => `${site('contact.address_street', 'V Zídkách 402')}`)
+const serviceTime = computed(() => site('service.time_start', '10:00'))
+const coffeeFrom = computed(() => site('service.coffee_from', '9:30'))
 
 function formatHeroDate(date?: string): string {
     if (!date) {
@@ -105,8 +118,8 @@ const marqueeItems = ['JAKO DOMA', 'POJĎ DÁL', 'BUĎ TU', 'TVŮJ ČAS', 'KAŽD
 
 <template>
     <Head>
-        <title>církev kolín — jako doma</title>
-        <meta name="description" content="Apoštolská církev Kolín. Neděle v 10:00, V Zídkách 402. Otevřená komunita, kde se cítíš jako doma — ať jsi tu poprvé nebo odjakživa." />
+        <title>{{ page?.meta_title ?? 'církev kolín — jako doma' }}</title>
+        <meta name="description" :content="page?.meta_description ?? 'Apoštolská církev Kolín. Neděle v 10:00, V Zídkách 402. Otevřená komunita, kde se cítíš jako doma — ať jsi tu poprvé nebo odjakživa.'" />
         <component :is="'script'" type="application/ld+json" v-html="jsonLd" />
     </Head>
 
@@ -126,20 +139,19 @@ const marqueeItems = ['JAKO DOMA', 'POJĎ DÁL', 'BUĎ TU', 'TVŮJ ČAS', 'KAŽD
                             <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-coral opacity-75"></span>
                             <span class="relative inline-flex h-2 w-2 rounded-full bg-brand-coral"></span>
                         </span>
-                        Neděle 10:00 · živě i online
+                        {{ heroEyebrow }}
                     </span>
                 </div>
 
                 <!-- Big hero display -->
                 <h1 class="reveal reveal-delay-1 mt-6 hero-display text-brand-ink" style="font-size: clamp(3.5rem, 13vw, 11.5rem)">
-                    <span class="block">Pojď dál</span>
-                    <span class="block text-brand-coral">a buď tu</span>
-                    <span class="block whitespace-nowrap text-brand-ink">jako doma.</span>
+                    <span class="block">{{ heroTitle }}</span>
+                    <span class="block text-brand-coral">{{ heroTitleAccent }}</span>
                 </h1>
 
                 <p class="reveal reveal-delay-2 mt-8 max-w-2xl text-lg text-brand-ink-soft sm:text-xl">
-                    Otevřená komunita Apoštolské církve v Kolíně. Scházíme se každou neděli v 10:00
-                    <span class="font-semibold text-brand-ink">V Zídkách 402</span>. Chvály, slovo, káva, lidi.
+                    {{ heroDescription }}
+                    <span v-if="heroAddress" class="font-semibold text-brand-ink">{{ heroAddress }}</span>
                 </p>
 
                 <!-- CTA row -->
@@ -164,7 +176,7 @@ const marqueeItems = ['JAKO DOMA', 'POJĎ DÁL', 'BUĎ TU', 'TVŮJ ČAS', 'KAŽD
                 <dl class="reveal reveal-delay-4 mt-16 grid grid-cols-2 gap-6 sm:grid-cols-4">
                     <div>
                         <dt class="text-xs font-semibold uppercase tracking-widest text-brand-ink/50">Začátek</dt>
-                        <dd class="mt-1 font-display text-2xl text-brand-ink">10:00</dd>
+                        <dd class="mt-1 font-display text-2xl text-brand-ink">{{ serviceTime }}</dd>
                     </div>
                     <div>
                         <dt class="text-xs font-semibold uppercase tracking-widest text-brand-ink/50">Dress code</dt>
@@ -499,7 +511,7 @@ const marqueeItems = ['JAKO DOMA', 'POJĎ DÁL', 'BUĎ TU', 'TVŮJ ČAS', 'KAŽD
                     <span class="text-brand-sunny">v neděli?</span>
                 </h2>
                 <p class="reveal reveal-delay-2 mx-auto mt-8 max-w-xl text-lg text-white/90 sm:text-xl">
-                    V 10:00 ve <span class="font-semibold underline decoration-brand-sunny decoration-4 underline-offset-4">V Zídkách 402</span>, Kolín. Přijď, jak jsi — kavárna je otevřená od 9:30.
+                    V {{ serviceTime }} ve <span class="font-semibold underline decoration-brand-sunny decoration-4 underline-offset-4">{{ heroAddress }}</span>, Kolín. Přijď, jak jsi — kavárna je otevřená od {{ coffeeFrom }}.
                 </p>
                 <div class="reveal reveal-delay-3 mt-10 flex flex-wrap items-center justify-center gap-4">
                     <Link

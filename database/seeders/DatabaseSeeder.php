@@ -18,6 +18,12 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->call([
+            SiteSettingSeeder::class,
+            PageSeeder::class,
+            FaqSeeder::class,
+        ]);
+
         $roles = ['admin', 'editor', 'preacher'];
         foreach ($roles as $role) {
             Role::firstOrCreate(['name' => $role]);
