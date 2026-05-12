@@ -1,58 +1,39 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3'
-import { Form } from '@inertiajs/vue3'
+import { Head, Form } from '@inertiajs/vue3'
 import PublicLayout from '@/layouts/public.vue'
 import PageHero from '@/components/PageHero.vue'
 import { ChevronDown, Send, CheckCircle2 } from 'lucide-vue-next'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import type { Page, Faq } from '@/types'
+
+const props = defineProps<{
+    page?: Page | null
+    faqs?: Faq[]
+}>()
 
 const openFaq = ref<number | null>(0)
 
-const faqs = [
-    {
-        question: 'Co mě čeká, když přijdu?',
-        answer: 'Chvíle uctívání hudbou (~30 min), kázání (~40 min) a neformální čas po s kávou. Žádné divné rituály, žádný nátlak. Lidé jsou oblečeni běžně — džíny jsou OK.',
-    },
-    {
-        question: 'Co si mám vzít s sebou?',
-        answer: 'Nic zvláštního. Sami sebe. Pokud máte Bibli a chcete ji přinést, super — ale není to nutné. Bible jsou k dispozici i u nás.',
-    },
-    {
-        question: 'Co bude s mými dětmi?',
-        answer: 'V neděli během setkání mají děti vlastní program (Kidztown). Malé batolata mohou být s vámi nebo v dětském koutku. Předem nemusíte nic registrovat.',
-    },
-    {
-        question: 'Budu muset něco dělat nebo říkat?',
-        answer: 'Vůbec ne. Přijďte, posaďte se, poslouchejte. Nikdo vás nebude nutit vstávat, zpívat, mluvit ani nic podepisovat. Jste hosté.',
-    },
-    {
-        question: 'Co jste za lidi?',
-        answer: 'Jsme parta různých lidí — mladí, starší, rodiny, singles, lidé hledající, lidé věřící. Nedělíme lidi na věřící a nevěřící. Přijde každý, kdo chce.',
-    },
-    {
-        question: 'Kde zaparkuji?',
-        answer: 'Parking je dostupný na ulici Benešova (modrá zóna — neděle je zdarma). Vstup do budovy je z Benešovy ulice, ne ze Z Zídkách.',
-    },
-]
+const heroAccent = computed(() => (props.page?.hero_accent_color ?? 'coral') as 'coral' | 'teal' | 'sunny' | 'mint' | 'primary')
+const faqs = computed(() => props.faqs ?? [])
 </script>
 
 <template>
     <Head>
-        <title>Jsem tu poprvé — církev kolín</title>
-        <meta name="description" content="Plánujete první návštěvu? Zjistěte, co vás čeká, kde zaparkovat, co s dětmi a jak to u nás chodí." />
+        <title>{{ page?.meta_title ?? 'Jsem tu poprvé — církev kolín' }}</title>
+        <meta name="description" :content="page?.meta_description ?? 'Plánujete první návštěvu? Zjistěte, co vás čeká, kde zaparkovat, co s dětmi a jak to u nás chodí.'" />
     </Head>
 
     <PublicLayout>
         <PageHero
-            eyebrow="Vítejte"
-            title="Jsem tu"
-            title-accent="poprvé."
-            accent-color="coral"
-            description="Rozumíme — přijít někam poprvé může být trochu divné. Proto jsme připravili odpovědi na otázky, které tě asi napadají. A pokud něco chybí, napiš nám."
+            :eyebrow="page?.hero_eyebrow ?? 'Vítejte'"
+            :title="page?.hero_title ?? 'Jsem tu'"
+            :title-accent="page?.hero_title_accent ?? 'poprvé.'"
+            :accent-color="heroAccent"
+            :description="page?.hero_description ?? 'Rozumíme — přijít někam poprvé může být trochu divné. Proto jsme připravili odpovědi na otázky, které tě asi napadají. A pokud něco chybí, napiš nám.'"
         />
 
         <!-- FAQ -->
-        <section class="bg-white py-20 sm:py-28">
+        <section v-if="faqs.length" class="bg-white py-20 sm:py-28">
             <div class="mx-auto max-w-3xl px-4 sm:px-6">
                 <div class="reveal mb-10">
                     <span class="text-xs font-bold uppercase tracking-[0.2em] text-brand-coral">Časté otázky</span>
@@ -61,7 +42,7 @@ const faqs = [
                 <dl class="space-y-3">
                     <div
                         v-for="(faq, index) in faqs"
-                        :key="index"
+                        :key="faq.id"
                         :class="['overflow-hidden rounded-2xl bg-brand-cream ring-1 ring-brand-ink/5 transition-colors', openFaq === index && 'ring-brand-primary/20']"
                     >
                         <dt>
@@ -84,7 +65,7 @@ const faqs = [
                             leave-from-class="opacity-100 max-h-96"
                             leave-to-class="opacity-0 max-h-0"
                         >
-                            <dd v-show="openFaq === index" class="px-6 pb-5 leading-relaxed text-brand-ink-soft">
+                            <dd v-show="openFaq === index" class="whitespace-pre-line px-6 pb-5 leading-relaxed text-brand-ink-soft">
                                 {{ faq.answer }}
                             </dd>
                         </Transition>

@@ -2,12 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Faq;
+use App\Models\Page;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class JsemTuPoprveController extends Controller
 {
-    public function index(): \Inertia\Response
+    public function index(): Response
     {
-        return \Inertia\Inertia::render('JsemTuPoprve');
+        return Inertia::render('JsemTuPoprve', [
+            'page' => Page::findBySlug('jsem-tu-poprve'),
+            'faqs' => Faq::query()
+                ->published()
+                ->forPage('jsem-tu-poprve')
+                ->orderBy('sort')
+                ->get(['id', 'question', 'answer']),
+        ]);
     }
 }

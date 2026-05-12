@@ -1,9 +1,17 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3'
+import { Head } from '@inertiajs/vue3'
+import { computed } from 'vue'
 import PublicLayout from '@/layouts/public.vue'
 import PageHero from '@/components/PageHero.vue'
 import Blob from '@/components/Blob.vue'
 import { Heart, Users, BookOpen, ArrowRight } from 'lucide-vue-next'
+import type { Page } from '@/types'
+
+const props = defineProps<{
+    page?: Page | null
+}>()
+
+const heroAccent = computed(() => (props.page?.hero_accent_color ?? 'teal') as 'coral' | 'teal' | 'sunny' | 'mint' | 'primary')
 
 const beliefs = [
     { icon: Heart, title: 'Bůh je Stvořitel', text: 'Věříme, že všechno, co je kolem nás — a my sami — máme od Boha. A že o nás stojí.' },
@@ -14,17 +22,17 @@ const beliefs = [
 
 <template>
     <Head>
-        <title>Kdo jsme — církev kolín</title>
-        <meta name="description" content="Jsme otevřená komunita v Kolíně, která podporuje život v celé jeho šíři. Apoštolská církev Kolín, pastor Martin Fridrich." />
+        <title>{{ page?.meta_title ?? 'Kdo jsme — církev kolín' }}</title>
+        <meta name="description" :content="page?.meta_description ?? 'Jsme otevřená komunita v Kolíně, která podporuje život v celé jeho šíři. Apoštolská církev Kolín, pastor Martin Fridrich.'" />
     </Head>
 
     <PublicLayout>
         <PageHero
-            eyebrow="O nás"
-            title="Kdo jsme"
-            title-accent="a čemu věříme."
-            accent-color="teal"
-            description="Jsme místní komunita lidí, kterou spojuje víra v Boha a touha být užiteční lidem kolem nás. S radostí vítáme každého, kdo se chce přidat — nebo se jen přijít podívat."
+            :eyebrow="page?.hero_eyebrow ?? 'O nás'"
+            :title="page?.hero_title ?? 'Kdo jsme'"
+            :title-accent="page?.hero_title_accent ?? 'a čemu věříme.'"
+            :accent-color="heroAccent"
+            :description="page?.hero_description ?? 'Jsme místní komunita lidí, kterou spojuje víra v Boha a touha být užiteční lidem kolem nás. S radostí vítáme každého, kdo se chce přidat — nebo se jen přijít podívat.'"
         />
 
         <!-- Vize -->

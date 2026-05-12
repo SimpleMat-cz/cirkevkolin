@@ -219,7 +219,7 @@ register.form = registerForm
 
 /**
 * @see \App\Http\Controllers\HomeController::home
-* @see app/Http/Controllers/HomeController.php:12
+* @see app/Http/Controllers/HomeController.php:13
 * @route '/'
 */
 export const home = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -234,7 +234,7 @@ home.definition = {
 
 /**
 * @see \App\Http\Controllers\HomeController::home
-* @see app/Http/Controllers/HomeController.php:12
+* @see app/Http/Controllers/HomeController.php:13
 * @route '/'
 */
 home.url = (options?: RouteQueryOptions) => {
@@ -243,7 +243,7 @@ home.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\HomeController::home
-* @see app/Http/Controllers/HomeController.php:12
+* @see app/Http/Controllers/HomeController.php:13
 * @route '/'
 */
 home.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -253,7 +253,7 @@ home.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\HomeController::home
-* @see app/Http/Controllers/HomeController.php:12
+* @see app/Http/Controllers/HomeController.php:13
 * @route '/'
 */
 home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -263,7 +263,7 @@ home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\HomeController::home
-* @see app/Http/Controllers/HomeController.php:12
+* @see app/Http/Controllers/HomeController.php:13
 * @route '/'
 */
 const homeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -273,7 +273,7 @@ const homeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\HomeController::home
-* @see app/Http/Controllers/HomeController.php:12
+* @see app/Http/Controllers/HomeController.php:13
 * @route '/'
 */
 homeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -283,7 +283,7 @@ homeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\HomeController::home
-* @see app/Http/Controllers/HomeController.php:12
+* @see app/Http/Controllers/HomeController.php:13
 * @route '/'
 */
 homeForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -300,7 +300,7 @@ home.form = homeForm
 
 /**
 * @see \App\Http\Controllers\NedeleController::nedele
-* @see app/Http/Controllers/NedeleController.php:9
+* @see app/Http/Controllers/NedeleController.php:11
 * @route '/nedele'
 */
 export const nedele = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -315,7 +315,7 @@ nedele.definition = {
 
 /**
 * @see \App\Http\Controllers\NedeleController::nedele
-* @see app/Http/Controllers/NedeleController.php:9
+* @see app/Http/Controllers/NedeleController.php:11
 * @route '/nedele'
 */
 nedele.url = (options?: RouteQueryOptions) => {
@@ -324,7 +324,7 @@ nedele.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\NedeleController::nedele
-* @see app/Http/Controllers/NedeleController.php:9
+* @see app/Http/Controllers/NedeleController.php:11
 * @route '/nedele'
 */
 nedele.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -334,7 +334,7 @@ nedele.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\NedeleController::nedele
-* @see app/Http/Controllers/NedeleController.php:9
+* @see app/Http/Controllers/NedeleController.php:11
 * @route '/nedele'
 */
 nedele.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -344,7 +344,7 @@ nedele.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\NedeleController::nedele
-* @see app/Http/Controllers/NedeleController.php:9
+* @see app/Http/Controllers/NedeleController.php:11
 * @route '/nedele'
 */
 const nedeleForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -354,7 +354,7 @@ const nedeleForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 
 /**
 * @see \App\Http\Controllers\NedeleController::nedele
-* @see app/Http/Controllers/NedeleController.php:9
+* @see app/Http/Controllers/NedeleController.php:11
 * @route '/nedele'
 */
 nedeleForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -364,7 +364,7 @@ nedeleForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\NedeleController::nedele
-* @see app/Http/Controllers/NedeleController.php:9
+* @see app/Http/Controllers/NedeleController.php:11
 * @route '/nedele'
 */
 nedeleForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -381,7 +381,7 @@ nedele.form = nedeleForm
 
 /**
 * @see \App\Http\Controllers\JsemTuPoprveController::jsemTuPoprve
-* @see app/Http/Controllers/JsemTuPoprveController.php:9
+* @see app/Http/Controllers/JsemTuPoprveController.php:12
 * @route '/jsem-tu-poprve'
 */
 export const jsemTuPoprve = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -396,7 +396,7 @@ jsemTuPoprve.definition = {
 
 /**
 * @see \App\Http\Controllers\JsemTuPoprveController::jsemTuPoprve
-* @see app/Http/Controllers/JsemTuPoprveController.php:9
+* @see app/Http/Controllers/JsemTuPoprveController.php:12
 * @route '/jsem-tu-poprve'
 */
 jsemTuPoprve.url = (options?: RouteQueryOptions) => {
@@ -405,7 +405,7 @@ jsemTuPoprve.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\JsemTuPoprveController::jsemTuPoprve
-* @see app/Http/Controllers/JsemTuPoprveController.php:9
+* @see app/Http/Controllers/JsemTuPoprveController.php:12
 * @route '/jsem-tu-poprve'
 */
 jsemTuPoprve.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -415,7 +415,7 @@ jsemTuPoprve.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\JsemTuPoprveController::jsemTuPoprve
-* @see app/Http/Controllers/JsemTuPoprveController.php:9
+* @see app/Http/Controllers/JsemTuPoprveController.php:12
 * @route '/jsem-tu-poprve'
 */
 jsemTuPoprve.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -425,7 +425,7 @@ jsemTuPoprve.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\JsemTuPoprveController::jsemTuPoprve
-* @see app/Http/Controllers/JsemTuPoprveController.php:9
+* @see app/Http/Controllers/JsemTuPoprveController.php:12
 * @route '/jsem-tu-poprve'
 */
 const jsemTuPoprveForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -435,7 +435,7 @@ const jsemTuPoprveForm = (options?: RouteQueryOptions): RouteFormDefinition<'get
 
 /**
 * @see \App\Http\Controllers\JsemTuPoprveController::jsemTuPoprve
-* @see app/Http/Controllers/JsemTuPoprveController.php:9
+* @see app/Http/Controllers/JsemTuPoprveController.php:12
 * @route '/jsem-tu-poprve'
 */
 jsemTuPoprveForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -445,7 +445,7 @@ jsemTuPoprveForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'>
 
 /**
 * @see \App\Http\Controllers\JsemTuPoprveController::jsemTuPoprve
-* @see app/Http/Controllers/JsemTuPoprveController.php:9
+* @see app/Http/Controllers/JsemTuPoprveController.php:12
 * @route '/jsem-tu-poprve'
 */
 jsemTuPoprveForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -462,7 +462,7 @@ jsemTuPoprve.form = jsemTuPoprveForm
 
 /**
 * @see \App\Http\Controllers\KdoJsmeController::kdoJsme
-* @see app/Http/Controllers/KdoJsmeController.php:9
+* @see app/Http/Controllers/KdoJsmeController.php:11
 * @route '/kdo-jsme'
 */
 export const kdoJsme = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -477,7 +477,7 @@ kdoJsme.definition = {
 
 /**
 * @see \App\Http\Controllers\KdoJsmeController::kdoJsme
-* @see app/Http/Controllers/KdoJsmeController.php:9
+* @see app/Http/Controllers/KdoJsmeController.php:11
 * @route '/kdo-jsme'
 */
 kdoJsme.url = (options?: RouteQueryOptions) => {
@@ -486,7 +486,7 @@ kdoJsme.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\KdoJsmeController::kdoJsme
-* @see app/Http/Controllers/KdoJsmeController.php:9
+* @see app/Http/Controllers/KdoJsmeController.php:11
 * @route '/kdo-jsme'
 */
 kdoJsme.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -496,7 +496,7 @@ kdoJsme.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\KdoJsmeController::kdoJsme
-* @see app/Http/Controllers/KdoJsmeController.php:9
+* @see app/Http/Controllers/KdoJsmeController.php:11
 * @route '/kdo-jsme'
 */
 kdoJsme.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -506,7 +506,7 @@ kdoJsme.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\KdoJsmeController::kdoJsme
-* @see app/Http/Controllers/KdoJsmeController.php:9
+* @see app/Http/Controllers/KdoJsmeController.php:11
 * @route '/kdo-jsme'
 */
 const kdoJsmeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -516,7 +516,7 @@ const kdoJsmeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =>
 
 /**
 * @see \App\Http\Controllers\KdoJsmeController::kdoJsme
-* @see app/Http/Controllers/KdoJsmeController.php:9
+* @see app/Http/Controllers/KdoJsmeController.php:11
 * @route '/kdo-jsme'
 */
 kdoJsmeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -526,7 +526,7 @@ kdoJsmeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\KdoJsmeController::kdoJsme
-* @see app/Http/Controllers/KdoJsmeController.php:9
+* @see app/Http/Controllers/KdoJsmeController.php:11
 * @route '/kdo-jsme'
 */
 kdoJsmeForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -786,7 +786,7 @@ akce.form = akceForm
 
 /**
 * @see \App\Http\Controllers\KontaktController::kontakt
-* @see app/Http/Controllers/KontaktController.php:9
+* @see app/Http/Controllers/KontaktController.php:11
 * @route '/kontakt'
 */
 export const kontakt = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -801,7 +801,7 @@ kontakt.definition = {
 
 /**
 * @see \App\Http\Controllers\KontaktController::kontakt
-* @see app/Http/Controllers/KontaktController.php:9
+* @see app/Http/Controllers/KontaktController.php:11
 * @route '/kontakt'
 */
 kontakt.url = (options?: RouteQueryOptions) => {
@@ -810,7 +810,7 @@ kontakt.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\KontaktController::kontakt
-* @see app/Http/Controllers/KontaktController.php:9
+* @see app/Http/Controllers/KontaktController.php:11
 * @route '/kontakt'
 */
 kontakt.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -820,7 +820,7 @@ kontakt.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\KontaktController::kontakt
-* @see app/Http/Controllers/KontaktController.php:9
+* @see app/Http/Controllers/KontaktController.php:11
 * @route '/kontakt'
 */
 kontakt.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -830,7 +830,7 @@ kontakt.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\KontaktController::kontakt
-* @see app/Http/Controllers/KontaktController.php:9
+* @see app/Http/Controllers/KontaktController.php:11
 * @route '/kontakt'
 */
 const kontaktForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -840,7 +840,7 @@ const kontaktForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =>
 
 /**
 * @see \App\Http\Controllers\KontaktController::kontakt
-* @see app/Http/Controllers/KontaktController.php:9
+* @see app/Http/Controllers/KontaktController.php:11
 * @route '/kontakt'
 */
 kontaktForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -850,7 +850,7 @@ kontaktForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\KontaktController::kontakt
-* @see app/Http/Controllers/KontaktController.php:9
+* @see app/Http/Controllers/KontaktController.php:11
 * @route '/kontakt'
 */
 kontaktForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -867,7 +867,7 @@ kontakt.form = kontaktForm
 
 /**
 * @see \App\Http\Controllers\PrispetController::prispet
-* @see app/Http/Controllers/PrispetController.php:10
+* @see app/Http/Controllers/PrispetController.php:11
 * @route '/prispet'
 */
 export const prispet = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -882,7 +882,7 @@ prispet.definition = {
 
 /**
 * @see \App\Http\Controllers\PrispetController::prispet
-* @see app/Http/Controllers/PrispetController.php:10
+* @see app/Http/Controllers/PrispetController.php:11
 * @route '/prispet'
 */
 prispet.url = (options?: RouteQueryOptions) => {
@@ -891,7 +891,7 @@ prispet.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\PrispetController::prispet
-* @see app/Http/Controllers/PrispetController.php:10
+* @see app/Http/Controllers/PrispetController.php:11
 * @route '/prispet'
 */
 prispet.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -901,7 +901,7 @@ prispet.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\PrispetController::prispet
-* @see app/Http/Controllers/PrispetController.php:10
+* @see app/Http/Controllers/PrispetController.php:11
 * @route '/prispet'
 */
 prispet.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -911,7 +911,7 @@ prispet.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\PrispetController::prispet
-* @see app/Http/Controllers/PrispetController.php:10
+* @see app/Http/Controllers/PrispetController.php:11
 * @route '/prispet'
 */
 const prispetForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -921,7 +921,7 @@ const prispetForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =>
 
 /**
 * @see \App\Http\Controllers\PrispetController::prispet
-* @see app/Http/Controllers/PrispetController.php:10
+* @see app/Http/Controllers/PrispetController.php:11
 * @route '/prispet'
 */
 prispetForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -931,7 +931,7 @@ prispetForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\PrispetController::prispet
-* @see app/Http/Controllers/PrispetController.php:10
+* @see app/Http/Controllers/PrispetController.php:11
 * @route '/prispet'
 */
 prispetForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

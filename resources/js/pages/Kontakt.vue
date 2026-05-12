@@ -1,23 +1,64 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3'
+import { computed } from 'vue'
 import PublicLayout from '@/layouts/public.vue'
 import PageHero from '@/components/PageHero.vue'
 import { MapPin, Mail, Clock, CreditCard, Facebook, Instagram, Youtube } from 'lucide-vue-next'
+import { useSiteSettings } from '@/composables/useSiteSettings'
+import type { Page } from '@/types'
+
+const props = defineProps<{
+    page?: Page | null
+}>()
+
+const { site } = useSiteSettings()
+
+const heroAccent = computed(() => (props.page?.hero_accent_color ?? 'teal') as 'coral' | 'teal' | 'sunny' | 'mint' | 'primary')
+
+const addressLines = computed(() => {
+    const parts = [
+        site('contact.address_street', 'V Zídkách 402'),
+        `${site('contact.address_city', 'Kolín 2')}\nPSČ ${site('contact.address_zip', '280 02')}`,
+        site('contact.address_note'),
+    ]
+    return parts.filter(Boolean).join('\n')
+})
+
+const serviceHours = computed(() => {
+    const day = site('service.weekday', 'Neděle')
+    const start = site('service.time_start', '10:00')
+    const end = site('service.time_end', '11:30')
+    const coffee = site('service.coffee_from', '9:30')
+    return `${start} — cca ${end}\nKavárna od ${coffee}\n(${day})`
+})
+
+const items = computed(() => [
+    { icon: MapPin, label: 'Adresa', value: addressLines.value, color: 'bg-brand-coral text-white' },
+    { icon: Mail, label: 'E-mail', value: site('contact.email', 'kolin@apostolskacirkev.cz'), href: `mailto:${site('contact.email', 'kolin@apostolskacirkev.cz')}`, color: 'bg-brand-primary text-white' },
+    { icon: Clock, label: 'Bohoslužba', value: serviceHours.value, color: 'bg-brand-teal text-white' },
+    { icon: CreditCard, label: 'Účet', value: site('contact.bank_account', '435669379 / 0800 (ČS)'), color: 'bg-brand-sunny text-brand-ink' },
+])
+
+const socials = computed(() => [
+    { icon: Facebook, href: site('social.facebook'), label: 'Facebook' },
+    { icon: Instagram, href: site('social.instagram'), label: 'Instagram' },
+    { icon: Youtube, href: site('social.youtube'), label: 'YouTube' },
+].filter((s) => Boolean(s.href)))
 </script>
 
 <template>
     <Head>
-        <title>Kontakt — církev kolín</title>
-        <meta name="description" content="V Zídkách 402, Kolín. E-mail kolin@apostolskacirkev.cz. Neděle 10:00." />
+        <title>{{ page?.meta_title ?? 'Kontakt — církev kolín' }}</title>
+        <meta name="description" :content="page?.meta_description ?? 'V Zídkách 402, Kolín. E-mail kolin@apostolskacirkev.cz. Neděle 10:00.'" />
     </Head>
 
     <PublicLayout>
         <PageHero
-            eyebrow="Kontakt"
-            title="Napiš."
-            title-accent="Přijď. Ozvi se."
-            accent-color="teal"
-            description="Jsme dostupní — napiš, zavolej nebo prostě přijď. Nejlíp v neděli v 10:00."
+            :eyebrow="page?.hero_eyebrow ?? 'Kontakt'"
+            :title="page?.hero_title ?? 'Napiš.'"
+            :title-accent="page?.hero_title_accent ?? 'Přijď. Ozvi se.'"
+            :accent-color="heroAccent"
+            :description="page?.hero_description ?? 'Jsme dostupní — napiš, zavolej nebo prostě přijď. Nejlíp v neděli v 10:00.'"
         />
 
         <section class="relative bg-white py-20 sm:py-28">
@@ -26,12 +67,7 @@ import { MapPin, Mail, Clock, CreditCard, Facebook, Instagram, Youtube } from 'l
                     <!-- Kontaktní info -->
                     <div class="lg:col-span-2 space-y-4">
                         <div
-                            v-for="(item, i) in [
-                                { icon: MapPin, label: 'Adresa', value: 'V Zídkách 402, Kolín 2\nPSČ 280 02\nVchod z Benešovy ulice', color: 'bg-brand-coral text-white' },
-                                { icon: Mail, label: 'E-mail', value: 'kolin@apostolskacirkev.cz', href: 'mailto:kolin@apostolskacirkev.cz', color: 'bg-brand-primary text-white' },
-                                { icon: Clock, label: 'Neděle', value: '10:00 — cca 11:30\nKavárna od 9:30', color: 'bg-brand-teal text-white' },
-                                { icon: CreditCard, label: 'Účet', value: '435669379 / 0800 (ČS)', color: 'bg-brand-sunny text-brand-ink' },
-                            ]"
+                            v-for="(item, i) in items"
                             :key="item.label"
                             :class="['reveal hover-lift flex gap-5 rounded-3xl bg-brand-cream p-6 ring-1 ring-brand-ink/5', `reveal-delay-${i + 1}`]"
                         >
@@ -51,15 +87,11 @@ import { MapPin, Mail, Clock, CreditCard, Facebook, Instagram, Youtube } from 'l
                             </div>
                         </div>
 
-                        <div class="reveal reveal-delay-5 flex gap-3 pt-2">
+                        <div v-if="socials.length" class="reveal reveal-delay-5 flex gap-3 pt-2">
                             <a
-                                v-for="s in [
-                                    { icon: Facebook, href: 'https://www.facebook.com/cirkevkolin', label: 'Facebook' },
-                                    { icon: Instagram, href: 'https://www.instagram.com/cirkevkolin', label: 'Instagram' },
-                                    { icon: Youtube, href: 'https://www.youtube.com/channel/UCnsKOpdlWx4wS0mos_PXfDg', label: 'YouTube' },
-                                ]"
+                                v-for="s in socials"
                                 :key="s.label"
-                                :href="s.href"
+                                :href="s.href!"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 class="flex h-11 w-11 items-center justify-center rounded-full bg-brand-ink text-white transition-all hover:-translate-y-0.5 hover:bg-brand-coral"
