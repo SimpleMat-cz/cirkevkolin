@@ -122,6 +122,10 @@ if (isset($_GET['__diag'])) {
         echo "\nPROVIDERS loaded: ".count($app->getLoadedProviders())."\n";
         echo "view bound: ".($app->bound('view') ? 'yes' : 'no')."\n";
         echo "config bound: ".($app->bound('config') ? 'yes' : 'no')."\n";
+        echo "\n---DEPLOY---\n";
+        echo 'commit: '.(getenv('VERCEL_GIT_COMMIT_SHA') ?: '(unknown)')."\n";
+        echo 'branch: '.(getenv('VERCEL_GIT_COMMIT_REF') ?: '(unknown)')."\n";
+        echo 'has_boost_in_cache: '.(str_contains(@file_get_contents(__DIR__.'/../bootstrap/cache/packages.php') ?: '', 'Boost') ? 'YES (rozbité)' : 'no (ok)')."\n";
     } catch (\Throwable $e) {
         echo "BOOT FAILED: ".get_class($e).": ".$e->getMessage()."\n";
         echo $e->getTraceAsString()."\n";
