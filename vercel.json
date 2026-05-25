@@ -32,6 +32,12 @@
     "SESSION_DRIVER": "cookie",
     "QUEUE_CONNECTION": "sync",
     "LOG_CHANNEL": "stderr",
-    "SCOUT_DRIVER": "null"
+    "SCOUT_DRIVER": "null",
+    "COMPOSER_NO_DEV": "1"
+  },
+  "build": {
+    "env": {
+      "COMPOSER_NO_DEV": "1"
+    }
   }
 }
