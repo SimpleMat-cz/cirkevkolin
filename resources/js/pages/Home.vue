@@ -92,7 +92,7 @@ const whatToExpect = [
 const audiences = [
     { emoji: '👨‍👩‍👧', color: 'bg-brand-coral/15', title: 'Rodiny', text: 'Prostor pro každého — od nejmenšího po nejstaršího.' },
     { emoji: '🧒', color: 'bg-brand-mint/25', title: 'Děti • Kidztown', text: 'Batolata mají svůj program každý čtvrtek i v neděli.' },
-    { emoji: '🏄', color: 'bg-brand-sunny/30', title: 'Mládež • WyldLife', text: 'Klub pro 10–13 leté, středa 16:30–18:00.' },
+    { emoji: '🏄', color: 'bg-brand-sunny/30', title: 'Mládež • WyldLife', text: 'Klub pro 9–13 leté, středa 16:30–18:00.' },
     { emoji: '🧑', color: 'bg-brand-teal/20', title: 'Dospělí', text: 'Lidé hledající komunitu, smysl nebo prostě dobrou kávu.' },
 ]
 
