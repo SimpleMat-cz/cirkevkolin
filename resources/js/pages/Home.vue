@@ -109,7 +109,7 @@ const showOtherEvents = ref(false)
 
 const values = [
     { num: '01', title: 'Učíme se o Ježíši', text: 'Bible, která mluví do dnešního života. Srozumitelně a bez předstírání.' },
-    { num: '02', title: 'Milujeme lidi', text: 'Každý je vítaný — ať už jsi teprve hledá nebo věříš celý život.' },
+    { num: '02', title: 'Milujeme lidi', text: 'Každý je vítaný — ať už teprve hledáš, nebo věříš celý život.' },
     { num: '03', title: 'Žijeme jako rodina', text: 'Nejsme jen program v neděli. Scházíme se během týdne, pomáháme si.' },
 ]
 
@@ -337,7 +337,7 @@ const marqueeItems = ['JAKO DOMA', 'POJĎ DÁL', 'BUĎ TU', 'TVŮJ ČAS', 'KAŽD
                         </h2>
                     </div>
                     <p class="max-w-sm text-brand-ink-soft">
-                        Přijdou sem lidé z celého spektra — studenti, rodiny s dětmi, podnikatelé i pensisti. Nikdo není vylučován.
+                        Přijdou sem lidé z celého spektra — studenti, rodiny s dětmi, podnikatelé i penzisti. Nikdo není vylučován.
                     </p>
                 </div>
 
