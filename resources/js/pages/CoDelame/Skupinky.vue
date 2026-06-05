@@ -42,7 +42,7 @@ const leaders = [
         <section class="bg-white py-20 sm:py-28">
             <div class="mx-auto max-w-4xl px-4 sm:px-6">
                 <div class="reveal">
-                    <span class="text-xs font-bold uppercase tracking-[0.2em] text-brand-coral">Co se scházíme</span>
+                    <span class="text-xs font-bold uppercase tracking-[0.2em] text-brand-coral">Skupinky a komunity</span>
                     <h2 class="mt-3 font-display text-4xl text-brand-ink sm:text-5xl">Skupiny, které právě běží</h2>
                 </div>
 

@@ -80,7 +80,7 @@ const faqs = computed(() => props.faqs ?? [])
                 <div class="reveal">
                     <span class="text-xs font-bold uppercase tracking-[0.2em] text-brand-coral">Místo</span>
                     <h2 class="mt-3 font-display text-4xl text-brand-ink sm:text-5xl">Kde nás najdeš</h2>
-                    <p class="mt-3 text-brand-ink-soft">V Zídkách 402, Kolín 2 — vchod z Benešovy ulice. Modrá zóna v neděli zdarma.</p>
+                    <p class="mt-3 text-brand-ink-soft">V Zídkách 402, Kolín 2 — vchod z ulice Benešova.</p>
                 </div>
 
                 <!-- Ukázka, jak to vypadá naživo -->

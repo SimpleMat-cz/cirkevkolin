@@ -31,7 +31,7 @@ const props = defineProps<{
     filters: { category?: string }
 }>()
 
-const categories = ['neděle', 'wyldlife', 'kidztown', 'skupinky', 'akce']
+const categories = ['neděle', 'wyldlife', 'kidztown', 'younglife', 'skupinky', 'akce']
 const category = ref(props.filters.category ?? '')
 
 watch(category, (val) => {
@@ -51,7 +51,7 @@ const allEvents = computed(() => {
 <template>
     <Head>
         <title>Akce — církev kolín</title>
-        <meta name="description" content="Přehled akcí Apoštolské církve Kolín — neděle, WyldLife, Kidztown, skupinky a další." />
+        <meta name="description" content="Přehled akcí Apoštolské církve Kolín — neděle, WyldLife, KidzTown, skupinky a další." />
     </Head>
 
     <PublicLayout>
@@ -60,7 +60,7 @@ const allEvents = computed(() => {
             title="Co se"
             title-accent="u nás chystá."
             accent-color="coral"
-            description="Nedělní setkání, WyldLife, Kidztown a další. Přijď, kam ti to sedí — každá akce je otevřená."
+            description="Nedělní setkání, WyldLife, KidzTown a další. Najdi si místo, kde se budeš cítit dobře — všechny akce jsou otevřené každému."
         />
 
         <!-- Filter -->

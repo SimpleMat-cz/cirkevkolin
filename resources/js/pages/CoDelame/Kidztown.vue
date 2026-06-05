@@ -6,15 +6,14 @@ import LeadersBlock from '@/components/LeadersBlock.vue'
 import { Clock, MapPin, Shield, Heart, ExternalLink, Facebook, ArrowRight } from 'lucide-vue-next'
 
 const leaders = [
-    { name: 'Jméno vedoucí', role: 'Vedoucí Kidztown — doplníme' },
-    { name: 'Jméno vedoucí', role: 'Vedoucí Kidztown — doplníme' },
+    { name: 'Mirka Smetanová', role: 'Vedoucí KidzTown' },
 ]
 </script>
 
 <template>
     <Head>
-        <title>Kidztown — církev kolín</title>
-        <meta name="description" content="Kidztown — mateřské centrum pro batolata a jejich rodiče. Středy a čtvrtky dopoledne, navíc program pro děti v neděli při bohoslužbě." />
+        <title>KidzTown — církev kolín</title>
+        <meta name="description" content="KidzTown — mateřské centrum pro batolata a jejich rodiče. Středy a čtvrtky dopoledne - Hrátky s Oskárkem. Každé sudé úterý je připraveno setkání pro rodiče s miminky a nejmenšími dětmi." />
     </Head>
 
     <PublicLayout>
@@ -28,15 +27,15 @@ const leaders = [
                     Pro děti 0–3 + rodiče
                 </span>
                 <h1 class="mt-4 hero-display text-5xl text-brand-ink sm:text-6xl lg:text-7xl">
-                    Kidztown.
+                    KidzTown.
                 </h1>
                 <p class="mt-6 max-w-2xl text-lg leading-relaxed text-brand-ink-soft">
-                    Mateřské centrum, kde se děti radují z&nbsp;objevování světa a&nbsp;rodiče najdou podporu, společnost a&nbsp;novou kávu.
+                    Mateřské centrum, kde se děti radují z objevování světa a rodiče najdou podporu, společnost a dobrou kávu. 
                 </p>
                 <div class="mt-8 flex flex-wrap gap-4 text-sm text-brand-ink-soft">
                     <span class="flex items-center gap-2 rounded-full bg-white px-4 py-2 shadow-sm ring-1 ring-brand-ink/5">
                         <Clock class="h-4 w-4 text-brand-teal" />
-                        Středa a čtvrtek 10:30–12:30
+                        Středa, čtvrtek a každé sudé úterý 9:30–11:30
                     </span>
                     <span class="flex items-center gap-2 rounded-full bg-white px-4 py-2 shadow-sm ring-1 ring-brand-ink/5">
                         <MapPin class="h-4 w-4 text-brand-teal" />
@@ -50,15 +49,15 @@ const leaders = [
         <section class="bg-white py-20 sm:py-28">
             <div class="mx-auto max-w-3xl px-4 sm:px-6">
                 <div class="reveal">
-                    <span class="text-xs font-bold uppercase tracking-[0.2em] text-brand-coral">Co se v Kidztownu děje</span>
-                    <h2 class="mt-3 font-display text-4xl text-brand-ink sm:text-5xl">Hraní, vyrábění, káva pro rodiče.</h2>
+                    <span class="text-xs font-bold uppercase tracking-[0.2em] text-brand-coral">Co se v KidzTownu děje</span>
+                    <h2 class="mt-3 font-display text-4xl text-brand-ink sm:text-5xl">Hraní, tvoření, odpočinek, skvělá káva v příjemné společnosti.</h2>
                 </div>
                 <div class="reveal reveal-delay-1 mt-8 space-y-5 text-lg leading-relaxed text-brand-ink-soft">
                     <p>
-                        Scházíme se ve&nbsp;středu a&nbsp;čtvrtek dopoledne ke&nbsp;společnému hraní, vyrábění a&nbsp;sdílení času s&nbsp;dětmi. Zároveň dáváme prostor maminkám (i&nbsp;tatínkům), aby si mohli v&nbsp;klidu vypít skvělou kávu.
+                        Scházíme se ve středu a čtvrtek a každé sudé úterý dopoledne ke společnému hraní, vyrábění a sdílení času s dětmi. Zároveň dáváme prostor maminkám (i tatínkům), aby si mohli v klidu vypít skvělou kávu.
                     </p>
                     <p>
-                        Kidztown je <strong class="text-brand-ink">bezpečné a&nbsp;přátelské místo</strong>, kde se děti můžou radovat z&nbsp;objevování světa a&nbsp;rodiče najdou podporu, společnost a&nbsp;nové přátele.
+                        KidzTown je <strong class="text-brand-ink">bezpečné a&nbsp;přátelské místo</strong>, kde se děti můžou radovat z&nbsp;objevování světa a&nbsp;rodiče najdou podporu, společnost i&nbsp;nové přátele.
                     </p>
                 </div>
 
@@ -70,7 +69,7 @@ const leaders = [
                         </div>
                         <h3 class="mt-4 font-display text-xl text-brand-ink">Bezpečnost na prvním místě</h3>
                         <p class="mt-3 text-sm leading-relaxed text-brand-ink-soft">
-                            Vedoucí mají platný výpis z&nbsp;rejstříku trestů a&nbsp;prošli školením ochrany dětí. V&nbsp;neděli pracujeme ve&nbsp;dvojicích, dítě předáváme vždy zpátky rodiči.
+                            V&nbsp;mateřském centru KidzTown najdete zkušené vedoucí, kteří mají bohaté zkušenosti s&nbsp;prací s&nbsp;dětmi.
                         </p>
                     </div>
                     <div class="reveal reveal-delay-1 rounded-3xl bg-brand-cream p-6 sm:p-8">
@@ -79,21 +78,21 @@ const leaders = [
                         </div>
                         <h3 class="mt-4 font-display text-xl text-brand-ink">I v neděli</h3>
                         <p class="mt-3 text-sm leading-relaxed text-brand-ink-soft">
-                            V&nbsp;neděli paralelně s&nbsp;kázáním probíhá samostatný program pro děti. Rodiče mají klid na setkání, děti mají svoje.
+                            V&nbsp;neděli paralelně s&nbsp;kázáním probíhá samostatný program pro děti od 3 let.
                         </p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <LeadersBlock :leaders="leaders" subtitle="Kdo vede Kidztown" />
+        <LeadersBlock :leaders="leaders" subtitle="Kdo vede KidzTown" />
 
         <!-- CTA -->
         <section class="bg-brand-mint/25 py-16 sm:py-20">
             <div class="mx-auto max-w-3xl px-4 text-center sm:px-6">
                 <h2 class="font-display text-3xl text-brand-ink sm:text-4xl">Víc na vlastních stránkách</h2>
                 <p class="mt-4 text-brand-ink-soft">
-                    Kidztown má vlastní web a&nbsp;Facebook — tam najdeš aktuální program, fotky i&nbsp;praktické info.
+                    KidzTown má vlastní web a&nbsp;Facebook — tam najdeš aktuální program, fotky i&nbsp;praktické info.
                 </p>
                 <div class="mt-8 flex flex-wrap justify-center gap-3">
                     <a

@@ -14,7 +14,7 @@ const leaders = [
 <template>
     <Head>
         <title>Nedělní dopoledne — církev kolín</title>
-        <meta name="description" content="Každou neděli v 10:00 v Kolíně. Chvály, slovo od pastora, program pro děti a nejlepší káva v Kolíně po skončení." />
+        <meta name="description" content="Každou neděli v 10:00 v Kolíně. Chvály, slovo/zamyšlení, program pro děti a nejlepší káva v Kolíně po skončení." />
     </Head>
 
     <PublicLayout>
@@ -58,13 +58,13 @@ const leaders = [
 
                 <div class="mt-12 space-y-6 text-lg leading-relaxed text-brand-ink-soft">
                     <p>
-                        Během „oficiálního“ programu si od našeho pastora poslechneme zamyšlení o&nbsp;tom, jak víra souvisí s&nbsp;našimi každodenními životy. Je to srozumitelně, prakticky a&nbsp;beze zbytečných frází.
+                        Během „oficiálního“ programu si poslechneme zamyšlení o&nbsp;tom, jak víra souvisí s&nbsp;našimi každodenními životy. Je to srozumitelně, prakticky a&nbsp;beze zbytečných frází.
                     </p>
                     <p>
                         Součástí programu je také hudba — této části říkáme <strong class="text-brand-ink">chvály</strong>. Na pódiu hraje kapela moderní písně vytvářející prostor pro rozjímání, vnitřní ztišení a&nbsp;napojení na Boha. Kdo chce, může se přidat zpěvem — nebo jen tiše poslouchat.
                     </p>
                     <p>
-                        Ve stejné budově v&nbsp;prostorech mateřského centra <Link href="/co-delame/kidztown" class="font-semibold text-brand-primary hover:underline">KidzTown</Link> zároveň probíhá samostatný program pro děti, aby rodiče mohli být v&nbsp;klidu na setkání.
+                        Ve stejné budově v prostorech mateřského centra KidzTown zároveň probíhá samostatný program pro děti od 3 let. Je připravená také místnost pro rodiče s batolaty s přenosem bohoslužby.
                     </p>
                     <p>
                         Po skončení bohoslužby to většinou nekončí — zůstáváme u&nbsp;<strong class="text-brand-ink">„nejlepší kávy v&nbsp;Kolíně“</strong> a&nbsp;domácího zákusku. Povídáme si, seznamujeme se a&nbsp;sdílíme život.
@@ -78,17 +78,17 @@ const leaders = [
             <div class="mx-auto max-w-4xl px-4 sm:px-6">
                 <div class="reveal max-w-2xl">
                     <span class="text-xs font-bold uppercase tracking-[0.2em] text-brand-coral">Program</span>
-                    <h2 class="mt-3 font-display text-4xl text-brand-ink sm:text-5xl">Rámcově to vypadá takhle</h2>
-                    <p class="mt-4 text-brand-ink-soft">Trvá to kolem hodiny a&nbsp;půl. Čas je přibližný — nespěcháme na nikoho.</p>
+                    <h2 class="mt-3 font-display text-4xl text-brand-ink sm:text-5xl">Rámcově to vypadá takto</h2>
+                    Celá bohoslužba trvá přibližně hodinu a půl.
                 </div>
 
                 <div class="mt-12 space-y-4">
                     <div
                         v-for="(item, i) in [
-                            { time: '10:00', icon: Music, title: 'Chvály', desc: 'Pár písniček pro naladění srdce. Kapela hraje moderní chválové písně, text se promítá — ať jsi zpěvák, nebo ne.' },
-                            { time: '10:20', icon: BookOpen, title: 'Zamyšlení', desc: 'Pastor Martin (nebo host) otevře Bibli a hledá, co dnes říká nám. Lidsky, prakticky, upřímně.' },
-                            { time: '11:10', icon: Users, title: 'Modlitba a oznámení', desc: 'Modlíme se za sebe navzájem a říkáme si, co se v komunitě děje během týdne.' },
-                            { time: '11:30', icon: Coffee, title: 'Káva a pokec', desc: 'Nejlepší část. Kafe, čaj, domácí zákusek a čas na rozhovor. Nikdo tě nevyhání.' },
+                            { time: '10:00', icon: Music, title: 'Chvály', desc: 'pár písní pro naladění srdce a vnitřní ztišení. Kapela hraje moderní worship s promítaným textem.' },
+                            { time: '10:20', icon: BookOpen, title: 'Zamyšlení', desc: 'Pastor Martin (nebo host) sdílí biblické poselství pro dnešní dobu. Srozumitelně, prakticky a upřímně.' },
+                            { time: '11:10', icon: Users, title: 'Modlitba a oznámení', desc: 'Chvíle ztišení, vděčnosti, prosby i podpory. Připomínáme si, co nás čeká v dalších týdnech.' },
+                            { time: '11:30', icon: Coffee, title: 'Káva a pokec', desc: 'Nejlepší část. Kafe, čaj, domácí zákusek a čas na rozhovor.' },
                         ]"
                         :key="item.time"
                         :class="['reveal flex gap-5 rounded-2xl bg-white p-6 ring-1 ring-brand-ink/5 hover-lift', `reveal-delay-${i + 1}`]"
@@ -117,7 +117,7 @@ const leaders = [
                     <div class="reveal rounded-3xl bg-brand-coral/10 p-8 sm:p-10">
                         <h2 class="font-display text-3xl text-brand-ink">Přijdeš poprvé?</h2>
                         <p class="mt-4 leading-relaxed text-brand-ink-soft">
-                            Přijít poprvé je úplně normální věc. U&nbsp;vchodu tě přivítáme, ukážeme ti, kde co je, a&nbsp;pokud chceš, posadíme tě k&nbsp;někomu, kdo tě provede.
+                            Těšíme se na Tebe! U&nbsp;vchodu tě přivítáme a&nbsp;ukážeme ti, kde co je. Posadíme tě také k&nbsp;někomu, kdo tě po setkání provede.
                         </p>
                         <Link
                             href="/jsem-tu-poprve"

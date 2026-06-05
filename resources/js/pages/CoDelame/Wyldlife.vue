@@ -6,15 +6,14 @@ import LeadersBlock from '@/components/LeadersBlock.vue'
 import { Clock, MapPin, Users, Zap, Facebook, ArrowRight } from 'lucide-vue-next'
 
 const leaders = [
-    { name: 'Jméno vedoucího', role: 'Vedoucí WyldLife — doplníme' },
-    { name: 'Jméno vedoucí', role: 'Vedoucí WyldLife — doplníme' },
+    { name: 'Žužu — Zuzana Dibalová', role: 'Vedoucí WyldLife' },
 ]
 </script>
 
 <template>
     <Head>
         <title>WyldLife — církev kolín</title>
-        <meta name="description" content="WyldLife je klub pro děti 9–13 let. Každou středu 16:30–18:00 v Kolíně. Hry, zážitky, kamarádství, občas i vážnější rozhovor." />
+        <meta name="description" content="WyldLife je klub pro děti 9–13 let. Každou středu 16:30–18:00 v Kolíně. Hry, zážitky, kamarádství, inspirativní témata o životě." />
     </Head>
 
     <PublicLayout>
@@ -61,7 +60,7 @@ const leaders = [
                         <ul class="mt-6 space-y-3">
                             <li
                                 v-for="item in [
-                                    'Hry, soutěže a občas trochu šílenosti',
+                                    'Hry, soutěže, výzvy, kopec legrace',
                                     'Témata, která dávají smysl v reálném životě',
                                     'Čas na pokec, když se chce',
                                     'Výpravy a speciální akce během roku',
@@ -95,7 +94,7 @@ const leaders = [
             <div class="mx-auto max-w-3xl px-4 text-center sm:px-6">
                 <h2 class="font-display text-3xl text-brand-ink sm:text-4xl">Chceš vědět víc?</h2>
                 <p class="mt-4 text-brand-ink-soft">
-                    Aktuální program a&nbsp;novinky najdeš na Facebooku. Můžeš se ale taky jen tak stavit — první návštěva je bez závazků.
+                    Aktuální program a&nbsp;novinky najdeš na Facebooku. Můžeš se ale taky jen tak stavit a podívat se, jak to u nás chodí.
                 </p>
                 <div class="mt-8 flex flex-wrap justify-center gap-3">
                     <a

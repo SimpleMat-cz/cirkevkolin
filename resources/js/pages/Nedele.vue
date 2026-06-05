@@ -6,17 +6,17 @@ import Blob from '@/components/Blob.vue'
 import { ArrowRight, Baby, Music, Mic, Coffee } from 'lucide-vue-next'
 
 const agenda = [
-    { time: '10:00', icon: Music, title: 'Chvály', text: 'Pár písní, volné zapojení. Nikdo nemusí zpívat, kdo nechce.' },
-    { time: '10:30', icon: Mic, title: 'Kázání', text: '~40 min, srozumitelně, bez religiózního slangu.' },
-    { time: '11:10', icon: Baby, title: 'Modlitba & oznámení', text: 'Krátce. Kdo chce, může přijít na modlitbu dopředu.' },
-    { time: '11:30', icon: Coffee, title: 'Káva a pohoda', text: 'Tohle je ta nejlepší část. Zůstaň, povídáme si.' },
+    { time: '10:00', icon: Music, title: 'Chvály', text: 'pár písní a prostor se zapojit tak, jak je ti příjemné. Nikdo nemusí zpívat.' },
+    { time: '10:30', icon: Mic, title: 'Kázání', text: 'asi 40 minut, srozumitelně a bez zbytečného religiózního jazyka.' },
+    { time: '11:10', icon: Baby, title: 'Modlitba & oznámení', text: 'krátké zakončení na závěr.' },
+    { time: '11:30', icon: Coffee, title: 'Káva a pohoda', text: 'Tohle je také oblíbená část. Neodcházej a popovídej si.' },
 ]
 </script>
 
 <template>
     <Head>
         <title>Neděle v 10:00 — církev kolín</title>
-        <meta name="description" content="Každou neděli v 10:00 V Zídkách 402, Kolín. Chvály, kázání, káva — cca 90 minut. Program pro děti i mládež." />
+        <meta name="description" content="Každou neděli v 10:00 V Zídkách 402, Kolín. Chvály, kázání, skvělá káva. Program pro děti od 4 let." />
     </Head>
 
     <PublicLayout>
@@ -25,7 +25,7 @@ const agenda = [
             title="Neděle"
             title-accent="v 10:00."
             accent-color="coral"
-            description="V Zídkách 402, Kolín — vchod z Benešovy ulice. Průměrná délka 90 minut. Program pro děti i mládež běží paralelně."
+            description="V Zídkách 402, Kolín — vchod z Benešovy ulice.Délka 60-90 minut. Paralelně probíhá také program pro děti od 4 let."
         />
 
         <!-- Agenda -->
@@ -67,10 +67,10 @@ const agenda = [
                     <div>
                         <span class="text-xs font-bold uppercase tracking-[0.2em] text-brand-coral">Program pro rodiny</span>
                         <h2 class="mt-3 font-display text-4xl text-brand-ink sm:text-5xl">
-                            Dětem dáme <span class="text-brand-primary">jejich prostor,</span> rodičům klid.
+                            Dětem dáme <span class="text-brand-primary">jejich prostor,</span> rodičům pohodu.
                         </h2>
                         <p class="mt-5 text-lg leading-relaxed text-brand-ink-soft">
-                            Během nedělního setkání probíhá <strong class="text-brand-ink">besídka</strong> — program pro děti od batolat až po školáky. Rodiče si mohou sednout a v klidu poslouchat.
+                            Během nedělního setkání probíhá program pro děti od 4 let - <strong class="text-brand-ink">besídka</strong>. Rodiče tak mohou v klidu poslouchat.
                             <strong class="text-brand-ink">WyldLife</strong> (9–13 let) probíhá ve středu odpoledne.
                         </p>
                         <Link

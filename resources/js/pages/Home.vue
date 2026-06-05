@@ -84,24 +84,24 @@ function formatDuration(seconds?: number): string {
 }
 
 const whatToExpect = [
-    { icon: Calendar, title: 'Začínáme v 10:00', text: 'Každou neděli. Chvály, krátké kázání, modlitby — trvá to kolem 90 minut.' },
-    { icon: Users, title: 'Program pro děti', text: 'Kidztown pro nejmenší, WyldLife pro starší. Rodiče si sednou a poslouchají.' },
-    { icon: Coffee, title: 'Káva a pohoda po', text: 'Po každé neděli zůstáváme, povídáme a sdílíme. Tohle je ta nejlepší část.' },
+    { icon: Calendar, title: 'Začínáme v 10:00', text: 'Každou neděli. Chvály, zamyšlení/kázání, modlitby — trvá to něco přes hodinu.' },
+    { icon: Users, title: 'Program pro děti', text: 'Program pro děti od 4 let zajištěn. Pro rodiče s mladšími dětmi je vyhrazena místnost s herními prvky a živým přenosem.' },
+    { icon: Coffee, title: 'Káva a pohoda po', text: 'Po bohoslužbě zůstáváme  a povídáme u výborné kávy. Tuhle část máme také moc rádi.' },
 ]
 
 const audiences = [
-    { emoji: '👨‍👩‍👧', color: 'bg-brand-coral/15', title: 'Rodiny', text: 'Prostor pro každého — od nejmenšího po nejstaršího.' },
-    { emoji: '🧒', color: 'bg-brand-mint/25', title: 'Děti • Kidztown', text: 'Batolata mají svůj program každý čtvrtek i v neděli.' },
-    { emoji: '🏄', color: 'bg-brand-sunny/30', title: 'Mládež • WyldLife', text: 'Klub pro 9–13 leté, středa 16:30–18:00.' },
+    { emoji: '👨‍👩‍👧', color: 'bg-brand-coral/15', title: 'Rodiny', text: 'Prostor pro každého — od nejmladšíhošího po nejstaršího.' },
+    { emoji: '🧒', color: 'bg-brand-mint/25', title: 'Děti • KidzTown', text: ' mateřské centrum je otevřené pro maminky s dětmi každou středu a čtvrtek. Nedělní program pro děti od 4 let.' },
+    { emoji: '🏄', color: 'bg-brand-sunny/30', title: 'Mládež • WyldLife', text: 'Klub pro děti 9–13 let, středa 16:30–18:00.' },
     { emoji: '🧑', color: 'bg-brand-teal/20', title: 'Dospělí', text: 'Lidé hledající komunitu, smysl nebo prostě dobrou kávu.' },
 ]
 
 // Další akce, co u nás během roku probíhají (rozklikávací sekce)
 const otherEvents = [
-    { icon: Flame, color: 'bg-brand-coral/15 text-brand-coral', title: 'Limity', text: 'Mužská skupina, která jde k jádru věci. Vede Martin Fridrich.' },
+    { icon: Flame, color: 'bg-brand-coral/15 text-brand-coral', title: 'Limity', text: 'Mužská skupina, která jde k jádru věci. Vede Martin Moldan.' },
     { icon: Briefcase, color: 'bg-brand-primary/15 text-brand-primary', title: 'Business chill', text: 'Setkání podnikatelů a manažerů. Sdílíme výzvy, modlíme se za byznys.' },
-    { icon: Film, color: 'bg-brand-teal/20 text-brand-teal', title: 'Filmové večery', text: 'Sborový film, popcorn a pak rozhovor o tom, co z toho plyne.' },
-    { icon: Mountain, color: 'bg-brand-mint/25 text-brand-teal', title: 'Sborové dovolené', text: 'Jedeme spolu na pár dní — hory, jídlo, hry, modlitby. Ročně.' },
+    { icon: Film, color: 'bg-brand-teal/20 text-brand-teal', title: 'Filmové večery', text: 'již brzy.' },
+    { icon: Mountain, color: 'bg-brand-mint/25 text-brand-teal', title: 'Sborové dovolené', text: 'společně vyrážíme každý rok na víkendový pobyt.' },
     { icon: Sun, color: 'bg-brand-sunny/30 text-amber-700', title: 'CityCamp', text: 'Příměstský tábor pro děti — léto v Kolíně plné dobrodružství.' },
 ]
 
@@ -109,7 +109,7 @@ const showOtherEvents = ref(false)
 
 const values = [
     { num: '01', title: 'Učíme se o Ježíši', text: 'Bible, která mluví do dnešního života. Srozumitelně a bez předstírání.' },
-    { num: '02', title: 'Milujeme lidi', text: 'Každý je vítaný — ať už teprve hledáš, nebo věříš celý život.' },
+    { num: '02', title: 'Milujeme lidi', text: 'každý je vítaný, ať už teprve hledáš, nebo věříš celý život.' },
     { num: '03', title: 'Žijeme jako rodina', text: 'Nejsme jen program v neděli. Scházíme se během týdne, pomáháme si.' },
 ]
 
@@ -288,7 +288,7 @@ const marqueeItems = ['JAKO DOMA', 'POJĎ DÁL', 'BUĎ TU', 'TVŮJ ČAS', 'KAŽD
                         První neděle <br class="hidden sm:block" /> u nás
                     </h2>
                     <p class="mt-6 text-lg text-brand-ink-soft">
-                        Víme, že přijít poprvé do kostela může být trochu nervy. Řekneme ti všechno, ať víš, do čeho jdeš.
+                        Poprvé v církvi? Chápeme, že to může vzbuzovat smíšené pocity. Proto ti předem ukážeme, jak to u nás chodí.
                     </p>
                 </div>
 
@@ -337,7 +337,7 @@ const marqueeItems = ['JAKO DOMA', 'POJĎ DÁL', 'BUĎ TU', 'TVŮJ ČAS', 'KAŽD
                         </h2>
                     </div>
                     <p class="max-w-sm text-brand-ink-soft">
-                        Přijdou sem lidé z celého spektra — studenti, rodiny s dětmi, podnikatelé i penzisti. Nikdo není vylučován.
+                        Najdeš tu lidi z různých prostředí a generací — studenty, rodiny, podnikatele i seniory. Dveře jsou otevřené všem.
                     </p>
                 </div>
 
@@ -367,7 +367,7 @@ const marqueeItems = ['JAKO DOMA', 'POJĎ DÁL', 'BUĎ TU', 'TVŮJ ČAS', 'KAŽD
                         aria-controls="other-events"
                         @click="showOtherEvents = !showOtherEvents"
                     >
-                        {{ showOtherEvents ? 'Schovat další akce' : 'A co ještě během roku?' }}
+                        {{ showOtherEvents ? 'Schovat další akce' : 'Co dalšího během roku pořádáme?' }}
                         <ChevronDown class="h-4 w-4 transition-transform" :class="{ 'rotate-180': showOtherEvents }" />
                     </button>
                 </div>
@@ -443,7 +443,7 @@ const marqueeItems = ['JAKO DOMA', 'POJĎ DÁL', 'BUĎ TU', 'TVŮJ ČAS', 'KAŽD
                     <h2 class="mt-4 hero-display text-4xl sm:text-5xl lg:text-6xl">
                         Učíme o Ježíši. <br />
                         Milujeme lidi. <br />
-                        <span class="text-brand-primary">Žijeme jako rodina.</span>
+                        <span class="text-brand-primary">Jsme jako rodina.</span>
                     </h2>
                 </div>
 
@@ -477,7 +477,7 @@ const marqueeItems = ['JAKO DOMA', 'POJĎ DÁL', 'BUĎ TU', 'TVŮJ ČAS', 'KAŽD
                     <div>
                         <span class="text-xs font-bold uppercase tracking-[0.2em] text-brand-coral">Plán týdne</span>
                         <h2 class="mt-3 hero-display text-4xl text-brand-ink sm:text-5xl lg:text-6xl">Nejbližší akce</h2>
-                        <p class="mt-4 max-w-lg text-brand-ink-soft">Neděle je jen začátek. Přes týden jsou skupinky, mládež a dětský klub.</p>
+                        <p class="mt-4 max-w-lg text-brand-ink-soft">Neděle je jen začátek. Přes týden jsou různá setkání dospělých i dětí.</p>
                     </div>
                     <Link
                         href="/akce"
@@ -511,7 +511,7 @@ const marqueeItems = ['JAKO DOMA', 'POJĎ DÁL', 'BUĎ TU', 'TVŮJ ČAS', 'KAŽD
                     <span class="text-brand-sunny">v neděli?</span>
                 </h2>
                 <p class="reveal reveal-delay-2 mx-auto mt-8 max-w-xl text-lg text-white/90 sm:text-xl">
-                    V {{ serviceTime }} ve <span class="font-semibold underline decoration-brand-sunny decoration-4 underline-offset-4">{{ heroAddress }}</span>, Kolín. Přijď, jak jsi — kavárna je otevřená od {{ coffeeFrom }}.
+                    V {{ serviceTime }} ve <span class="font-semibold underline decoration-brand-sunny decoration-4 underline-offset-4">{{ heroAddress }}</span>, Kolín. Přijď — kavárna je otevřená od {{ coffeeFrom }}.
                 </p>
                 <div class="reveal reveal-delay-3 mt-10 flex flex-wrap items-center justify-center gap-4">
                     <Link
@@ -528,7 +528,7 @@ const marqueeItems = ['JAKO DOMA', 'POJĎ DÁL', 'BUĎ TU', 'TVŮJ ČAS', 'KAŽD
                         class="inline-flex items-center gap-2 rounded-full border-2 border-white/40 px-7 py-3.5 text-base font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/10"
                     >
                         <MapPin class="h-4 w-4" />
-                        Jak se k nám dostanete
+                        Jak se k nám dostaneš
                     </a>
                 </div>
             </div>
@@ -540,7 +540,7 @@ const marqueeItems = ['JAKO DOMA', 'POJĎ DÁL', 'BUĎ TU', 'TVŮJ ČAS', 'KAŽD
                 <p class="text-xs font-semibold uppercase tracking-[0.2em] text-brand-ink/40">Součást rodiny</p>
                 <p class="mt-3 text-brand-ink-soft">
                     Náš sbor je součástí <a href="https://www.apostolskacirkev.cz" target="_blank" rel="noopener noreferrer" class="font-semibold text-brand-primary hover:underline">Apoštolské církve v ČR</a> —
-                    společenství víc než 100 sborů po celé zemi, které sdílí stejné hodnoty, víru a vizi.
+                    společenství víc než 100 sborů po celé zemi, které sdílí stejnou víru a hodnoty.
                 </p>
             </div>
         </section>

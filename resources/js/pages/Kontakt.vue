@@ -29,7 +29,7 @@ const serviceHours = computed(() => {
     const start = site('service.time_start', '10:00')
     const end = site('service.time_end', '11:30')
     const coffee = site('service.coffee_from', '9:30')
-    return `${start} — cca ${end}\nKavárna od ${coffee}\n(${day})`
+    return `${start} — cca. ${end}\nKavárna od ${coffee}\n(${day})`
 })
 
 const items = computed(() => [
@@ -128,7 +128,7 @@ const socials = computed(() => [
                     <span class="text-xs font-bold uppercase tracking-[0.2em] text-brand-coral">Orientační body</span>
                     <h2 class="mt-3 font-display text-4xl text-brand-ink sm:text-5xl">Takhle to u nás vypadá.</h2>
                     <p class="mt-4 text-brand-ink-soft">
-                        Abys nás poznal(a), když přijdeš poprvé. Hledej prosklený vstup a&nbsp;černou tabuli „Vítejte CÍRKEV KOLÍN“.
+                        Abys nás poznal(a), když přijdeš poprvé. Hledej prosklený vstup a barevnou tabuli „Vítejte CÍRKEV KOLÍN".
                     </p>
                 </div>
 
@@ -154,7 +154,7 @@ const socials = computed(() => [
                         />
                         <figcaption class="px-5 py-4 text-sm text-brand-ink-soft">
                             <span class="font-semibold text-brand-ink">„Vítejte“ u vstupu.</span>
-                            Když vidíš tuhle tabuli, jsi na správným místě.
+                            Když vidíš tuhle tabuli, jsi na správném místě.
                         </figcaption>
                     </figure>
                 </div>

@@ -77,9 +77,11 @@ import Blob from '@/components/Blob.vue'
                         <li v-for="link in [
                             { label: 'Neděle', href: '/nedele' },
                             { label: 'Jsem tu poprvé', href: '/jsem-tu-poprve' },
+                            { label: 'Co děláme', href: '/co-delame' },
                             { label: 'Kázání', href: '/kazani' },
                             { label: 'Akce', href: '/akce' },
                             { label: 'Kdo jsme', href: '/kdo-jsme' },
+                            { label: 'Kontakt', href: '/kontakt' },
                             { label: 'Přispět', href: '/prispet' },
                         ]" :key="link.href">
                             <Link

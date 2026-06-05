@@ -6,8 +6,7 @@ import LeadersBlock from '@/components/LeadersBlock.vue'
 import { Clock, MapPin, Users, Flame, ArrowRight } from 'lucide-vue-next'
 
 const leaders = [
-    { name: 'Jméno vedoucího', role: 'Vedoucí Young Life — doplníme' },
-    { name: 'Jméno vedoucí', role: 'Vedoucí Young Life — doplníme' },
+    { name: 'Žužu — Zuzana Dibalová', role: 'Vedoucí Young Life' },
 ]
 </script>
 
@@ -61,10 +60,10 @@ const leaders = [
                         Young Life je místo pro teenagery od&nbsp;14 do&nbsp;19 let. Trávíme spolu čas, hrajeme hry, povídáme si a&nbsp;podnikáme společně věci, které nás baví a&nbsp;spojují.
                     </p>
                     <p>
-                        Přejeme si, aby u&nbsp;nás mohl <strong class="text-brand-ink">každý zažít pocit, že někam patří</strong>. Že je přijatý takový, jaký je. A&nbsp;že nemusí na nic hrát.
+                        Přejeme si, aby u&nbsp;nás mohl <strong class="text-brand-ink">každý zažít pocit, že někam patří</strong>. Že je přijatý takový, jaký je.
                     </p>
                     <p class="font-semibold text-brand-ink">
-                        Neváhej dorazit — první návštěva je bez závazků.
+                        Neváhej dorazit.
                     </p>
                 </div>
             </div>

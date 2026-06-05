@@ -87,7 +87,7 @@ const leaders = [
             <div class="mx-auto max-w-3xl px-4 text-center sm:px-6">
                 <h2 class="font-display text-3xl text-brand-ink sm:text-4xl">Přijít se jen mrknout?</h2>
                 <p class="mt-4 text-brand-ink-soft">
-                    Jasně. Ozvi se předem, ať víme, že dorazíš — a&nbsp;připravíme dvě kávy.
+                    Jasně. Ozvi se předem, ať víme, že dorazíš — a&nbsp;připravíme kávu navíc.
                 </p>
                 <Link
                     href="/kontakt"

@@ -14,7 +14,7 @@ const props = defineProps<{
 const heroAccent = computed(() => (props.page?.hero_accent_color ?? 'teal') as 'coral' | 'teal' | 'sunny' | 'mint' | 'primary')
 
 const beliefs = [
-    { icon: Heart, title: 'Bůh je Stvořitel', text: 'Věříme, že všechno, co je kolem nás — a my sami — máme od Boha. A že o nás stojí.' },
+    { icon: Heart, title: 'Bůh je Stvořitel', text: 'věříme, že všechno kolem nás i náš život má svůj původ v Bohu. A že mu na nás záleží.' },
     { icon: Users, title: 'Ježíš je přítel i zachránce', text: 'Věříme, že Ježíš Kristus není jen postava z dějin, ale osobní zachránce a přítel pro každého, kdo ho pustí dál.' },
     { icon: BookOpen, title: 'Bible nás vede', text: 'Učíme se z Bible o životě, naději a smyslu. Je pro nás mapou i kompasem.' },
 ]
@@ -41,7 +41,7 @@ const beliefs = [
                 <div class="reveal">
                     <span class="text-xs font-bold uppercase tracking-[0.2em] text-brand-coral">Kdo jsme</span>
                     <h2 class="mt-3 font-display text-4xl text-brand-ink sm:text-5xl">
-                        Místní komunita, <br class="hidden sm:block" />
+                        Místní křesťanská komunita, <br class="hidden sm:block" />
                         <span class="text-brand-primary">co má rada lidi.</span>
                     </h2>
                 </div>

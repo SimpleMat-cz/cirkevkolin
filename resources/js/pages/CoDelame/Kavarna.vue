@@ -7,14 +7,13 @@ import { Coffee, Calendar, Heart, ArrowRight } from 'lucide-vue-next'
 
 const leaders = [
     { name: 'Pája', role: 'Hlavní barista — stojí za nejlepší kávou v Kolíně' },
-    { name: 'Jméno kolegy', role: 'Barista — doplníme' },
 ]
 </script>
 
 <template>
     <Head>
         <title>Kavárna — církev kolín</title>
-        <meta name="description" content="Výběrová káva Fathers, připravovaná s péčí našimi baristy. V neděli, při Kidztownu, na Blešáku a dalších akcích v Kolíně." />
+        <meta name="description" content="Výběrová káva Fathers, připravovaná s péčí našimi baristy. V neděli, při KidzTownu, na Blešáku a dalších akcích v Kolíně." />
     </Head>
 
     <PublicLayout>
@@ -26,7 +25,7 @@ const leaders = [
                 <Link href="/co-delame" class="text-sm text-brand-ink/50 hover:text-brand-ink">← Co děláme</Link>
                 <span class="mt-4 inline-flex items-center gap-2 rounded-full bg-brand-teal px-3 py-1 text-[11px] font-bold uppercase tracking-[0.15em] text-white">
                     <Coffee class="h-3 w-3" />
-                    Nejlepší kafe v Kolíně
+                    Nejlepší kávu v Kolíně
                 </span>
                 <h1 class="mt-4 hero-display text-5xl text-brand-ink sm:text-6xl lg:text-7xl">
                     Kavárna.
@@ -41,15 +40,14 @@ const leaders = [
             <div class="mx-auto max-w-3xl px-4 sm:px-6">
                 <div class="reveal">
                     <span class="text-xs font-bold uppercase tracking-[0.2em] text-brand-coral">O kavárně</span>
-                    <h2 class="mt-3 font-display text-4xl text-brand-ink sm:text-5xl">Káva s příběhem. A s Pájou.</h2>
+                    <h2 class="mt-3 font-display text-4xl text-brand-ink sm:text-5xl">Káva s příběhem.</h2>
                 </div>
                 <div class="reveal reveal-delay-1 mt-8 space-y-5 text-lg leading-relaxed text-brand-ink-soft">
                     <p>
                         Naše kavárna nabízí výběrovou kávu <strong class="text-brand-ink">Fathers</strong>, připravovanou s&nbsp;péčí a&nbsp;vášní našimi skvělými baristy v&nbsp;čele s&nbsp;<strong class="text-brand-ink">Pájou</strong>. Je to káva, ke&nbsp;které se budete rádi vracet znovu a&nbsp;znovu.
                     </p>
                     <p>
-                        Finanční příspěvky z&nbsp;provozu kavárny směřují na podporu&hellip;
-                        <span class="italic text-brand-ink/50">(doplníme)</span>.
+                        Z&nbsp;výtěžku provozu kavárny podporujeme misijní práci Zuzky v&nbsp;masajské stepi.
                     </p>
                 </div>
 
@@ -57,9 +55,9 @@ const leaders = [
                 <div class="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-3">
                     <div
                         v-for="(slot, i) in [
-                            { icon: Calendar, title: 'Každá neděle', desc: 'Od 9:30 před bohoslužbou i po ní — připrav si ji na rozhovor s přáteli.' },
-                            { icon: Heart, title: 'U Kidztownu', desc: 'Středa a čtvrtek dopoledne — káva pro rodiče, zatímco si děti hrají.' },
-                            { icon: Coffee, title: 'Na akcích', desc: 'Najdeš nás na Blešáku a dalších městských akcích — hledej žlutou dodávku.' },
+                            { icon: Calendar, title: 'Každá neděle', desc: 'od 9:30 — před bohoslužbou i po ní.' },
+                            { icon: Heart, title: 'KidzTown', desc: 'Středa a čtvrtek  dopoledne — káva pro rodiče, zatímco si děti hrají.' },
+                            { icon: Coffee, title: 'Na akcích', desc: 'Najdeš nás na Blešáku a dalších městských akcích' },
                         ]"
                         :key="slot.title"
                         :class="['reveal hover-lift rounded-2xl bg-brand-cream p-6', `reveal-delay-${i + 1}`]"
@@ -74,23 +72,6 @@ const leaders = [
             </div>
         </section>
 
-        <LeadersBlock :leaders="leaders" subtitle="Kdo ti tu kávu udělá" />
-
-        <!-- CTA -->
-        <section class="bg-brand-teal/15 py-16 sm:py-20">
-            <div class="mx-auto max-w-3xl px-4 text-center sm:px-6">
-                <h2 class="font-display text-3xl text-brand-ink sm:text-4xl">Přijď na kafe</h2>
-                <p class="mt-4 text-brand-ink-soft">
-                    Nemusíš jít na bohoslužbu. Stačí otevřít dveře a&nbsp;říct, jaký máš rád espresso.
-                </p>
-                <Link
-                    href="/co-delame/nedelni-setkani"
-                    class="mt-8 inline-flex items-center gap-2 rounded-full bg-brand-teal px-6 py-3 text-sm font-semibold text-white hover:opacity-90"
-                >
-                    Jak to v neděli chodí
-                    <ArrowRight class="h-4 w-4" />
-                </Link>
-            </div>
-        </section>
+        <LeadersBlock :leaders="leaders" subtitle="Kdo ti kávu připraví" />
     </PublicLayout>
 </template>

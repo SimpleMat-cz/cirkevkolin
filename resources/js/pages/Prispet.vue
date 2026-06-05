@@ -21,9 +21,9 @@ async function copy(value: string, which: 'iban' | 'account') {
 
 const uses = [
     { icon: Home, title: 'Sborová budova', text: 'Provoz, nájem, energie — abys mohl přijít do teplé místnosti.' },
-    { icon: Users, title: 'Program pro děti', text: 'Kidztown, WyldLife — materiály, vybavení, akce.' },
+    { icon: Users, title: 'Program pro děti', text: 'KidzTown, WyldLife — materiály, vybavení, akce.' },
     { icon: Music, title: 'Hudba a technika', text: 'Nástroje, mixpult, mikrofony — aby zvuk seděl.' },
-    { icon: Heart, title: 'Sociální pomoc', text: 'Akutní pomoc lidem v nouzi z našeho okolí.' },
+    { icon: Heart, title: 'Charitativní aktivity', text: 'a sociální pomoc lidem v nouzi.' },
 ]
 </script>
 
@@ -39,7 +39,7 @@ const uses = [
             title="Děkujeme."
             title-accent="Vážně."
             accent-color="sunny"
-            description="Váš dar pomáhá pokrývat provoz sboru, programy pro děti a mládež, a také podporu lidí v tíživé životní situaci. Každá koruna počítá."
+            description="Váš dar pomáhá pokrývat provoz sboru, veřejné a charitativní aktivity sboru. Každá koruna pomáhá."
         />
 
         <!-- Platba -->
