@@ -147,6 +147,96 @@ if (isset($_GET['__diag'])) {
             echo '  at '.$e->getFile().':'.$e->getLine()."\n";
         }
 
+        echo "\n---HOME flow test---\n";
+        try {
+            $page = \App\Models\Page::findBySlug('home');
+            echo 'Page::findBySlug(home): '.($page ? 'OK ('.$page->title.')' : 'NULL')."\n";
+            $sermons = \App\Models\Sermon::query()->where('is_published', true)->with(['speaker', 'series'])->orderByDesc('published_at')->limit(3)->get();
+            echo 'latestSermons: '.$sermons->count()." rows\n";
+            $events = \App\Models\Event::query()->where('is_published', true)->where('starts_at', '>=', now())->orderBy('starts_at')->limit(3)->get();
+            echo 'upcomingEvents: '.$events->count()." rows\n";
+            // try toArray (Inertia serialization)
+            $pageArr = $page ? $page->toArray() : null;
+            echo 'page toArray: OK ('.count($pageArr ?? []).' keys)'."\n";
+            $sermonsArr = $sermons->toArray();
+            echo 'sermons toArray: OK ('.count($sermonsArr).' items)'."\n";
+            $eventsArr = $events->toArray();
+            echo 'events toArray: OK ('.count($eventsArr).' items)'."\n";
+            // try real controller invocation
+            $controller = new \App\Http\Controllers\HomeController();
+            $response = $controller->index();
+            echo 'HomeController->index(): OK ('.get_class($response).')'."\n";
+
+            // Try full HTTP request through kernel
+            $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
+            $req = \Illuminate\Http\Request::create('/', 'GET');
+            try {
+                $resp = $kernel->handle($req);
+                echo 'Kernel->handle(/): status='.$resp->getStatusCode().' content-length='.strlen($resp->getContent())."\n";
+                if ($resp->getStatusCode() >= 500) {
+                    // Aplikuj middleware jednotlivě a najdi viníka
+                    $route = $app->make(\Illuminate\Routing\Router::class)->getRoutes()->match($req);
+                    echo '  matched route: '.$route->uri()." (action: ".($route->getActionName() ?? '?').")\n";
+                    $middlewares = $app->make(\Illuminate\Routing\Router::class)->gatherRouteMiddleware($route);
+                    echo '  middleware count: '.count($middlewares)."\n";
+                    foreach ($middlewares as $mw) {
+                        $mwName = is_string($mw) ? $mw : (is_object($mw) ? get_class($mw) : 'unknown');
+                        echo '    - '.$mwName."\n";
+                    }
+                    // Test postupně global middleware
+                    $globals = [
+                        \Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks::class,
+                        \Illuminate\Http\Middleware\ValidatePathEncoding::class,
+                        \Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance::class,
+                        \Illuminate\Http\Middleware\ValidatePostSize::class,
+                        \Illuminate\Foundation\Http\Middleware\TrimStrings::class,
+                        \Illuminate\Http\Middleware\ConvertEmptyStringsToNull::class,
+                        \Illuminate\Foundation\Http\Middleware\HandleCors::class,
+                        \Illuminate\Http\Middleware\TrustProxies::class,
+                    ];
+                    foreach ($globals as $g) {
+                        try {
+                            $r = (new \Illuminate\Pipeline\Pipeline($app))->send($req)->through([$g])->then(fn ($req) => new \Illuminate\Http\Response('ok'));
+                            echo '    G '.basename(str_replace('\\', '/', $g)).' = '.$r->getStatusCode()."\n";
+                        } catch (\Throwable $ge) {
+                            echo '    G '.basename(str_replace('\\', '/', $g)).' FAIL: '.get_class($ge).': '.substr($ge->getMessage(), 0, 200)."\n";
+                            echo '      at '.str_replace('/var/task/user/', '', $ge->getFile()).':'.$ge->getLine()."\n";
+                        }
+                    }
+                    // Try Pipeline directly
+                    try {
+                        $pipeline = (new \Illuminate\Pipeline\Pipeline($app))
+                            ->send($req)
+                            ->through(array_merge($globals, $middlewares))
+                            ->then(fn ($req) => $response->toResponse($req));
+                        echo '  full pipeline result: status='.$pipeline->getStatusCode().' len='.strlen($pipeline->getContent())."\n";
+                    } catch (\Throwable $pe) {
+                        echo '  PIPELINE FAIL: '.get_class($pe).': '.substr($pe->getMessage(), 0, 400)."\n";
+                        echo '  at '.str_replace('/var/task/user/', '', $pe->getFile()).':'.$pe->getLine()."\n";
+                        foreach (array_slice($pe->getTrace(), 0, 5) as $i => $f) {
+                            $file = str_replace('/var/task/user/', '', $f['file'] ?? '?');
+                            echo "    #$i $file:".($f['line'] ?? '?').' '.($f['class'] ?? '').($f['type'] ?? '').($f['function'] ?? '')."\n";
+                        }
+                    }
+                }
+            } catch (\Throwable $ke) {
+                echo 'Kernel FAIL: '.get_class($ke).': '.substr($ke->getMessage(), 0, 400)."\n";
+                echo '  at '.$ke->getFile().':'.$ke->getLine()."\n";
+                $prev = $ke->getPrevious();
+                if ($prev) {
+                    echo '  prev: '.get_class($prev).': '.substr($prev->getMessage(), 0, 400)."\n";
+                    echo '  prev at '.$prev->getFile().':'.$prev->getLine()."\n";
+                }
+            }
+        } catch (\Throwable $e) {
+            echo 'HOME FAIL: '.get_class($e).': '.substr($e->getMessage(), 0, 400)."\n";
+            echo '  at '.$e->getFile().':'.$e->getLine()."\n";
+            echo '  trace top 5:'."\n";
+            foreach (array_slice($e->getTrace(), 0, 5) as $i => $f) {
+                echo "    #$i ".($f['file'] ?? '?').':'.($f['line'] ?? '?').' '.($f['class'] ?? '').($f['type'] ?? '').($f['function'] ?? '')."\n";
+            }
+        }
+
         echo "\n---DEPLOY---\n";
         echo 'commit: '.(getenv('VERCEL_GIT_COMMIT_SHA') ?: '(unknown)')."\n";
         echo 'branch: '.(getenv('VERCEL_GIT_COMMIT_REF') ?: '(unknown)')."\n";
