@@ -33,7 +33,11 @@
     "QUEUE_CONNECTION": "sync",
     "LOG_CHANNEL": "stderr",
     "SCOUT_DRIVER": "null",
-    "COMPOSER_NO_DEV": "1"
+    "COMPOSER_NO_DEV": "1",
+    "DB_CONNECTION": "pgsql",
+    "DB_SSLMODE": "require",
+    "FILESYSTEM_DISK": "s3",
+    "AWS_USE_PATH_STYLE_ENDPOINT": "true"
   },
   "build": {
     "env": {
