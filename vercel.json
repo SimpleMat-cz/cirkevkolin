@@ -36,6 +36,7 @@
     "COMPOSER_NO_DEV": "1",
     "DB_CONNECTION": "pgsql",
     "DB_SSLMODE": "require",
+    "DB_SEARCH_PATH": "cirkev",
     "FILESYSTEM_DISK": "s3",
     "AWS_USE_PATH_STYLE_ENDPOINT": "true"
   },
