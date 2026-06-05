@@ -25,7 +25,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: '8.4'
           tools: composer:v2
           coverage: xdebug
 
@@ -54,7 +54,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: '8.4'
           tools: composer:v2
       - run: COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction --prefer-dist
       - run: ./vendor/bin/pint --test
@@ -74,7 +74,7 @@ jobs:
         run: pnpm install --frozen-lockfile
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: '8.4'
           tools: composer:v2
       - run: COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction --prefer-dist
       - name: Copy .env

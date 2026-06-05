@@ -6,7 +6,7 @@
   "outputDirectory": "public",
   "functions": {
     "api/index.php": {
-      "runtime": "vercel-php@0.7.3",
+      "runtime": "vercel-php@0.8.0",
       "maxDuration": 30,
       "includeFiles": "vendor/laravel/framework/src/Illuminate/Testing/*"
     }
@@ -33,7 +33,12 @@
     "QUEUE_CONNECTION": "sync",
     "LOG_CHANNEL": "stderr",
     "SCOUT_DRIVER": "null",
-    "COMPOSER_NO_DEV": "1"
+    "COMPOSER_NO_DEV": "1",
+    "DB_CONNECTION": "pgsql",
+    "DB_SSLMODE": "require",
+    "DB_SEARCH_PATH": "cirkev",
+    "FILESYSTEM_DISK": "s3",
+    "AWS_USE_PATH_STYLE_ENDPOINT": "true"
   },
   "build": {
     "env": {
