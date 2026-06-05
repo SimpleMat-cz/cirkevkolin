@@ -6,11 +6,13 @@
  */
 require __DIR__.'/../vendor/autoload.php';
 
+use OpenSpout\Common\Entity\Cell;
 use OpenSpout\Common\Entity\Row;
 use OpenSpout\Common\Entity\Style\Border;
 use OpenSpout\Common\Entity\Style\BorderPart;
 use OpenSpout\Common\Entity\Style\CellVerticalAlignment;
 use OpenSpout\Common\Entity\Style\Style;
+use OpenSpout\Writer\XLSX\Entity\SheetView;
 use OpenSpout\Writer\XLSX\Options;
 use OpenSpout\Writer\XLSX\Writer;
 
@@ -469,32 +471,32 @@ $headers = ['Stránka', 'URL', 'Sekce', 'Prvek / typ', 'Současný text', 'Zdroj
 
 $border = new Border(new BorderPart(Border::BOTTOM, 'D0D0D0', Border::WIDTH_THIN, Border::STYLE_SOLID));
 
-$headerStyle = (new Style())
+$headerStyle = (new Style)
     ->setFontBold()->setFontSize(11)->setFontColor('FFFFFF')
     ->setBackgroundColor('1F3A5F')
     ->setShouldWrapText()
     ->setCellVerticalAlignment(CellVerticalAlignment::CENTER);
 
-$pageStyle = (new Style())
+$pageStyle = (new Style)
     ->setFontBold()->setFontSize(11)->setFontColor('1F3A5F')
     ->setBackgroundColor('DCE6F1')
     ->setCellVerticalAlignment(CellVerticalAlignment::TOP)
     ->setShouldWrapText()->setBorder($border);
 
-$cellStyle = (new Style())
+$cellStyle = (new Style)
     ->setFontSize(10)->setShouldWrapText()
     ->setCellVerticalAlignment(CellVerticalAlignment::TOP)->setBorder($border);
 
-$editStyle = (new Style())
+$editStyle = (new Style)
     ->setFontSize(10)->setShouldWrapText()
     ->setBackgroundColor('FFF7DC')
     ->setCellVerticalAlignment(CellVerticalAlignment::TOP)->setBorder($border);
 
-$noteStyle = (new Style())
+$noteStyle = (new Style)
     ->setFontSize(9)->setFontItalic()->setFontColor('A0522D')->setShouldWrapText()
     ->setCellVerticalAlignment(CellVerticalAlignment::TOP)->setBorder($border);
 
-$options = new Options();
+$options = new Options;
 $options->setColumnWidth(20, 1);
 $options->setColumnWidth(20, 2);
 $options->setColumnWidth(22, 3);
@@ -508,7 +510,7 @@ $out = __DIR__.'/../storage/app/textace-webu-cirkevkolin.xlsx';
 $writer = new Writer($options);
 $writer->openToFile($out);
 $writer->getCurrentSheet()->setName('Textace webu');
-$sheetView = (new \OpenSpout\Writer\XLSX\Entity\SheetView())->setFreezeRow(2)->setFreezeColumn('C');
+$sheetView = (new SheetView)->setFreezeRow(2)->setFreezeColumn('C');
 $writer->getCurrentSheet()->setSheetView($sheetView);
 
 $writer->addRow(Row::fromValues($headers, $headerStyle));
@@ -521,14 +523,14 @@ foreach ($D as $row) {
 
     $rowStyle = $isNewPage ? $pageStyle : $cellStyle;
     $cells = [
-        \OpenSpout\Common\Entity\Cell::fromValue($page, $isNewPage ? $pageStyle : $cellStyle),
-        \OpenSpout\Common\Entity\Cell::fromValue($url, $isNewPage ? $pageStyle : $cellStyle),
-        \OpenSpout\Common\Entity\Cell::fromValue($section, $cellStyle),
-        \OpenSpout\Common\Entity\Cell::fromValue($element, $cellStyle),
-        \OpenSpout\Common\Entity\Cell::fromValue($text, $cellStyle),
-        \OpenSpout\Common\Entity\Cell::fromValue($source, $cellStyle),
-        \OpenSpout\Common\Entity\Cell::fromValue('', $editStyle),
-        \OpenSpout\Common\Entity\Cell::fromValue($note, $noteStyle),
+        Cell::fromValue($page, $isNewPage ? $pageStyle : $cellStyle),
+        Cell::fromValue($url, $isNewPage ? $pageStyle : $cellStyle),
+        Cell::fromValue($section, $cellStyle),
+        Cell::fromValue($element, $cellStyle),
+        Cell::fromValue($text, $cellStyle),
+        Cell::fromValue($source, $cellStyle),
+        Cell::fromValue('', $editStyle),
+        Cell::fromValue($note, $noteStyle),
     ];
     $writer->addRow(new Row($cells));
 }
