@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             FaqSeeder::class,
         ]);
 
-        $roles = ['admin', 'editor', 'preacher'];
+        $roles = ['admin', 'editor', 'preacher', 'broadcaster'];
         foreach ($roles as $role) {
             Role::firstOrCreate(['name' => $role]);
         }

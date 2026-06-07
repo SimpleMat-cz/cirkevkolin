@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\SpeakerFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,8 +11,9 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Speaker extends Model implements HasMedia
 {
-    /** @use HasFactory<\Database\Factories\SpeakerFactory> */
+    /** @use HasFactory<SpeakerFactory> */
     use HasFactory;
+
     use InteractsWithMedia;
 
     protected $fillable = ['name', 'slug', 'bio', 'is_active'];

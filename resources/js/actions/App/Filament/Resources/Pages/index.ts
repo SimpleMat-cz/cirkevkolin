@@ -1,7 +1,7 @@
-import Pages from './Pages'
+import Pages from './Pages';
 
 const PagesNamespace = {
     Pages: Object.assign(Pages, Pages),
-}
+};
 
-export default PagesNamespace
+export default PagesNamespace;

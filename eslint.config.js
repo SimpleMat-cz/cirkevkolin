@@ -39,6 +39,9 @@ export default defineConfigWithVueTs(
         },
         rules: {
             'vue/multi-word-component-names': 'off',
+            // JSON-LD is injected via <component :is="'script'" v-html> which renders a
+            // native element, so this rule is a false positive for that pattern.
+            'vue/no-v-text-v-html-on-component': 'off',
             '@typescript-eslint/no-explicit-any': 'off',
             '@typescript-eslint/consistent-type-imports': [
                 'error',
@@ -82,6 +85,8 @@ export default defineConfigWithVueTs(
             'bootstrap/ssr',
             'tailwind.config.js',
             'vite.config.ts',
+            'vitest.config.ts',
+            'supabase/**',
             'resources/js/actions/**',
             'resources/js/components/ui/*',
             'resources/js/routes/**',

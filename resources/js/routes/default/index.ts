@@ -1,7 +1,7 @@
-import livewire from './livewire'
+import livewire from './livewire';
 
 const defaultMethod = {
     livewire: Object.assign(livewire, livewire),
-}
+};
 
-export default defaultMethod
+export default defaultMethod;

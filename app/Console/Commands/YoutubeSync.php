@@ -7,6 +7,7 @@ use App\Models\Speaker;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
@@ -41,7 +42,7 @@ class YoutubeSync extends Command
         return self::SUCCESS;
     }
 
-    private function fetchAllVideos(string $apiKey, string $channelId): \Illuminate\Support\Collection
+    private function fetchAllVideos(string $apiKey, string $channelId): Collection
     {
         $videos = collect();
         $pageToken = null;
@@ -82,7 +83,7 @@ class YoutubeSync extends Command
         return $videos;
     }
 
-    private function fetchVideoDetails(string $apiKey, string $videoIds): \Illuminate\Support\Collection
+    private function fetchVideoDetails(string $apiKey, string $videoIds): Collection
     {
         $response = Http::get('https://www.googleapis.com/youtube/v3/videos', [
             'key' => $apiKey,

@@ -2,47 +2,48 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class CoDelameController extends Controller
 {
-    public function index(): \Inertia\Response
+    public function index(): Response
     {
-        return \Inertia\Inertia::render('CoDelame/Index');
+        return Inertia::render('CoDelame/Index');
     }
 
-    public function nedelniSetkani(): \Inertia\Response
+    public function nedelniSetkani(): Response
     {
-        return \Inertia\Inertia::render('CoDelame/NedelniSetkani');
+        return Inertia::render('CoDelame/NedelniSetkani');
     }
 
-    public function kidztown(): \Inertia\Response
+    public function kidztown(): Response
     {
-        return \Inertia\Inertia::render('CoDelame/Kidztown');
+        return Inertia::render('CoDelame/Kidztown');
     }
 
-    public function wyldlife(): \Inertia\Response
+    public function wyldlife(): Response
     {
-        return \Inertia\Inertia::render('CoDelame/Wyldlife');
+        return Inertia::render('CoDelame/Wyldlife');
     }
 
-    public function skupinky(): \Inertia\Response
+    public function skupinky(): Response
     {
-        return \Inertia\Inertia::render('CoDelame/Skupinky');
+        return Inertia::render('CoDelame/Skupinky');
     }
 
-    public function youngLife(): \Inertia\Response
+    public function youngLife(): Response
     {
-        return \Inertia\Inertia::render('CoDelame/YoungLife');
+        return Inertia::render('CoDelame/YoungLife');
     }
 
-    public function kavarna(): \Inertia\Response
+    public function kavarna(): Response
     {
-        return \Inertia\Inertia::render('CoDelame/Kavarna');
+        return Inertia::render('CoDelame/Kavarna');
     }
 
-    public function business(): \Inertia\Response
+    public function business(): Response
     {
-        return \Inertia\Inertia::render('CoDelame/Business');
+        return Inertia::render('CoDelame/Business');
     }
 }

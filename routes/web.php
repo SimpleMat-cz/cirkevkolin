@@ -8,6 +8,7 @@ use App\Http\Controllers\KazaniController;
 use App\Http\Controllers\KdoJsmeController;
 use App\Http\Controllers\KontaktController;
 use App\Http\Controllers\NedeleController;
+use App\Http\Controllers\PrekladController;
 use App\Http\Controllers\PrispetController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\VisitRequestController;
@@ -47,6 +48,14 @@ Route::get('/akce/{slug}', [AkceController::class, 'show'])->name('akce.show');
 
 Route::get('/kontakt', [KontaktController::class, 'index'])->name('kontakt');
 Route::get('/prispet', [PrispetController::class, 'index'])->name('prispet');
+
+// Live sermon translation
+Route::get('/preklad', [PrekladController::class, 'viewer'])->name('preklad');
+Route::middleware('auth')->group(function () {
+    Route::get('/preklad/admin', [PrekladController::class, 'admin'])->name('preklad.admin');
+    Route::post('/preklad/soniox-key', [PrekladController::class, 'sonioxKey'])->name('preklad.soniox-key');
+    Route::post('/preklad/realtime-token', [PrekladController::class, 'realtimeToken'])->name('preklad.realtime-token');
+});
 
 Route::post('/jsem-tu-poprve/prihlaseni', [VisitRequestController::class, 'store'])->name('visit-request.store');
 
