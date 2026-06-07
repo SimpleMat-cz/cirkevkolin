@@ -1,5 +1,30 @@
 <?php
 
+use App\Http\Controllers\HomeController;
+use App\Models\Event;
+use App\Models\Page;
+use App\Models\Sermon;
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Bootstrap\BootProviders;
+use Illuminate\Foundation\Bootstrap\HandleExceptions;
+use Illuminate\Foundation\Bootstrap\LoadConfiguration;
+use Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables;
+use Illuminate\Foundation\Bootstrap\RegisterFacades;
+use Illuminate\Foundation\Bootstrap\RegisterProviders;
+use Illuminate\Foundation\Http\Middleware\HandleCors;
+use Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks;
+use Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance;
+use Illuminate\Foundation\Http\Middleware\TrimStrings;
+use Illuminate\Http\Middleware\ConvertEmptyStringsToNull;
+use Illuminate\Http\Middleware\TrustProxies;
+use Illuminate\Http\Middleware\ValidatePathEncoding;
+use Illuminate\Http\Middleware\ValidatePostSize;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Pipeline\Pipeline;
+use Illuminate\Routing\Router;
+
 /*
  * Vercel serverless PHP entry point.
  * Forwards všechny požadavky do Laravelu (public/index.php).
@@ -96,32 +121,32 @@ if (isset($_GET['__diag'])) {
 
     try {
         require_once __DIR__.'/../vendor/autoload.php';
-        /** @var \Illuminate\Foundation\Application $app */
+        /** @var Application $app */
         $app = require_once __DIR__.'/../bootstrap/app.php';
 
         // Run full bootstrappers (simulace toho, co dělá handleRequest).
         $bootstrappers = [
-            \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
-            \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
-            \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
-            \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
-            \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
-            \Illuminate\Foundation\Bootstrap\BootProviders::class,
+            LoadEnvironmentVariables::class,
+            LoadConfiguration::class,
+            HandleExceptions::class,
+            RegisterFacades::class,
+            RegisterProviders::class,
+            BootProviders::class,
         ];
         foreach ($bootstrappers as $b) {
             try {
                 $app->make($b)->bootstrap($app);
                 echo "OK: $b\n";
-            } catch (\Throwable $e) {
-                echo "FAIL: $b\n  ".get_class($e).": ".$e->getMessage()."\n";
-                echo "  ".$e->getFile().':'.$e->getLine()."\n";
+            } catch (Throwable $e) {
+                echo "FAIL: $b\n  ".get_class($e).': '.$e->getMessage()."\n";
+                echo '  '.$e->getFile().':'.$e->getLine()."\n";
                 break;
             }
         }
 
         echo "\nPROVIDERS loaded: ".count($app->getLoadedProviders())."\n";
-        echo "view bound: ".($app->bound('view') ? 'yes' : 'no')."\n";
-        echo "config bound: ".($app->bound('config') ? 'yes' : 'no')."\n";
+        echo 'view bound: '.($app->bound('view') ? 'yes' : 'no')."\n";
+        echo 'config bound: '.($app->bound('config') ? 'yes' : 'no')."\n";
 
         echo "\n---DB---\n";
         try {
@@ -140,20 +165,20 @@ if (isset($_GET['__diag'])) {
             $r = $app['db']->select('SELECT current_setting(\'search_path\') AS sp, current_database() AS db');
             echo 'current search_path: '.($r[0]->sp ?? '?')."\n";
             echo 'current_database: '.($r[0]->db ?? '?')."\n";
-            $r2 = $app['db']->select("SELECT count(*) AS c FROM pages");
+            $r2 = $app['db']->select('SELECT count(*) AS c FROM pages');
             echo 'pages count: '.($r2[0]->c ?? '?')."\n";
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             echo 'DB FAIL: '.get_class($e).': '.$e->getMessage()."\n";
             echo '  at '.$e->getFile().':'.$e->getLine()."\n";
         }
 
         echo "\n---HOME flow test---\n";
         try {
-            $page = \App\Models\Page::findBySlug('home');
+            $page = Page::findBySlug('home');
             echo 'Page::findBySlug(home): '.($page ? 'OK ('.$page->title.')' : 'NULL')."\n";
-            $sermons = \App\Models\Sermon::query()->where('is_published', true)->with(['speaker', 'series'])->orderByDesc('published_at')->limit(3)->get();
+            $sermons = Sermon::query()->where('is_published', true)->with(['speaker', 'series'])->orderByDesc('published_at')->limit(3)->get();
             echo 'latestSermons: '.$sermons->count()." rows\n";
-            $events = \App\Models\Event::query()->where('is_published', true)->where('starts_at', '>=', now())->orderBy('starts_at')->limit(3)->get();
+            $events = Event::query()->where('is_published', true)->where('starts_at', '>=', now())->orderBy('starts_at')->limit(3)->get();
             echo 'upcomingEvents: '.$events->count()." rows\n";
             // try toArray (Inertia serialization)
             $pageArr = $page ? $page->toArray() : null;
@@ -163,21 +188,21 @@ if (isset($_GET['__diag'])) {
             $eventsArr = $events->toArray();
             echo 'events toArray: OK ('.count($eventsArr).' items)'."\n";
             // try real controller invocation
-            $controller = new \App\Http\Controllers\HomeController();
+            $controller = new HomeController;
             $response = $controller->index();
             echo 'HomeController->index(): OK ('.get_class($response).')'."\n";
 
             // Try full HTTP request through kernel
-            $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
-            $req = \Illuminate\Http\Request::create('/', 'GET');
+            $kernel = $app->make(Kernel::class);
+            $req = Request::create('/', 'GET');
             try {
                 $resp = $kernel->handle($req);
                 echo 'Kernel->handle(/): status='.$resp->getStatusCode().' content-length='.strlen($resp->getContent())."\n";
                 if ($resp->getStatusCode() >= 500) {
                     // Aplikuj middleware jednotlivě a najdi viníka
-                    $route = $app->make(\Illuminate\Routing\Router::class)->getRoutes()->match($req);
-                    echo '  matched route: '.$route->uri()." (action: ".($route->getActionName() ?? '?').")\n";
-                    $middlewares = $app->make(\Illuminate\Routing\Router::class)->gatherRouteMiddleware($route);
+                    $route = $app->make(Router::class)->getRoutes()->match($req);
+                    echo '  matched route: '.$route->uri().' (action: '.($route->getActionName() ?? '?').")\n";
+                    $middlewares = $app->make(Router::class)->gatherRouteMiddleware($route);
                     echo '  middleware count: '.count($middlewares)."\n";
                     foreach ($middlewares as $mw) {
                         $mwName = is_string($mw) ? $mw : (is_object($mw) ? get_class($mw) : 'unknown');
@@ -185,32 +210,32 @@ if (isset($_GET['__diag'])) {
                     }
                     // Test postupně global middleware
                     $globals = [
-                        \Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks::class,
-                        \Illuminate\Http\Middleware\ValidatePathEncoding::class,
-                        \Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance::class,
-                        \Illuminate\Http\Middleware\ValidatePostSize::class,
-                        \Illuminate\Foundation\Http\Middleware\TrimStrings::class,
-                        \Illuminate\Http\Middleware\ConvertEmptyStringsToNull::class,
-                        \Illuminate\Foundation\Http\Middleware\HandleCors::class,
-                        \Illuminate\Http\Middleware\TrustProxies::class,
+                        InvokeDeferredCallbacks::class,
+                        ValidatePathEncoding::class,
+                        PreventRequestsDuringMaintenance::class,
+                        ValidatePostSize::class,
+                        TrimStrings::class,
+                        ConvertEmptyStringsToNull::class,
+                        HandleCors::class,
+                        TrustProxies::class,
                     ];
                     foreach ($globals as $g) {
                         try {
-                            $r = (new \Illuminate\Pipeline\Pipeline($app))->send($req)->through([$g])->then(fn ($req) => new \Illuminate\Http\Response('ok'));
+                            $r = (new Pipeline($app))->send($req)->through([$g])->then(fn ($req) => new Response('ok'));
                             echo '    G '.basename(str_replace('\\', '/', $g)).' = '.$r->getStatusCode()."\n";
-                        } catch (\Throwable $ge) {
+                        } catch (Throwable $ge) {
                             echo '    G '.basename(str_replace('\\', '/', $g)).' FAIL: '.get_class($ge).': '.substr($ge->getMessage(), 0, 200)."\n";
                             echo '      at '.str_replace('/var/task/user/', '', $ge->getFile()).':'.$ge->getLine()."\n";
                         }
                     }
                     // Try Pipeline directly
                     try {
-                        $pipeline = (new \Illuminate\Pipeline\Pipeline($app))
+                        $pipeline = (new Pipeline($app))
                             ->send($req)
                             ->through(array_merge($globals, $middlewares))
                             ->then(fn ($req) => $response->toResponse($req));
                         echo '  full pipeline result: status='.$pipeline->getStatusCode().' len='.strlen($pipeline->getContent())."\n";
-                    } catch (\Throwable $pe) {
+                    } catch (Throwable $pe) {
                         echo '  PIPELINE FAIL: '.get_class($pe).': '.substr($pe->getMessage(), 0, 400)."\n";
                         echo '  at '.str_replace('/var/task/user/', '', $pe->getFile()).':'.$pe->getLine()."\n";
                         foreach (array_slice($pe->getTrace(), 0, 5) as $i => $f) {
@@ -219,7 +244,7 @@ if (isset($_GET['__diag'])) {
                         }
                     }
                 }
-            } catch (\Throwable $ke) {
+            } catch (Throwable $ke) {
                 echo 'Kernel FAIL: '.get_class($ke).': '.substr($ke->getMessage(), 0, 400)."\n";
                 echo '  at '.$ke->getFile().':'.$ke->getLine()."\n";
                 $prev = $ke->getPrevious();
@@ -228,7 +253,7 @@ if (isset($_GET['__diag'])) {
                     echo '  prev at '.$prev->getFile().':'.$prev->getLine()."\n";
                 }
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             echo 'HOME FAIL: '.get_class($e).': '.substr($e->getMessage(), 0, 400)."\n";
             echo '  at '.$e->getFile().':'.$e->getLine()."\n";
             echo '  trace top 5:'."\n";
@@ -252,10 +277,10 @@ if (isset($_GET['__diag'])) {
                     $host = "$pfx-$r.pooler.supabase.com";
                     try {
                         $dsn = "pgsql:host=$host;port=6543;dbname=postgres;sslmode=require";
-                        $pdo = new \PDO($dsn, $user, $pass, [\PDO::ATTR_TIMEOUT => 10, \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
-                        $r2 = $pdo->query("SELECT current_database()")->fetchColumn();
+                        $pdo = new PDO($dsn, $user, $pass, [PDO::ATTR_TIMEOUT => 10, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+                        $r2 = $pdo->query('SELECT current_database()')->fetchColumn();
                         echo "  ✓ $host → OK ($r2)\n";
-                    } catch (\Throwable $ee) {
+                    } catch (Throwable $ee) {
                         $msg = preg_replace('/\s+/', ' ', $ee->getMessage());
                         if (str_contains($msg, 'tenant') || str_contains($msg, 'Tenant') || str_contains($msg, 'ENOTFOUND')) {
                             echo "  ✗ $host → wrong tenant\n";
@@ -268,8 +293,8 @@ if (isset($_GET['__diag'])) {
                 }
             }
         }
-    } catch (\Throwable $e) {
-        echo "BOOT FAILED: ".get_class($e).": ".$e->getMessage()."\n";
+    } catch (Throwable $e) {
+        echo 'BOOT FAILED: '.get_class($e).': '.$e->getMessage()."\n";
         echo $e->getTraceAsString()."\n";
     }
     exit;
@@ -281,16 +306,16 @@ if (isset($_GET['__diag_old'])) {
     error_reporting(E_ALL);
     try {
         require __DIR__.'/../public/index.php';
-    } catch (\Throwable $e) {
+    } catch (Throwable $e) {
         header('Content-Type: text/plain; charset=utf-8', true, 500);
-        echo "EXCEPTION: ".get_class($e)."\n";
-        echo "MSG: ".$e->getMessage()."\n";
-        echo "FILE: ".$e->getFile().":".$e->getLine()."\n\n";
+        echo 'EXCEPTION: '.get_class($e)."\n";
+        echo 'MSG: '.$e->getMessage()."\n";
+        echo 'FILE: '.$e->getFile().':'.$e->getLine()."\n\n";
         echo $e->getTraceAsString()."\n\n";
         if ($prev = $e->getPrevious()) {
             echo "---PREVIOUS---\n";
             echo get_class($prev)."\n".$prev->getMessage()."\n";
-            echo $prev->getFile().":".$prev->getLine()."\n";
+            echo $prev->getFile().':'.$prev->getLine()."\n";
         }
         echo "\n---ENV---\n";
         foreach (['APP_ENV', 'APP_KEY', 'APP_DEBUG', 'APP_STORAGE', 'DB_CONNECTION', 'DB_DATABASE', 'VIEW_COMPILED_PATH'] as $k) {

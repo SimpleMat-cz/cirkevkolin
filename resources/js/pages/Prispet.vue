@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3'
-import PublicLayout from '@/layouts/public.vue'
-import PageHero from '@/components/PageHero.vue'
-import Blob from '@/components/Blob.vue'
 import { Copy, Check, Heart, Home, Music, Users } from 'lucide-vue-next'
 import { ref } from 'vue'
+import Blob from '@/components/Blob.vue'
+import PageHero from '@/components/PageHero.vue'
+import PublicLayout from '@/layouts/public.vue'
 
-const props = defineProps<{
+defineProps<{
     iban: string
     accountNumber: string
 }>()

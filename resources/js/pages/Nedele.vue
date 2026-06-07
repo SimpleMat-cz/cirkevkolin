@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3'
-import PublicLayout from '@/layouts/public.vue'
-import PageHero from '@/components/PageHero.vue'
-import Blob from '@/components/Blob.vue'
 import { ArrowRight, Baby, Music, Mic, Coffee } from 'lucide-vue-next'
+import Blob from '@/components/Blob.vue'
+import PageHero from '@/components/PageHero.vue'
+import PublicLayout from '@/layouts/public.vue'
 
 const agenda = [
     { time: '10:00', icon: Music, title: 'Chvály', text: 'pár písní a prostor se zapojit tak, jak je ti příjemné. Nikdo nemusí zpívat.' },

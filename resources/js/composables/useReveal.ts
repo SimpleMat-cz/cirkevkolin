@@ -1,5 +1,5 @@
-import { onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { router } from '@inertiajs/vue3'
+import { onMounted, onBeforeUnmount, nextTick } from 'vue'
 
 /**
  * Scroll-reveal composable.
@@ -19,6 +19,7 @@ export function useReveal(selector = '.reveal') {
 
     function isInViewport(el: Element): boolean {
         const rect = el.getBoundingClientRect()
+
         return (
             rect.top < window.innerHeight &&
             rect.bottom > 0 &&
@@ -33,6 +34,7 @@ export function useReveal(selector = '.reveal') {
 
         if (prefersReduced) {
             targets.forEach(revealNow)
+
             return
         }
 
@@ -53,11 +55,14 @@ export function useReveal(selector = '.reveal') {
             if (el.classList.contains('is-visible')) {
                 return
             }
+
             if (isInViewport(el)) {
                 // Already in view on mount — reveal immediately, no fade.
                 revealNow(el)
+
                 return
             }
+
             observer!.observe(el)
         })
     }

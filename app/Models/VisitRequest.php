@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Database\Factories\VisitRequestFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class VisitRequest extends Model
 {
-    /** @use HasFactory<\Database\Factories\VisitRequestFactory> */
+    /** @use HasFactory<VisitRequestFactory> */
     use HasFactory;
 
     protected $fillable = [

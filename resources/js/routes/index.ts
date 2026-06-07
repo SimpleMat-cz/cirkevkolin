@@ -543,7 +543,7 @@ kdoJsme.form = kdoJsmeForm
 
 /**
 * @see \App\Http\Controllers\CoDelameController::coDelame
-* @see app/Http/Controllers/CoDelameController.php:9
+* @see app/Http/Controllers/CoDelameController.php:10
 * @route '/co-delame'
 */
 export const coDelame = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -558,7 +558,7 @@ coDelame.definition = {
 
 /**
 * @see \App\Http\Controllers\CoDelameController::coDelame
-* @see app/Http/Controllers/CoDelameController.php:9
+* @see app/Http/Controllers/CoDelameController.php:10
 * @route '/co-delame'
 */
 coDelame.url = (options?: RouteQueryOptions) => {
@@ -567,7 +567,7 @@ coDelame.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\CoDelameController::coDelame
-* @see app/Http/Controllers/CoDelameController.php:9
+* @see app/Http/Controllers/CoDelameController.php:10
 * @route '/co-delame'
 */
 coDelame.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -577,7 +577,7 @@ coDelame.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\CoDelameController::coDelame
-* @see app/Http/Controllers/CoDelameController.php:9
+* @see app/Http/Controllers/CoDelameController.php:10
 * @route '/co-delame'
 */
 coDelame.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -587,7 +587,7 @@ coDelame.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\CoDelameController::coDelame
-* @see app/Http/Controllers/CoDelameController.php:9
+* @see app/Http/Controllers/CoDelameController.php:10
 * @route '/co-delame'
 */
 const coDelameForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -597,7 +597,7 @@ const coDelameForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =
 
 /**
 * @see \App\Http\Controllers\CoDelameController::coDelame
-* @see app/Http/Controllers/CoDelameController.php:9
+* @see app/Http/Controllers/CoDelameController.php:10
 * @route '/co-delame'
 */
 coDelameForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -607,7 +607,7 @@ coDelameForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 
 /**
 * @see \App\Http\Controllers\CoDelameController::coDelame
-* @see app/Http/Controllers/CoDelameController.php:9
+* @see app/Http/Controllers/CoDelameController.php:10
 * @route '/co-delame'
 */
 coDelameForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

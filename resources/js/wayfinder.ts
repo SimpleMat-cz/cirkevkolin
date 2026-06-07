@@ -32,9 +32,11 @@ const getValue = (value: string | number | boolean) => {
     if (value === true) {
           return "1";
     }
+
     if (value === false) {
           return "0";
     }
+
     return value.toString();
 };
 
@@ -44,8 +46,12 @@ const addNestedParams = (
     params: URLSearchParams,
   ) => {
       Object.entries(obj).forEach(([subKey, value]) => {
-            if (value === undefined) return;
+            if (value === undefined) {
+return;
+}
+
             const paramKey = `${prefix}[${subKey}]`;
+
             if (Array.isArray(value)) {
                     value.forEach((v) => params.append(`${paramKey}[]`, getValue(v)));
             } else if (value !== null && typeof value === "object") {
@@ -70,6 +76,7 @@ export const queryParams = (options?: RouteQueryOptions) => {
     if (!options || (!options.query && !options.mergeQuery)) {
           return "";
     }
+
     const query = options.query ?? options.mergeQuery;
     const includeExisting = options.mergeQuery !== undefined;
     const params = new URLSearchParams(
@@ -77,14 +84,18 @@ export const queryParams = (options?: RouteQueryOptions) => {
             ? window.location.search
             : "",
         );
+
     for (const key in query) {
           const queryValue = query[key];
+
           if (includeExisting) {
                   clearParamFamily(params, key);
           }
+
           if (queryValue === undefined || queryValue === null) {
                   continue;
           }
+
           if (Array.isArray(queryValue)) {
                   queryValue.forEach((value) => {
                             params.append(`${key}[]`, value.toString());
@@ -95,7 +106,9 @@ export const queryParams = (options?: RouteQueryOptions) => {
                   params.set(key, getValue(queryValue));
           }
     }
+
     const str = params.toString();
+
     return str.length > 0 ? `?${str}` : "";
 };
 
@@ -119,6 +132,7 @@ export const applyUrlDefaults = <T extends UrlDefaults | undefined>(
   ): T => {
     const existingParams = { ...(existing ?? ({} as UrlDefaults)) };
     const defaultParams = urlDefaults();
+
     for (const key in defaultParams) {
           if (
                   existingParams[key] === undefined &&
@@ -128,6 +142,7 @@ export const applyUrlDefaults = <T extends UrlDefaults | undefined>(
                             defaultParams[key];
           }
     }
+
     return existingParams as T;
 };
 
@@ -137,6 +152,7 @@ export const validateParameters = (
   ) => {
       const missing = optional.filter((key) => {
             const value = args?.[key];
+
             return (
                     value === undefined ||
                     value === null ||
@@ -145,6 +161,7 @@ export const validateParameters = (
                   );
       });
       const expectedMissing = optional.slice(missing.length * -1);
+
       for (let i = 0; i < missing.length; i++) {
             if (missing[i] !== expectedMissing[i]) {
                     throw Error(

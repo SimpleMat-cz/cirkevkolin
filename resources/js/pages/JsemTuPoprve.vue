@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Head, Form } from '@inertiajs/vue3'
-import PublicLayout from '@/layouts/public.vue'
-import PageHero from '@/components/PageHero.vue'
 import { ChevronDown, Send, CheckCircle2 } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
+import PageHero from '@/components/PageHero.vue'
+import PublicLayout from '@/layouts/public.vue'
 import type { Page, Faq } from '@/types'
 
 const props = defineProps<{

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3'
-import PublicLayout from '@/layouts/public.vue'
+import { Briefcase, Clock, MessageCircle, Users, ArrowRight } from 'lucide-vue-next'
 import Blob from '@/components/Blob.vue'
 import LeadersBlock from '@/components/LeadersBlock.vue'
-import { Briefcase, Clock, MessageCircle, Users, ArrowRight } from 'lucide-vue-next'
+import PublicLayout from '@/layouts/public.vue'
 
 const leaders = [
     { name: 'Martin Penc', role: 'Vede Business setkání — ozvi se mu přímo' },

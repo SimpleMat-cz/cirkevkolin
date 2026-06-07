@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3'
-import PublicLayout from '@/layouts/public.vue'
-import SermonCard from '@/components/SermonCard.vue'
-import { ref, computed } from 'vue'
+import { Head } from '@inertiajs/vue3'
 import { Calendar, User, BookOpen, MessageSquare } from 'lucide-vue-next'
+import { ref, computed } from 'vue'
+import SermonCard from '@/components/SermonCard.vue'
+import PublicLayout from '@/layouts/public.vue'
 
 interface Sermon {
     id: number
@@ -32,6 +32,7 @@ const jsonLd = computed(() => {
     if (!props.sermon.youtube_id) {
         return null
     }
+
     return JSON.stringify({
         '@context': 'https://schema.org',
         '@type': 'VideoObject',
@@ -47,6 +48,7 @@ function formatDate(dateStr?: string): string {
     if (!dateStr) {
         return ''
     }
+
     return new Date(dateStr).toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 </script>
@@ -55,6 +57,7 @@ function formatDate(dateStr?: string): string {
     <Head>
         <title>{{ sermon.title }} — církev kolín</title>
         <meta name="description" :content="sermon.description ?? sermon.title" />
+        <!-- eslint-disable-next-line vue/no-v-text-v-html-on-component -->
         <component v-if="jsonLd" :is="'script'" type="application/ld+json" v-html="jsonLd" />
     </Head>
 

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3'
-import PublicLayout from '@/layouts/public.vue'
-import PageHero from '@/components/PageHero.vue'
-import Blob from '@/components/Blob.vue'
 import { ArrowRight } from 'lucide-vue-next'
+import Blob from '@/components/Blob.vue'
+import PageHero from '@/components/PageHero.vue'
+import PublicLayout from '@/layouts/public.vue'
 
 const items = [
     { href: '/co-delame/nedelni-setkani', emoji: '🙌', color: 'bg-brand-coral/15', accent: 'bg-brand-coral', title: 'Nedělní dopoledne', desc: 'Každou neděli v 10:00 se scházíme úplně všichni. Chvály, kázání, káva — nikam nespěcháme.' },

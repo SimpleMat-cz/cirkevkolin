@@ -15,7 +15,6 @@ class PrekladRoutesTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->withoutVite();
         Role::findOrCreate('broadcaster');
     }
 

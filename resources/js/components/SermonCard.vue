@@ -15,20 +15,13 @@ interface Sermon {
     series?: { title: string }
 }
 
-const props = defineProps<{ sermon: Sermon }>()
-
-function formatDuration(seconds?: number): string {
-    if (!seconds) {
-        return ''
-    }
-    const m = Math.floor(seconds / 60)
-    return `${m} min`
-}
+defineProps<{ sermon: Sermon }>()
 
 function formatDate(dateStr?: string): string {
     if (!dateStr) {
         return ''
     }
+
     return new Date(dateStr).toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 </script>

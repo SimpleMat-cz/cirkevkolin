@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { Link, Head } from '@inertiajs/vue3'
-import PublicLayout from '@/layouts/public.vue'
-import Blob from '@/components/Blob.vue'
-import SermonCard from '@/components/SermonCard.vue'
-import EventCard from '@/components/EventCard.vue'
-import { computed, ref } from 'vue'
 import { Calendar, Coffee, Heart, Users, Play, ArrowRight, MapPin, Youtube, ChevronDown, Film, Mountain, Sun, Briefcase, Flame } from 'lucide-vue-next'
+import { computed, ref } from 'vue'
+import Blob from '@/components/Blob.vue'
+import EventCard from '@/components/EventCard.vue'
+import SermonCard from '@/components/SermonCard.vue'
 import { useSiteSettings } from '@/composables/useSiteSettings'
+import PublicLayout from '@/layouts/public.vue'
 import type { Page } from '@/types'
 
 const jsonLd = JSON.stringify({
@@ -73,14 +73,8 @@ function formatHeroDate(date?: string): string {
     if (!date) {
         return ''
     }
-    return new Date(date).toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long', year: 'numeric' })
-}
 
-function formatDuration(seconds?: number): string {
-    if (!seconds) {
-        return ''
-    }
-    return `${Math.floor(seconds / 60)} min`
+    return new Date(date).toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
 const whatToExpect = [
@@ -120,6 +114,7 @@ const marqueeItems = ['JAKO DOMA', 'POJĎ DÁL', 'BUĎ TU', 'TVŮJ ČAS', 'KAŽD
     <Head>
         <title>{{ page?.meta_title ?? 'církev kolín — jako doma' }}</title>
         <meta name="description" :content="page?.meta_description ?? 'Apoštolská církev Kolín. Neděle v 10:00, V Zídkách 402. Otevřená komunita, kde se cítíš jako doma — ať jsi tu poprvé nebo odjakživa.'" />
+        <!-- eslint-disable-next-line vue/no-v-text-v-html-on-component -->
         <component :is="'script'" type="application/ld+json" v-html="jsonLd" />
     </Head>
 

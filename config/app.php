@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Testing\ParallelTestingServiceProvider;
+
 return [
 
     /*
@@ -140,8 +143,8 @@ return [
     | odstraní při `--no-dev` buildu (Vercel). Explicitně ho odfiltrujeme.
     */
     'providers' => array_values(array_filter(
-        Illuminate\Support\ServiceProvider::defaultProviders()->toArray(),
-        fn ($p) => $p !== \Illuminate\Testing\ParallelTestingServiceProvider::class,
+        ServiceProvider::defaultProviders()->toArray(),
+        fn ($p) => $p !== ParallelTestingServiceProvider::class,
     )),
 
 ];

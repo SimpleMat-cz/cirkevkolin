@@ -15,12 +15,12 @@ class VisitRequestController extends Controller
 
         Mail::raw(
             "Nová přihláška návštěvy:\n\n"
-            . "Jméno: {$visitRequest->name}\n"
-            . "E-mail: {$visitRequest->email}\n"
-            . "Telefon: {$visitRequest->phone}\n"
-            . "Počet lidí: {$visitRequest->people_count}\n"
-            . "Datum: {$visitRequest->planned_visit_date}\n"
-            . "Poznámka: {$visitRequest->note}",
+            ."Jméno: {$visitRequest->name}\n"
+            ."E-mail: {$visitRequest->email}\n"
+            ."Telefon: {$visitRequest->phone}\n"
+            ."Počet lidí: {$visitRequest->people_count}\n"
+            ."Datum: {$visitRequest->planned_visit_date}\n"
+            ."Poznámka: {$visitRequest->note}",
             fn ($message) => $message
                 ->to(config('mail.admin_address', 'kolin@apostolskacirkev.cz'))
                 ->subject("Nová přihláška návštěvy — {$visitRequest->name}")

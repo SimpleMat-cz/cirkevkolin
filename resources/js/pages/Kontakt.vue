@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3'
-import { computed } from 'vue'
-import PublicLayout from '@/layouts/public.vue'
-import PageHero from '@/components/PageHero.vue'
 import { MapPin, Mail, Clock, CreditCard, Facebook, Instagram, Youtube } from 'lucide-vue-next'
+import { computed } from 'vue'
+import PageHero from '@/components/PageHero.vue'
 import { useSiteSettings } from '@/composables/useSiteSettings'
+import PublicLayout from '@/layouts/public.vue'
 import type { Page } from '@/types'
 
 const props = defineProps<{
@@ -21,6 +21,7 @@ const addressLines = computed(() => {
         `${site('contact.address_city', 'Kolín 2')}\nPSČ ${site('contact.address_zip', '280 02')}`,
         site('contact.address_note'),
     ]
+
     return parts.filter(Boolean).join('\n')
 })
 
@@ -29,6 +30,7 @@ const serviceHours = computed(() => {
     const start = site('service.time_start', '10:00')
     const end = site('service.time_end', '11:30')
     const coffee = site('service.coffee_from', '9:30')
+
     return `${start} — cca. ${end}\nKavárna od ${coffee}\n(${day})`
 })
 

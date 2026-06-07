@@ -2,10 +2,13 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class CoDelameTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_co_delame_index_loads(): void
     {
         $this->get('/co-delame')->assertStatus(200);

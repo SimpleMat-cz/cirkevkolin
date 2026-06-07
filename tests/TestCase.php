@@ -7,6 +7,14 @@ use Laravel\Fortify\Features;
 
 abstract class TestCase extends BaseTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Tests render Inertia pages without a built Vite manifest in CI.
+        $this->withoutVite();
+    }
+
     protected function skipUnlessFortifyFeature(string $feature, ?string $message = null): void
     {
         if (! Features::enabled($feature)) {

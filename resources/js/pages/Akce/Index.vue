@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3'
-import PublicLayout from '@/layouts/public.vue'
-import PageHero from '@/components/PageHero.vue'
-import EventCard from '@/components/EventCard.vue'
 import { ref, watch, computed } from 'vue'
+import EventCard from '@/components/EventCard.vue'
+import PageHero from '@/components/PageHero.vue'
+import PublicLayout from '@/layouts/public.vue'
 
 interface Event {
     id: number
@@ -44,6 +44,7 @@ const allEvents = computed(() => {
         ...props.events.data,
         ...props.recurring,
     ]
+
     return combined.sort((a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime())
 })
 </script>

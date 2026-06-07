@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3'
 import { MapPin, Mail, CreditCard } from 'lucide-vue-next'
-import BrandLogo from '@/components/BrandLogo.vue'
 import Blob from '@/components/Blob.vue'
+import BrandLogo from '@/components/BrandLogo.vue'
 </script>
 
 <template>

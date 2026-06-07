@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\CoDelameController::nedelniSetkani
-* @see app/Http/Controllers/CoDelameController.php:14
+* @see app/Http/Controllers/CoDelameController.php:15
 * @route '/co-delame/nedelni-setkani'
 */
 export const nedelniSetkani = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ nedelniSetkani.definition = {
 
 /**
 * @see \App\Http\Controllers\CoDelameController::nedelniSetkani
-* @see app/Http/Controllers/CoDelameController.php:14
+* @see app/Http/Controllers/CoDelameController.php:15
 * @route '/co-delame/nedelni-setkani'
 */
 nedelniSetkani.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ nedelniSetkani.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\CoDelameController::nedelniSetkani
-* @see app/Http/Controllers/CoDelameController.php:14
+* @see app/Http/Controllers/CoDelameController.php:15
 * @route '/co-delame/nedelni-setkani'
 */
 nedelniSetkani.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ nedelniSetkani.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\CoDelameController::nedelniSetkani
-* @see app/Http/Controllers/CoDelameController.php:14
+* @see app/Http/Controllers/CoDelameController.php:15
 * @route '/co-delame/nedelni-setkani'
 */
 nedelniSetkani.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ nedelniSetkani.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
 
 /**
 * @see \App\Http\Controllers\CoDelameController::nedelniSetkani
-* @see app/Http/Controllers/CoDelameController.php:14
+* @see app/Http/Controllers/CoDelameController.php:15
 * @route '/co-delame/nedelni-setkani'
 */
 const nedelniSetkaniForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const nedelniSetkaniForm = (options?: RouteQueryOptions): RouteFormDefinition<'g
 
 /**
 * @see \App\Http\Controllers\CoDelameController::nedelniSetkani
-* @see app/Http/Controllers/CoDelameController.php:14
+* @see app/Http/Controllers/CoDelameController.php:15
 * @route '/co-delame/nedelni-setkani'
 */
 nedelniSetkaniForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ nedelniSetkaniForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get
 
 /**
 * @see \App\Http\Controllers\CoDelameController::nedelniSetkani
-* @see app/Http/Controllers/CoDelameController.php:14
+* @see app/Http/Controllers/CoDelameController.php:15
 * @route '/co-delame/nedelni-setkani'
 */
 nedelniSetkaniForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ nedelniSetkani.form = nedelniSetkaniForm
 
 /**
 * @see \App\Http\Controllers\CoDelameController::kidztown
-* @see app/Http/Controllers/CoDelameController.php:19
+* @see app/Http/Controllers/CoDelameController.php:20
 * @route '/co-delame/kidztown'
 */
 export const kidztown = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -97,7 +97,7 @@ kidztown.definition = {
 
 /**
 * @see \App\Http\Controllers\CoDelameController::kidztown
-* @see app/Http/Controllers/CoDelameController.php:19
+* @see app/Http/Controllers/CoDelameController.php:20
 * @route '/co-delame/kidztown'
 */
 kidztown.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ kidztown.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\CoDelameController::kidztown
-* @see app/Http/Controllers/CoDelameController.php:19
+* @see app/Http/Controllers/CoDelameController.php:20
 * @route '/co-delame/kidztown'
 */
 kidztown.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -116,7 +116,7 @@ kidztown.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\CoDelameController::kidztown
-* @see app/Http/Controllers/CoDelameController.php:19
+* @see app/Http/Controllers/CoDelameController.php:20
 * @route '/co-delame/kidztown'
 */
 kidztown.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -126,7 +126,7 @@ kidztown.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\CoDelameController::kidztown
-* @see app/Http/Controllers/CoDelameController.php:19
+* @see app/Http/Controllers/CoDelameController.php:20
 * @route '/co-delame/kidztown'
 */
 const kidztownForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -136,7 +136,7 @@ const kidztownForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =
 
 /**
 * @see \App\Http\Controllers\CoDelameController::kidztown
-* @see app/Http/Controllers/CoDelameController.php:19
+* @see app/Http/Controllers/CoDelameController.php:20
 * @route '/co-delame/kidztown'
 */
 kidztownForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -146,7 +146,7 @@ kidztownForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 
 /**
 * @see \App\Http\Controllers\CoDelameController::kidztown
-* @see app/Http/Controllers/CoDelameController.php:19
+* @see app/Http/Controllers/CoDelameController.php:20
 * @route '/co-delame/kidztown'
 */
 kidztownForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -163,7 +163,7 @@ kidztown.form = kidztownForm
 
 /**
 * @see \App\Http\Controllers\CoDelameController::wyldlife
-* @see app/Http/Controllers/CoDelameController.php:24
+* @see app/Http/Controllers/CoDelameController.php:25
 * @route '/co-delame/wyldlife'
 */
 export const wyldlife = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -178,7 +178,7 @@ wyldlife.definition = {
 
 /**
 * @see \App\Http\Controllers\CoDelameController::wyldlife
-* @see app/Http/Controllers/CoDelameController.php:24
+* @see app/Http/Controllers/CoDelameController.php:25
 * @route '/co-delame/wyldlife'
 */
 wyldlife.url = (options?: RouteQueryOptions) => {
@@ -187,7 +187,7 @@ wyldlife.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\CoDelameController::wyldlife
-* @see app/Http/Controllers/CoDelameController.php:24
+* @see app/Http/Controllers/CoDelameController.php:25
 * @route '/co-delame/wyldlife'
 */
 wyldlife.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -197,7 +197,7 @@ wyldlife.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\CoDelameController::wyldlife
-* @see app/Http/Controllers/CoDelameController.php:24
+* @see app/Http/Controllers/CoDelameController.php:25
 * @route '/co-delame/wyldlife'
 */
 wyldlife.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -207,7 +207,7 @@ wyldlife.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\CoDelameController::wyldlife
-* @see app/Http/Controllers/CoDelameController.php:24
+* @see app/Http/Controllers/CoDelameController.php:25
 * @route '/co-delame/wyldlife'
 */
 const wyldlifeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -217,7 +217,7 @@ const wyldlifeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =
 
 /**
 * @see \App\Http\Controllers\CoDelameController::wyldlife
-* @see app/Http/Controllers/CoDelameController.php:24
+* @see app/Http/Controllers/CoDelameController.php:25
 * @route '/co-delame/wyldlife'
 */
 wyldlifeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -227,7 +227,7 @@ wyldlifeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 
 /**
 * @see \App\Http\Controllers\CoDelameController::wyldlife
-* @see app/Http/Controllers/CoDelameController.php:24
+* @see app/Http/Controllers/CoDelameController.php:25
 * @route '/co-delame/wyldlife'
 */
 wyldlifeForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -244,7 +244,7 @@ wyldlife.form = wyldlifeForm
 
 /**
 * @see \App\Http\Controllers\CoDelameController::skupinky
-* @see app/Http/Controllers/CoDelameController.php:29
+* @see app/Http/Controllers/CoDelameController.php:30
 * @route '/co-delame/skupinky'
 */
 export const skupinky = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -259,7 +259,7 @@ skupinky.definition = {
 
 /**
 * @see \App\Http\Controllers\CoDelameController::skupinky
-* @see app/Http/Controllers/CoDelameController.php:29
+* @see app/Http/Controllers/CoDelameController.php:30
 * @route '/co-delame/skupinky'
 */
 skupinky.url = (options?: RouteQueryOptions) => {
@@ -268,7 +268,7 @@ skupinky.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\CoDelameController::skupinky
-* @see app/Http/Controllers/CoDelameController.php:29
+* @see app/Http/Controllers/CoDelameController.php:30
 * @route '/co-delame/skupinky'
 */
 skupinky.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -278,7 +278,7 @@ skupinky.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\CoDelameController::skupinky
-* @see app/Http/Controllers/CoDelameController.php:29
+* @see app/Http/Controllers/CoDelameController.php:30
 * @route '/co-delame/skupinky'
 */
 skupinky.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -288,7 +288,7 @@ skupinky.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\CoDelameController::skupinky
-* @see app/Http/Controllers/CoDelameController.php:29
+* @see app/Http/Controllers/CoDelameController.php:30
 * @route '/co-delame/skupinky'
 */
 const skupinkyForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -298,7 +298,7 @@ const skupinkyForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =
 
 /**
 * @see \App\Http\Controllers\CoDelameController::skupinky
-* @see app/Http/Controllers/CoDelameController.php:29
+* @see app/Http/Controllers/CoDelameController.php:30
 * @route '/co-delame/skupinky'
 */
 skupinkyForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -308,7 +308,7 @@ skupinkyForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 
 /**
 * @see \App\Http\Controllers\CoDelameController::skupinky
-* @see app/Http/Controllers/CoDelameController.php:29
+* @see app/Http/Controllers/CoDelameController.php:30
 * @route '/co-delame/skupinky'
 */
 skupinkyForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -325,7 +325,7 @@ skupinky.form = skupinkyForm
 
 /**
 * @see \App\Http\Controllers\CoDelameController::youngLife
-* @see app/Http/Controllers/CoDelameController.php:34
+* @see app/Http/Controllers/CoDelameController.php:35
 * @route '/co-delame/young-life'
 */
 export const youngLife = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -340,7 +340,7 @@ youngLife.definition = {
 
 /**
 * @see \App\Http\Controllers\CoDelameController::youngLife
-* @see app/Http/Controllers/CoDelameController.php:34
+* @see app/Http/Controllers/CoDelameController.php:35
 * @route '/co-delame/young-life'
 */
 youngLife.url = (options?: RouteQueryOptions) => {
@@ -349,7 +349,7 @@ youngLife.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\CoDelameController::youngLife
-* @see app/Http/Controllers/CoDelameController.php:34
+* @see app/Http/Controllers/CoDelameController.php:35
 * @route '/co-delame/young-life'
 */
 youngLife.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -359,7 +359,7 @@ youngLife.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\CoDelameController::youngLife
-* @see app/Http/Controllers/CoDelameController.php:34
+* @see app/Http/Controllers/CoDelameController.php:35
 * @route '/co-delame/young-life'
 */
 youngLife.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -369,7 +369,7 @@ youngLife.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\CoDelameController::youngLife
-* @see app/Http/Controllers/CoDelameController.php:34
+* @see app/Http/Controllers/CoDelameController.php:35
 * @route '/co-delame/young-life'
 */
 const youngLifeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -379,7 +379,7 @@ const youngLifeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> 
 
 /**
 * @see \App\Http\Controllers\CoDelameController::youngLife
-* @see app/Http/Controllers/CoDelameController.php:34
+* @see app/Http/Controllers/CoDelameController.php:35
 * @route '/co-delame/young-life'
 */
 youngLifeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -389,7 +389,7 @@ youngLifeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =>
 
 /**
 * @see \App\Http\Controllers\CoDelameController::youngLife
-* @see app/Http/Controllers/CoDelameController.php:34
+* @see app/Http/Controllers/CoDelameController.php:35
 * @route '/co-delame/young-life'
 */
 youngLifeForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -406,7 +406,7 @@ youngLife.form = youngLifeForm
 
 /**
 * @see \App\Http\Controllers\CoDelameController::kavarna
-* @see app/Http/Controllers/CoDelameController.php:39
+* @see app/Http/Controllers/CoDelameController.php:40
 * @route '/co-delame/kavarna'
 */
 export const kavarna = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -421,7 +421,7 @@ kavarna.definition = {
 
 /**
 * @see \App\Http\Controllers\CoDelameController::kavarna
-* @see app/Http/Controllers/CoDelameController.php:39
+* @see app/Http/Controllers/CoDelameController.php:40
 * @route '/co-delame/kavarna'
 */
 kavarna.url = (options?: RouteQueryOptions) => {
@@ -430,7 +430,7 @@ kavarna.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\CoDelameController::kavarna
-* @see app/Http/Controllers/CoDelameController.php:39
+* @see app/Http/Controllers/CoDelameController.php:40
 * @route '/co-delame/kavarna'
 */
 kavarna.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -440,7 +440,7 @@ kavarna.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\CoDelameController::kavarna
-* @see app/Http/Controllers/CoDelameController.php:39
+* @see app/Http/Controllers/CoDelameController.php:40
 * @route '/co-delame/kavarna'
 */
 kavarna.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -450,7 +450,7 @@ kavarna.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\CoDelameController::kavarna
-* @see app/Http/Controllers/CoDelameController.php:39
+* @see app/Http/Controllers/CoDelameController.php:40
 * @route '/co-delame/kavarna'
 */
 const kavarnaForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -460,7 +460,7 @@ const kavarnaForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =>
 
 /**
 * @see \App\Http\Controllers\CoDelameController::kavarna
-* @see app/Http/Controllers/CoDelameController.php:39
+* @see app/Http/Controllers/CoDelameController.php:40
 * @route '/co-delame/kavarna'
 */
 kavarnaForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -470,7 +470,7 @@ kavarnaForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\CoDelameController::kavarna
-* @see app/Http/Controllers/CoDelameController.php:39
+* @see app/Http/Controllers/CoDelameController.php:40
 * @route '/co-delame/kavarna'
 */
 kavarnaForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -487,7 +487,7 @@ kavarna.form = kavarnaForm
 
 /**
 * @see \App\Http\Controllers\CoDelameController::business
-* @see app/Http/Controllers/CoDelameController.php:44
+* @see app/Http/Controllers/CoDelameController.php:45
 * @route '/co-delame/business'
 */
 export const business = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -502,7 +502,7 @@ business.definition = {
 
 /**
 * @see \App\Http\Controllers\CoDelameController::business
-* @see app/Http/Controllers/CoDelameController.php:44
+* @see app/Http/Controllers/CoDelameController.php:45
 * @route '/co-delame/business'
 */
 business.url = (options?: RouteQueryOptions) => {
@@ -511,7 +511,7 @@ business.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\CoDelameController::business
-* @see app/Http/Controllers/CoDelameController.php:44
+* @see app/Http/Controllers/CoDelameController.php:45
 * @route '/co-delame/business'
 */
 business.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -521,7 +521,7 @@ business.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\CoDelameController::business
-* @see app/Http/Controllers/CoDelameController.php:44
+* @see app/Http/Controllers/CoDelameController.php:45
 * @route '/co-delame/business'
 */
 business.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -531,7 +531,7 @@ business.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\CoDelameController::business
-* @see app/Http/Controllers/CoDelameController.php:44
+* @see app/Http/Controllers/CoDelameController.php:45
 * @route '/co-delame/business'
 */
 const businessForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -541,7 +541,7 @@ const businessForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =
 
 /**
 * @see \App\Http\Controllers\CoDelameController::business
-* @see app/Http/Controllers/CoDelameController.php:44
+* @see app/Http/Controllers/CoDelameController.php:45
 * @route '/co-delame/business'
 */
 businessForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -551,7 +551,7 @@ businessForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 
 /**
 * @see \App\Http\Controllers\CoDelameController::business
-* @see app/Http/Controllers/CoDelameController.php:44
+* @see app/Http/Controllers/CoDelameController.php:45
 * @route '/co-delame/business'
 */
 businessForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

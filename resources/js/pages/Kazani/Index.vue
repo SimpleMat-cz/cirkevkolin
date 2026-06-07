@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3'
-import PublicLayout from '@/layouts/public.vue'
-import PageHero from '@/components/PageHero.vue'
-import SermonCard from '@/components/SermonCard.vue'
 import { Search } from 'lucide-vue-next'
 import { ref, watch } from 'vue'
+import PageHero from '@/components/PageHero.vue'
+import SermonCard from '@/components/SermonCard.vue'
+import PublicLayout from '@/layouts/public.vue'
 
 interface Sermon {
     id: number
@@ -37,7 +37,7 @@ const props = defineProps<{
 
 const search = ref(props.filters.q ?? '')
 const speaker = ref(props.filters.speaker ?? '')
-const series = ref(props.filters.series ?? '')
+const selectedSeries = ref(props.filters.series ?? '')
 const topic = ref(props.filters.topic ?? '')
 const year = ref(props.filters.year ?? '')
 
@@ -47,7 +47,7 @@ function applyFilters() {
     router.get('/kazani', {
         q: search.value || undefined,
         speaker: speaker.value || undefined,
-        series: series.value || undefined,
+        series: selectedSeries.value || undefined,
         topic: topic.value || undefined,
         year: year.value || undefined,
     }, { preserveState: true, replace: true })
@@ -58,12 +58,12 @@ watch(search, () => {
     searchTimeout = setTimeout(applyFilters, 400)
 })
 
-watch([speaker, series, topic, year], applyFilters)
+watch([speaker, selectedSeries, topic, year], applyFilters)
 
 function resetFilters() {
     search.value = ''
     speaker.value = ''
-    series.value = ''
+    selectedSeries.value = ''
     topic.value = ''
     year.value = ''
     router.get('/kazani', {}, { preserveState: false })
@@ -108,7 +108,7 @@ function resetFilters() {
                     </select>
 
                     <select
-                        v-model="series"
+                        v-model="selectedSeries"
                         class="rounded-full border border-brand-ink/10 bg-white px-4 py-2.5 text-sm focus:border-brand-primary focus:outline-none"
                     >
                         <option value="">Všechny série</option>
@@ -124,7 +124,7 @@ function resetFilters() {
                     </select>
 
                     <button
-                        v-if="search || speaker || series || topic || year"
+                        v-if="search || speaker || selectedSeries || topic || year"
                         class="rounded-full bg-brand-coral text-white px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-brand-coral-dark"
                         @click="resetFilters"
                     >

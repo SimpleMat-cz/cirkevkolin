@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3'
-import { computed } from 'vue'
-import PublicLayout from '@/layouts/public.vue'
-import PageHero from '@/components/PageHero.vue'
-import Blob from '@/components/Blob.vue'
 import { Heart, Users, BookOpen, ArrowRight } from 'lucide-vue-next'
+import { computed } from 'vue'
+import Blob from '@/components/Blob.vue'
+import PageHero from '@/components/PageHero.vue'
+import PublicLayout from '@/layouts/public.vue'
 import type { Page } from '@/types'
 
 const props = defineProps<{

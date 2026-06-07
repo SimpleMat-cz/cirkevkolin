@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import AppNavbar from '@/components/AppNavbar.vue'
 import AppFooter from '@/components/AppFooter.vue'
+import AppNavbar from '@/components/AppNavbar.vue'
 import { useReveal } from '@/composables/useReveal'
 
 defineProps<{

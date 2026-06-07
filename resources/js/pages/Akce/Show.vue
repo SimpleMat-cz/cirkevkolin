@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { Head, Link } from '@inertiajs/vue3'
-import PublicLayout from '@/layouts/public.vue'
+import { Calendar, MapPin } from 'lucide-vue-next'
+import { computed } from 'vue'
 import Wave from '@/components/Wave.vue'
-import { Calendar, MapPin, Clock } from 'lucide-vue-next'
+import PublicLayout from '@/layouts/public.vue'
 
 interface Event {
     id: number
@@ -49,6 +49,7 @@ function formatDateTime(dateStr: string): string {
     <Head>
         <title>{{ event.title }} — církev kolín</title>
         <meta name="description" :content="event.description ?? event.title" />
+        <!-- eslint-disable-next-line vue/no-v-text-v-html-on-component -->
         <component :is="'script'" type="application/ld+json" v-html="jsonLd" />
     </Head>
 

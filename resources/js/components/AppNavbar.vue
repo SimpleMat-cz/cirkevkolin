@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3'
-import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { Menu, X } from 'lucide-vue-next'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import BrandLogo from '@/components/BrandLogo.vue'
 
 const isScrolled = ref(false)

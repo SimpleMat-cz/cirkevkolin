@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3'
-import { Calendar, MapPin, Clock } from 'lucide-vue-next'
+import { MapPin, Clock } from 'lucide-vue-next'
 
 interface Event {
     id: number
@@ -13,11 +13,7 @@ interface Event {
     location?: string
 }
 
-const props = defineProps<{ event: Event }>()
-
-function formatDate(dateStr: string): string {
-    return new Date(dateStr).toLocaleDateString('cs-CZ', { weekday: 'short', day: 'numeric', month: 'long' })
-}
+defineProps<{ event: Event }>()
 
 function formatTime(dateStr: string): string {
     return new Date(dateStr).toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' })
