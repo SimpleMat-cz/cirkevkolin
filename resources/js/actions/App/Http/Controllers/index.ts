@@ -7,6 +7,7 @@ import KazaniController from './KazaniController'
 import AkceController from './AkceController'
 import KontaktController from './KontaktController'
 import PrispetController from './PrispetController'
+import PrekladController from './PrekladController'
 import VisitRequestController from './VisitRequestController'
 import SitemapController from './SitemapController'
 import Settings from './Settings'
@@ -21,6 +22,7 @@ const Controllers = {
     AkceController: Object.assign(AkceController, AkceController),
     KontaktController: Object.assign(KontaktController, KontaktController),
     PrispetController: Object.assign(PrispetController, PrispetController),
+    PrekladController: Object.assign(PrekladController, PrekladController),
     VisitRequestController: Object.assign(VisitRequestController, VisitRequestController),
     SitemapController: Object.assign(SitemapController, SitemapController),
     Settings: Object.assign(Settings, Settings),

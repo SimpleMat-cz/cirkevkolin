@@ -947,6 +947,87 @@ prispetForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 prispet.form = prispetForm
 
 /**
+* @see \App\Http\Controllers\PrekladController::preklad
+* @see app/Http/Controllers/PrekladController.php:10
+* @route '/preklad'
+*/
+export const preklad = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: preklad.url(options),
+    method: 'get',
+})
+
+preklad.definition = {
+    methods: ["get","head"],
+    url: '/preklad',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\PrekladController::preklad
+* @see app/Http/Controllers/PrekladController.php:10
+* @route '/preklad'
+*/
+preklad.url = (options?: RouteQueryOptions) => {
+    return preklad.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\PrekladController::preklad
+* @see app/Http/Controllers/PrekladController.php:10
+* @route '/preklad'
+*/
+preklad.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: preklad.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\PrekladController::preklad
+* @see app/Http/Controllers/PrekladController.php:10
+* @route '/preklad'
+*/
+preklad.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: preklad.url(options),
+    method: 'head',
+})
+
+/**
+* @see \App\Http\Controllers\PrekladController::preklad
+* @see app/Http/Controllers/PrekladController.php:10
+* @route '/preklad'
+*/
+const prekladForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: preklad.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\PrekladController::preklad
+* @see app/Http/Controllers/PrekladController.php:10
+* @route '/preklad'
+*/
+prekladForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: preklad.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\PrekladController::preklad
+* @see app/Http/Controllers/PrekladController.php:10
+* @route '/preklad'
+*/
+prekladForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: preklad.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+preklad.form = prekladForm
+
+/**
 * @see \App\Http\Controllers\SitemapController::__invoke
 * @see app/Http/Controllers/SitemapController.php:11
 * @route '/sitemap.xml'
