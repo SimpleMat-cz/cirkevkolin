@@ -1,7 +1,7 @@
-import type { CaptionEvent, CaptionLang, SonioxToken } from './types'
+import type { CaptionEvent, CaptionLang, SonioxToken } from './types';
 
 /** Matches text whose tail closes a sentence (optionally with a closing quote/bracket). */
-const SENTENCE_END = /[.!?…]['")\]]?\s*$/
+const SENTENCE_END = /[.!?…]['")\]]?\s*$/;
 
 /**
  * Split a Soniox token batch into the original (source language) tokens and the
@@ -9,19 +9,22 @@ const SENTENCE_END = /[.!?…]['")\]]?\s*$/
  * original carries `translation_status: "original"`, the translation carries
  * `"translation"`.
  */
-export function splitTokens(tokens: SonioxToken[]): { original: SonioxToken[]; translation: SonioxToken[] } {
-    const original: SonioxToken[] = []
-    const translation: SonioxToken[] = []
+export function splitTokens(tokens: SonioxToken[]): {
+    original: SonioxToken[];
+    translation: SonioxToken[];
+} {
+    const original: SonioxToken[] = [];
+    const translation: SonioxToken[] = [];
 
     for (const token of tokens) {
         if (token.translation_status === 'translation') {
-            translation.push(token)
+            translation.push(token);
         } else {
-            original.push(token)
+            original.push(token);
         }
     }
 
-    return { original, translation }
+    return { original, translation };
 }
 
 /**
@@ -36,50 +39,54 @@ export function splitTokens(tokens: SonioxToken[]): { original: SonioxToken[]; t
  *    transcript would grow into one endless paragraph.
  */
 export class LanguageAggregator {
-    private seq = 0
-    private final = ''
-    private partial = ''
+    private seq = 0;
+    private final = '';
+    private partial = '';
 
     constructor(public readonly lang: CaptionLang) {}
 
     /** Feed a batch of (already language-filtered) tokens; returns the current segment. */
     push(tokens: SonioxToken[]): CaptionEvent {
-        let partialBuf = ''
+        let partialBuf = '';
 
         for (const token of tokens) {
-            const text = token.text ?? ''
+            const text = token.text ?? '';
 
             if (token.is_final) {
-                this.final += text
+                this.final += text;
             } else {
-                partialBuf += text
+                partialBuf += text;
             }
         }
 
-        this.partial = partialBuf
+        this.partial = partialBuf;
 
-        const event = this.snapshot()
+        const event = this.snapshot();
 
-        if (this.final.trim() !== '' && this.partial === '' && SENTENCE_END.test(this.final)) {
-            this.seq++
-            this.final = ''
+        if (
+            this.final.trim() !== '' &&
+            this.partial === '' &&
+            SENTENCE_END.test(this.final)
+        ) {
+            this.seq++;
+            this.final = '';
         }
 
-        return event
+        return event;
     }
 
     /** Emit any buffered text and close the current segment (used on finalize). */
     flush(): CaptionEvent | null {
         if (this.final.trim() === '' && this.partial.trim() === '') {
-            return null
+            return null;
         }
 
-        const event = this.snapshot()
-        this.seq++
-        this.final = ''
-        this.partial = ''
+        const event = this.snapshot();
+        this.seq++;
+        this.final = '';
+        this.partial = '';
 
-        return event
+        return event;
     }
 
     private snapshot(): CaptionEvent {
@@ -88,6 +95,6 @@ export class LanguageAggregator {
             seq: this.seq,
             final: this.final.trim(),
             partial: this.partial.trim(),
-        }
+        };
     }
 }

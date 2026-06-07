@@ -1,26 +1,26 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3'
-import { Menu, X } from 'lucide-vue-next'
-import { ref, onMounted, onUnmounted, watch } from 'vue'
-import BrandLogo from '@/components/BrandLogo.vue'
+import { Link } from '@inertiajs/vue3';
+import { Menu, X } from 'lucide-vue-next';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
+import BrandLogo from '@/components/BrandLogo.vue';
 
-const isScrolled = ref(false)
-const isMenuOpen = ref(false)
+const isScrolled = ref(false);
+const isMenuOpen = ref(false);
 
 function handleScroll() {
-    isScrolled.value = window.scrollY > 16
+    isScrolled.value = window.scrollY > 16;
 }
 
 onMounted(() => {
-    handleScroll()
-    window.addEventListener('scroll', handleScroll, { passive: true })
-})
-onUnmounted(() => window.removeEventListener('scroll', handleScroll))
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+});
+onUnmounted(() => window.removeEventListener('scroll', handleScroll));
 
 // Lock scroll when mobile menu is open
 watch(isMenuOpen, (v) => {
-    document.documentElement.style.overflow = v ? 'hidden' : ''
-})
+    document.documentElement.style.overflow = v ? 'hidden' : '';
+});
 
 const navLinks = [
     { label: 'Neděle', href: '/nedele' },
@@ -29,7 +29,7 @@ const navLinks = [
     { label: 'Kázání', href: '/kazani' },
     { label: 'Akce', href: '/akce' },
     { label: 'Kontakt', href: '/kontakt' },
-]
+];
 </script>
 
 <template>
@@ -41,10 +41,12 @@ const navLinks = [
                 : 'bg-transparent',
         ]"
     >
-        <nav class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6 sm:py-4">
+        <nav
+            class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6 sm:py-4"
+        >
             <Link
                 href="/"
-                class="shrink-0 transition-transform hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-4 focus-visible:ring-offset-brand-cream"
+                class="shrink-0 transition-transform hover:scale-[1.02] focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-4 focus-visible:ring-offset-brand-cream focus-visible:outline-none"
                 aria-label="Domů — církev kolín"
             >
                 <BrandLogo variant="B" color="primary" :size="150" />
@@ -54,7 +56,7 @@ const navLinks = [
                 <li v-for="link in navLinks" :key="link.href">
                     <Link
                         :href="link.href"
-                        class="group relative text-[15px] font-medium text-brand-ink transition-colors hover:text-brand-primary focus-visible:outline-none focus-visible:text-brand-primary"
+                        class="group relative text-[15px] font-medium text-brand-ink transition-colors hover:text-brand-primary focus-visible:text-brand-primary focus-visible:outline-none"
                     >
                         {{ link.label }}
                         <span
@@ -67,7 +69,7 @@ const navLinks = [
             <div class="flex items-center gap-3">
                 <Link
                     href="/prispet"
-                    class="btn-coral hidden rounded-full bg-brand-coral px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-brand-coral-dark hover:shadow-lg hover:shadow-brand-coral/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-coral focus-visible:ring-offset-2 sm:block"
+                    class="btn-coral hidden rounded-full bg-brand-coral px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-brand-coral-dark hover:shadow-lg hover:shadow-brand-coral/30 focus-visible:ring-2 focus-visible:ring-brand-coral focus-visible:ring-offset-2 focus-visible:outline-none sm:block"
                 >
                     Přispět
                 </Link>
@@ -101,7 +103,7 @@ const navLinks = [
                     <li v-for="link in navLinks" :key="link.href">
                         <Link
                             :href="link.href"
-                            class="block rounded-xl px-4 py-3 text-base font-medium text-brand-ink transition-colors hover:bg-brand-primary/10 hover:text-brand-primary focus-visible:outline-none focus-visible:bg-brand-primary/10"
+                            class="block rounded-xl px-4 py-3 text-base font-medium text-brand-ink transition-colors hover:bg-brand-primary/10 hover:text-brand-primary focus-visible:bg-brand-primary/10 focus-visible:outline-none"
                             @click="isMenuOpen = false"
                         >
                             {{ link.label }}

@@ -1,16 +1,16 @@
 <script setup lang="ts">
 withDefaults(
     defineProps<{
-        color?: string
-        flip?: boolean
-        height?: number
+        color?: string;
+        flip?: boolean;
+        height?: number;
     }>(),
     {
         color: '#f5f5dc',
         flip: false,
         height: 80,
     },
-)
+);
 </script>
 
 <template>

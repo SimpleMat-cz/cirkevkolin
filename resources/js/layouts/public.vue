@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import AppFooter from '@/components/AppFooter.vue'
-import AppNavbar from '@/components/AppNavbar.vue'
-import { useReveal } from '@/composables/useReveal'
+import AppFooter from '@/components/AppFooter.vue';
+import AppNavbar from '@/components/AppNavbar.vue';
+import { useReveal } from '@/composables/useReveal';
 
 defineProps<{
-    title?: string
-}>()
+    title?: string;
+}>();
 
-useReveal('.reveal')
+useReveal('.reveal');
 </script>
 
 <template>
     <div class="flex min-h-screen flex-col bg-brand-cream text-brand-ink">
         <a
             href="#main-content"
-            class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-brand-primary focus:px-4 focus:py-2 focus:text-white focus:shadow-lg"
+            class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-md focus:bg-brand-primary focus:px-4 focus:py-2 focus:text-white focus:shadow-lg"
         >
             Přejít na hlavní obsah
         </a>

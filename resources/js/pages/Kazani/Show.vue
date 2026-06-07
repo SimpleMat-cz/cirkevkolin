@@ -1,36 +1,36 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3'
-import { Calendar, User, BookOpen, MessageSquare } from 'lucide-vue-next'
-import { ref, computed } from 'vue'
-import SermonCard from '@/components/SermonCard.vue'
-import PublicLayout from '@/layouts/public.vue'
+import { Head } from '@inertiajs/vue3';
+import { Calendar, User, BookOpen, MessageSquare } from 'lucide-vue-next';
+import { ref, computed } from 'vue';
+import SermonCard from '@/components/SermonCard.vue';
+import PublicLayout from '@/layouts/public.vue';
 
 interface Sermon {
-    id: number
-    title: string
-    slug: string
-    description?: string
-    youtube_id?: string
-    published_at?: string
-    duration_seconds?: number
-    bible_references?: string
-    study_questions?: string
-    speaker?: { name: string; slug: string }
-    series?: { title: string; slug: string }
-    topics?: Array<{ id: number; name: string; slug: string }>
+    id: number;
+    title: string;
+    slug: string;
+    description?: string;
+    youtube_id?: string;
+    published_at?: string;
+    duration_seconds?: number;
+    bible_references?: string;
+    study_questions?: string;
+    speaker?: { name: string; slug: string };
+    series?: { title: string; slug: string };
+    topics?: Array<{ id: number; name: string; slug: string }>;
 }
 
 const props = defineProps<{
-    sermon: Sermon
-    related: Sermon[]
-}>()
+    sermon: Sermon;
+    related: Sermon[];
+}>();
 
-const activeTab = ref<'summary' | 'bible' | 'questions'>('summary')
-const consentGiven = ref(false)
+const activeTab = ref<'summary' | 'bible' | 'questions'>('summary');
+const consentGiven = ref(false);
 
 const jsonLd = computed(() => {
     if (!props.sermon.youtube_id) {
-        return null
+        return null;
     }
 
     return JSON.stringify({
@@ -41,24 +41,35 @@ const jsonLd = computed(() => {
         thumbnailUrl: `https://i.ytimg.com/vi/${props.sermon.youtube_id}/hqdefault.jpg`,
         uploadDate: props.sermon.published_at ?? '',
         embedUrl: `https://www.youtube-nocookie.com/embed/${props.sermon.youtube_id}`,
-    })
-})
+    });
+});
 
 function formatDate(dateStr?: string): string {
     if (!dateStr) {
-        return ''
+        return '';
     }
 
-    return new Date(dateStr).toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long', year: 'numeric' })
+    return new Date(dateStr).toLocaleDateString('cs-CZ', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+    });
 }
 </script>
 
 <template>
     <Head>
         <title>{{ sermon.title }} — církev kolín</title>
-        <meta name="description" :content="sermon.description ?? sermon.title" />
-        <!-- eslint-disable-next-line vue/no-v-text-v-html-on-component -->
-        <component v-if="jsonLd" :is="'script'" type="application/ld+json" v-html="jsonLd" />
+        <meta
+            name="description"
+            :content="sermon.description ?? sermon.title"
+        />
+        <component
+            v-if="jsonLd"
+            :is="'script'"
+            type="application/ld+json"
+            v-html="jsonLd"
+        />
     </Head>
 
     <PublicLayout>
@@ -67,9 +78,13 @@ function formatDate(dateStr?: string): string {
             <section class="bg-brand-ink">
                 <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6">
                     <!-- Consent gate -->
-                    <div v-if="sermon.youtube_id && !consentGiven" class="aspect-video overflow-hidden rounded-2xl bg-brand-ink/60 flex flex-col items-center justify-center gap-4 text-center p-8">
-                        <p class="text-white/80 text-sm max-w-sm">
-                            Video je uloženo na YouTube. Přehráním souhlasíte s tím, že YouTube může ukládat cookies.
+                    <div
+                        v-if="sermon.youtube_id && !consentGiven"
+                        class="flex aspect-video flex-col items-center justify-center gap-4 overflow-hidden rounded-2xl bg-brand-ink/60 p-8 text-center"
+                    >
+                        <p class="max-w-sm text-sm text-white/80">
+                            Video je uloženo na YouTube. Přehráním souhlasíte s
+                            tím, že YouTube může ukládat cookies.
                         </p>
                         <button
                             class="rounded-full bg-brand-coral px-6 py-3 text-sm font-semibold text-white hover:opacity-90"
@@ -79,7 +94,10 @@ function formatDate(dateStr?: string): string {
                         </button>
                     </div>
 
-                    <div v-else-if="sermon.youtube_id && consentGiven" class="aspect-video overflow-hidden rounded-2xl">
+                    <div
+                        v-else-if="sermon.youtube_id && consentGiven"
+                        class="aspect-video overflow-hidden rounded-2xl"
+                    >
                         <iframe
                             :src="`https://www.youtube-nocookie.com/embed/${sermon.youtube_id}?rel=0`"
                             class="h-full w-full"
@@ -88,8 +106,11 @@ function formatDate(dateStr?: string): string {
                         />
                     </div>
 
-                    <div v-else class="aspect-video overflow-hidden rounded-2xl bg-brand-ink/40 flex items-center justify-center">
-                        <p class="text-white/40 text-sm">Video není dostupné</p>
+                    <div
+                        v-else
+                        class="flex aspect-video items-center justify-center overflow-hidden rounded-2xl bg-brand-ink/40"
+                    >
+                        <p class="text-sm text-white/40">Video není dostupné</p>
                     </div>
                 </div>
             </section>
@@ -97,8 +118,11 @@ function formatDate(dateStr?: string): string {
             <!-- Meta -->
             <section class="bg-white py-10">
                 <div class="mx-auto max-w-4xl px-4 sm:px-6">
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        <span v-if="sermon.series" class="rounded-full bg-brand-teal/10 px-3 py-1 text-xs font-medium text-teal-700">
+                    <div class="mb-4 flex flex-wrap gap-2">
+                        <span
+                            v-if="sermon.series"
+                            class="rounded-full bg-brand-teal/10 px-3 py-1 text-xs font-medium text-teal-700"
+                        >
                             {{ sermon.series.title }}
                         </span>
                         <span
@@ -110,14 +134,26 @@ function formatDate(dateStr?: string): string {
                         </span>
                     </div>
 
-                    <h1 class="font-display text-3xl font-bold text-brand-ink sm:text-4xl">{{ sermon.title }}</h1>
+                    <h1
+                        class="font-display text-3xl font-bold text-brand-ink sm:text-4xl"
+                    >
+                        {{ sermon.title }}
+                    </h1>
 
-                    <div class="mt-4 flex flex-wrap gap-4 text-sm text-brand-ink/50">
-                        <span v-if="sermon.speaker" class="flex items-center gap-1.5">
+                    <div
+                        class="mt-4 flex flex-wrap gap-4 text-sm text-brand-ink/50"
+                    >
+                        <span
+                            v-if="sermon.speaker"
+                            class="flex items-center gap-1.5"
+                        >
                             <User class="h-4 w-4" />
                             {{ sermon.speaker.name }}
                         </span>
-                        <span v-if="sermon.published_at" class="flex items-center gap-1.5">
+                        <span
+                            v-if="sermon.published_at"
+                            class="flex items-center gap-1.5"
+                        >
                             <Calendar class="h-4 w-4" />
                             {{ formatDate(sermon.published_at) }}
                         </span>
@@ -128,15 +164,29 @@ function formatDate(dateStr?: string): string {
                         <div class="flex gap-0">
                             <button
                                 v-for="tab in [
-                                    { key: 'summary', label: 'Shrnutí', icon: BookOpen },
-                                    { key: 'bible', label: 'Bible verše', icon: BookOpen },
-                                    { key: 'questions', label: 'Pro skupinku', icon: MessageSquare },
+                                    {
+                                        key: 'summary',
+                                        label: 'Shrnutí',
+                                        icon: BookOpen,
+                                    },
+                                    {
+                                        key: 'bible',
+                                        label: 'Bible verše',
+                                        icon: BookOpen,
+                                    },
+                                    {
+                                        key: 'questions',
+                                        label: 'Pro skupinku',
+                                        icon: MessageSquare,
+                                    },
                                 ]"
                                 :key="tab.key"
-                                class="flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px"
-                                :class="activeTab === tab.key
-                                    ? 'border-brand-primary text-brand-primary-dark'
-                                    : 'border-transparent text-brand-ink/50 hover:text-brand-ink'"
+                                class="-mb-px flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors"
+                                :class="
+                                    activeTab === tab.key
+                                        ? 'border-brand-primary text-brand-primary-dark'
+                                        : 'border-transparent text-brand-ink/50 hover:text-brand-ink'
+                                "
                                 @click="activeTab = tab.key as typeof activeTab"
                             >
                                 {{ tab.label }}
@@ -145,14 +195,31 @@ function formatDate(dateStr?: string): string {
                     </div>
 
                     <div class="py-8">
-                        <div v-if="activeTab === 'summary'" class="prose prose-sm max-w-none text-brand-ink/70 leading-relaxed">
-                            {{ sermon.description || 'Popis není k dispozici.' }}
+                        <div
+                            v-if="activeTab === 'summary'"
+                            class="prose prose-sm max-w-none leading-relaxed text-brand-ink/70"
+                        >
+                            {{
+                                sermon.description || 'Popis není k dispozici.'
+                            }}
                         </div>
-                        <div v-else-if="activeTab === 'bible'" class="text-brand-ink/70 leading-relaxed whitespace-pre-line">
-                            {{ sermon.bible_references || 'Bible verše nejsou zadány.' }}
+                        <div
+                            v-else-if="activeTab === 'bible'"
+                            class="leading-relaxed whitespace-pre-line text-brand-ink/70"
+                        >
+                            {{
+                                sermon.bible_references ||
+                                'Bible verše nejsou zadány.'
+                            }}
                         </div>
-                        <div v-else class="text-brand-ink/70 leading-relaxed whitespace-pre-line">
-                            {{ sermon.study_questions || 'Otázky pro skupinku nejsou zadány.' }}
+                        <div
+                            v-else
+                            class="leading-relaxed whitespace-pre-line text-brand-ink/70"
+                        >
+                            {{
+                                sermon.study_questions ||
+                                'Otázky pro skupinku nejsou zadány.'
+                            }}
                         </div>
                     </div>
                 </div>
@@ -161,9 +228,17 @@ function formatDate(dateStr?: string): string {
             <!-- Related -->
             <section v-if="related.length" class="bg-brand-cream py-16">
                 <div class="mx-auto max-w-6xl px-4 sm:px-6">
-                    <h2 class="font-display text-2xl font-bold text-brand-ink">Další kázání</h2>
-                    <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                        <SermonCard v-for="s in related" :key="s.id" :sermon="s" />
+                    <h2 class="font-display text-2xl font-bold text-brand-ink">
+                        Další kázání
+                    </h2>
+                    <div
+                        class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                    >
+                        <SermonCard
+                            v-for="s in related"
+                            :key="s.id"
+                            :sermon="s"
+                        />
                     </div>
                 </div>
             </section>

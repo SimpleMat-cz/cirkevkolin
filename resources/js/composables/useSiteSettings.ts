@@ -9,7 +9,9 @@ import type { SiteSettings } from '@/types';
 export function useSiteSettings() {
     const page = usePage();
 
-    const settings = computed<SiteSettings>(() => (page.props.site as SiteSettings | undefined) ?? {});
+    const settings = computed<SiteSettings>(
+        () => (page.props.site as SiteSettings | undefined) ?? {},
+    );
 
     function site(key: string, fallback: string = ''): string {
         return settings.value[key] ?? fallback;

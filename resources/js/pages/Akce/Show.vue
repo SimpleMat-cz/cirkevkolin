@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3'
-import { Calendar, MapPin } from 'lucide-vue-next'
-import { computed } from 'vue'
-import Wave from '@/components/Wave.vue'
-import PublicLayout from '@/layouts/public.vue'
+import { Head, Link } from '@inertiajs/vue3';
+import { Calendar, MapPin } from 'lucide-vue-next';
+import { computed } from 'vue';
+import Wave from '@/components/Wave.vue';
+import PublicLayout from '@/layouts/public.vue';
 
 interface Event {
-    id: number
-    title: string
-    slug: string
-    description?: string
-    starts_at: string
-    ends_at?: string
-    category?: string
-    location?: string
-    has_registration: boolean
+    id: number;
+    title: string;
+    slug: string;
+    description?: string;
+    starts_at: string;
+    ends_at?: string;
+    category?: string;
+    location?: string;
+    has_registration: boolean;
 }
 
-const props = defineProps<{ event: Event }>()
+const props = defineProps<{ event: Event }>();
 
 const jsonLd = computed(() =>
     JSON.stringify({
@@ -36,12 +36,17 @@ const jsonLd = computed(() =>
             name: 'Apoštolská církev Kolín',
         },
     }),
-)
+);
 
 function formatDateTime(dateStr: string): string {
     return new Date(dateStr).toLocaleString('cs-CZ', {
-        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit',
-    })
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
 }
 </script>
 
@@ -49,21 +54,33 @@ function formatDateTime(dateStr: string): string {
     <Head>
         <title>{{ event.title }} — církev kolín</title>
         <meta name="description" :content="event.description ?? event.title" />
-        <!-- eslint-disable-next-line vue/no-v-text-v-html-on-component -->
         <component :is="'script'" type="application/ld+json" v-html="jsonLd" />
     </Head>
 
     <PublicLayout>
         <section class="bg-brand-cream pt-32 pb-12">
             <div class="mx-auto max-w-3xl px-4 sm:px-6">
-                <Link href="/akce" class="text-sm text-brand-ink/40 hover:text-brand-ink">← Všechny akce</Link>
-                <h1 class="mt-4 font-display text-4xl font-bold text-brand-ink sm:text-5xl">{{ event.title }}</h1>
-                <div class="mt-4 flex flex-wrap gap-4 text-sm text-brand-ink/60">
+                <Link
+                    href="/akce"
+                    class="text-sm text-brand-ink/40 hover:text-brand-ink"
+                    >← Všechny akce</Link
+                >
+                <h1
+                    class="mt-4 font-display text-4xl font-bold text-brand-ink sm:text-5xl"
+                >
+                    {{ event.title }}
+                </h1>
+                <div
+                    class="mt-4 flex flex-wrap gap-4 text-sm text-brand-ink/60"
+                >
                     <span class="flex items-center gap-1.5">
                         <Calendar class="h-4 w-4 text-brand-coral" />
                         {{ formatDateTime(event.starts_at) }}
                     </span>
-                    <span v-if="event.location" class="flex items-center gap-1.5">
+                    <span
+                        v-if="event.location"
+                        class="flex items-center gap-1.5"
+                    >
                         <MapPin class="h-4 w-4 text-brand-coral" />
                         {{ event.location }}
                     </span>
@@ -75,7 +92,10 @@ function formatDateTime(dateStr: string): string {
 
         <section class="bg-white py-12">
             <div class="mx-auto max-w-3xl px-4 sm:px-6">
-                <p v-if="event.description" class="text-brand-ink/70 leading-relaxed whitespace-pre-line">
+                <p
+                    v-if="event.description"
+                    class="leading-relaxed whitespace-pre-line text-brand-ink/70"
+                >
                     {{ event.description }}
                 </p>
                 <p v-else class="text-brand-ink/40">Popis není k dispozici.</p>

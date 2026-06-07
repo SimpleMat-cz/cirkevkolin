@@ -1,7 +1,10 @@
-import ListNewsletterSubscribers from './ListNewsletterSubscribers'
+import ListNewsletterSubscribers from './ListNewsletterSubscribers';
 
 const Pages = {
-    ListNewsletterSubscribers: Object.assign(ListNewsletterSubscribers, ListNewsletterSubscribers),
-}
+    ListNewsletterSubscribers: Object.assign(
+        ListNewsletterSubscribers,
+        ListNewsletterSubscribers,
+    ),
+};
 
-export default Pages
+export default Pages;

@@ -1,10 +1,12 @@
-import { createClient  } from '@supabase/supabase-js'
-import type {SupabaseClient} from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as
+    | string
+    | undefined;
 
-let client: SupabaseClient | null = null
+let client: SupabaseClient | null = null;
 
 /**
  * Lazily-created Supabase client for the sermon-translation module. Backed by the
@@ -14,19 +16,19 @@ let client: SupabaseClient | null = null
  */
 export function getSupabase(): SupabaseClient | null {
     if (!supabaseUrl || !supabaseAnonKey) {
-        return null
+        return null;
     }
 
     if (!client) {
         client = createClient(supabaseUrl, supabaseAnonKey, {
             realtime: { params: { eventsPerSecond: 10 } },
-        })
+        });
     }
 
-    return client
+    return client;
 }
 
-let broadcasterClient: { token: string; client: SupabaseClient } | null = null
+let broadcasterClient: { token: string; client: SupabaseClient } | null = null;
 
 /**
  * Client authorized as a broadcaster via a Laravel-minted Supabase JWT. The
@@ -36,19 +38,19 @@ let broadcasterClient: { token: string; client: SupabaseClient } | null = null
  */
 export function getBroadcasterClient(token: string): SupabaseClient | null {
     if (!supabaseUrl || !supabaseAnonKey) {
-        return null
+        return null;
     }
 
     if (!broadcasterClient || broadcasterClient.token !== token) {
         const client = createClient(supabaseUrl, supabaseAnonKey, {
             global: { headers: { Authorization: `Bearer ${token}` } },
             realtime: { params: { eventsPerSecond: 10 } },
-        })
-        client.realtime.setAuth(token)
-        broadcasterClient = { token, client }
+        });
+        client.realtime.setAuth(token);
+        broadcasterClient = { token, client };
     }
 
-    return broadcasterClient.client
+    return broadcasterClient.client;
 }
 
-export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey)
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);

@@ -1,7 +1,7 @@
 function readCookie(name: string): string | null {
-    const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`))
+    const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
 
-    return match ? decodeURIComponent(match[1]) : null
+    return match ? decodeURIComponent(match[1]) : null;
 }
 
 /**
@@ -20,11 +20,11 @@ export async function postJson<T>(url: string): Promise<T> {
             'X-Requested-With': 'XMLHttpRequest',
         },
         body: '{}',
-    })
+    });
 
     if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`)
+        throw new Error(`HTTP ${response.status}`);
     }
 
-    return response.json() as Promise<T>
+    return response.json() as Promise<T>;
 }

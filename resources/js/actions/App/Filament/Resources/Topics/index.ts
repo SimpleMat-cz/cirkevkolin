@@ -1,7 +1,7 @@
-import Pages from './Pages'
+import Pages from './Pages';
 
 const Topics = {
     Pages: Object.assign(Pages, Pages),
-}
+};
 
-export default Topics
+export default Topics;

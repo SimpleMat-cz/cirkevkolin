@@ -37,4 +37,4 @@ export const SERMON_GLOSSARY = [
     'WyldLife',
     'Young Life',
     'KidzTown',
-].join(', ')
+].join(', ');

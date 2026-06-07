@@ -19,18 +19,19 @@
         'Archivo', 'Inter', ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
-    --font-display: 'Archivo Black', 'Archivo', ui-sans-serif, system-ui, sans-serif;
+    --font-display:
+        'Archivo Black', 'Archivo', ui-sans-serif, system-ui, sans-serif;
     --font-body: 'Archivo', 'Inter', ui-sans-serif, system-ui, sans-serif;
 
     /* Brand palette — církev kolín (z logomanuálu) */
-    --color-brand-primary: #0eb0e5;         /* logo blue */
+    --color-brand-primary: #0eb0e5; /* logo blue */
     --color-brand-primary-dark: #0880a8;
-    --color-brand-coral: #ff8c69;           /* warm primary accent */
+    --color-brand-coral: #ff8c69; /* warm primary accent */
     --color-brand-coral-dark: #f06a40;
     --color-brand-teal: #4db6ac;
     --color-brand-mint: #8cc9a0;
     --color-brand-sunny: #f7d75c;
-    --color-brand-cream: #fdf9ee;           /* slightly warmer cream than #f5f5dc */
+    --color-brand-cream: #fdf9ee; /* slightly warmer cream than #f5f5dc */
     --color-brand-cream-deep: #f5f0df;
     --color-brand-ink: #2a2a2a;
     --color-brand-ink-soft: #4a4a4a;
@@ -146,11 +147,21 @@
         opacity: 1;
         transform: translateY(0);
     }
-    .reveal-delay-1 { transition-delay: 80ms; }
-    .reveal-delay-2 { transition-delay: 160ms; }
-    .reveal-delay-3 { transition-delay: 240ms; }
-    .reveal-delay-4 { transition-delay: 320ms; }
-    .reveal-delay-5 { transition-delay: 400ms; }
+    .reveal-delay-1 {
+        transition-delay: 80ms;
+    }
+    .reveal-delay-2 {
+        transition-delay: 160ms;
+    }
+    .reveal-delay-3 {
+        transition-delay: 240ms;
+    }
+    .reveal-delay-4 {
+        transition-delay: 320ms;
+    }
+    .reveal-delay-5 {
+        transition-delay: 400ms;
+    }
 
     /* Marquee band for repeated decorative text */
     .marquee-track {
@@ -159,8 +170,9 @@
 
     /* Subtle hover lift used on cards */
     .hover-lift {
-        transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
-                    box-shadow 300ms cubic-bezier(0.22, 1, 0.36, 1);
+        transition:
+            transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
+            box-shadow 300ms cubic-bezier(0.22, 1, 0.36, 1);
     }
     .hover-lift:hover {
         transform: translateY(-4px);
@@ -177,7 +189,12 @@
         content: '';
         position: absolute;
         inset: 0;
-        background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.35) 50%, transparent 100%);
+        background: linear-gradient(
+            120deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.35) 50%,
+            transparent 100%
+        );
         transform: translateX(-100%);
         transition: transform 700ms ease;
         z-index: -1;
@@ -189,66 +206,112 @@
 
 /* Pomalé continuous rotation + mírný float pro organický pohyb */
 @keyframes blob-spin {
-    from { transform: rotate(0deg); }
-    to   { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes blob-spin-reverse {
-    from { transform: rotate(0deg); }
-    to   { transform: rotate(-360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(-360deg);
+    }
 }
 
 @keyframes blob-float {
-    0%, 100% { transform: translate3d(0, 0, 0); }
-    50%      { transform: translate3d(8px, -10px, 0); }
+    0%,
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+    50% {
+        transform: translate3d(8px, -10px, 0);
+    }
 }
 
 @keyframes blob-float-slow {
-    0%, 100% { transform: translate3d(0, 0, 0); }
-    50%      { transform: translate3d(-12px, 16px, 0); }
+    0%,
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+    50% {
+        transform: translate3d(-12px, 16px, 0);
+    }
 }
 
 @keyframes blob-morph {
-    0%, 100% { border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%; }
-    25%      { border-radius: 40% 60% 40% 60% / 60% 40% 60% 40%; }
-    50%      { border-radius: 55% 45% 65% 35% / 45% 55% 45% 55%; }
-    75%      { border-radius: 50% 50% 40% 60% / 40% 60% 50% 50%; }
+    0%,
+    100% {
+        border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
+    }
+    25% {
+        border-radius: 40% 60% 40% 60% / 60% 40% 60% 40%;
+    }
+    50% {
+        border-radius: 55% 45% 65% 35% / 45% 55% 45% 55%;
+    }
+    75% {
+        border-radius: 50% 50% 40% 60% / 40% 60% 50% 50%;
+    }
 }
 
 @keyframes float-y {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-12px); }
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-12px);
+    }
 }
 
 @keyframes fade-up {
-    from { opacity: 0; transform: translateY(30px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes marquee {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
 }
 
 @keyframes wave-slide {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
 :root {
-    --background: hsl(46 70% 96%);       /* cream */
+    --background: hsl(46 70% 96%); /* cream */
     --foreground: hsl(0 0% 16%);
     --card: hsl(0 0% 100%);
     --card-foreground: hsl(0 0% 16%);
     --popover: hsl(0 0% 100%);
     --popover-foreground: hsl(0 0% 16%);
-    --primary: hsl(196 88% 48%);         /* brand blue */
+    --primary: hsl(196 88% 48%); /* brand blue */
     --primary-foreground: hsl(0 0% 100%);
     --secondary: hsl(46 44% 92%);
     --secondary-foreground: hsl(0 0% 16%);
     --muted: hsl(46 30% 94%);
     --muted-foreground: hsl(0 0% 40%);
-    --accent: hsl(17 100% 70%);          /* coral */
+    --accent: hsl(17 100% 70%); /* coral */
     --accent-foreground: hsl(0 0% 100%);
     --destructive: hsl(0 84.2% 60.2%);
     --destructive-foreground: hsl(0 0% 98%);
@@ -319,7 +382,9 @@
 
     /* Respect prefers-reduced-motion globally */
     @media (prefers-reduced-motion: reduce) {
-        *, *::before, *::after {
+        *,
+        *::before,
+        *::after {
             animation-duration: 0.001ms !important;
             animation-iteration-count: 1 !important;
             transition-duration: 0.001ms !important;

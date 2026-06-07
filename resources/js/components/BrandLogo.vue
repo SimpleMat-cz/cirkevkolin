@@ -6,27 +6,27 @@
  */
 withDefaults(
     defineProps<{
-        variant?: 'A' | 'B'
-        color?: 'primary' | 'dark' | 'light'
-        size?: number
+        variant?: 'A' | 'B';
+        color?: 'primary' | 'dark' | 'light';
+        size?: number;
     }>(),
     {
         variant: 'B',
         color: 'primary',
         size: 140,
     },
-)
+);
 
 const colorMap = {
     primary: '#0eb0e5',
     dark: '#1a1a1a',
     light: '#ffffff',
-}
+};
 </script>
 
 <template>
     <span
-        class="inline-flex select-none items-center leading-none"
+        class="inline-flex items-center leading-none select-none"
         role="img"
         aria-label="církev kolín"
     >
