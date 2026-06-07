@@ -50,7 +50,9 @@ jobs:
 
       - name: Deploy (prebuilt, production)
         if: steps.guard.outputs.ready == 'true'
-        run: vercel deploy --prebuilt --prod --token="${{ secrets.VERCEL_TOKEN }}"
+        # --archive=tgz uploads as a single tarball; the prebuilt output (incl.
+        # the bundled PHP vendor/) exceeds Vercel's 15000-file direct-upload limit.
+        run: vercel deploy --prebuilt --prod --archive=tgz --token="${{ secrets.VERCEL_TOKEN }}"
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
