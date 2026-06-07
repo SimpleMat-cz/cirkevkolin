@@ -1,10 +1,20 @@
 import { createClient } from '@supabase/supabase-js';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as
-    | string
-    | undefined;
+// Public defaults for the church's "jako-doma" Supabase project. These values
+// are publishable (they ship in the browser anyway), so we inline them as a
+// fallback to guarantee the build always has them — Vercel's build env injection
+// for VITE_* proved unreliable. An env var, when present, still takes precedence.
+const SUPABASE_URL_FALLBACK = 'https://ybesajwrpxgbiiyshynz.supabase.co';
+const SUPABASE_ANON_KEY_FALLBACK =
+    'sb_publishable_ptbZCSj3p-TBcjQIBb3NRQ_XtGa2E__';
+
+const supabaseUrl =
+    (import.meta.env.VITE_SUPABASE_URL as string | undefined) ||
+    SUPABASE_URL_FALLBACK;
+const supabaseAnonKey =
+    (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined) ||
+    SUPABASE_ANON_KEY_FALLBACK;
 
 let client: SupabaseClient | null = null;
 
