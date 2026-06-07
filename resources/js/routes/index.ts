@@ -948,7 +948,7 @@ prispet.form = prispetForm
 
 /**
 * @see \App\Http\Controllers\PrekladController::preklad
-* @see app/Http/Controllers/PrekladController.php:10
+* @see app/Http/Controllers/PrekladController.php:18
 * @route '/preklad'
 */
 export const preklad = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -963,7 +963,7 @@ preklad.definition = {
 
 /**
 * @see \App\Http\Controllers\PrekladController::preklad
-* @see app/Http/Controllers/PrekladController.php:10
+* @see app/Http/Controllers/PrekladController.php:18
 * @route '/preklad'
 */
 preklad.url = (options?: RouteQueryOptions) => {
@@ -972,7 +972,7 @@ preklad.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\PrekladController::preklad
-* @see app/Http/Controllers/PrekladController.php:10
+* @see app/Http/Controllers/PrekladController.php:18
 * @route '/preklad'
 */
 preklad.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -982,7 +982,7 @@ preklad.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\PrekladController::preklad
-* @see app/Http/Controllers/PrekladController.php:10
+* @see app/Http/Controllers/PrekladController.php:18
 * @route '/preklad'
 */
 preklad.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -992,7 +992,7 @@ preklad.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\PrekladController::preklad
-* @see app/Http/Controllers/PrekladController.php:10
+* @see app/Http/Controllers/PrekladController.php:18
 * @route '/preklad'
 */
 const prekladForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1002,7 +1002,7 @@ const prekladForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =>
 
 /**
 * @see \App\Http\Controllers\PrekladController::preklad
-* @see app/Http/Controllers/PrekladController.php:10
+* @see app/Http/Controllers/PrekladController.php:18
 * @route '/preklad'
 */
 prekladForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -1012,7 +1012,7 @@ prekladForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\PrekladController::preklad
-* @see app/Http/Controllers/PrekladController.php:10
+* @see app/Http/Controllers/PrekladController.php:18
 * @route '/preklad'
 */
 prekladForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

@@ -1,8 +1,8 @@
-import type { RealtimeChannel } from '@supabase/supabase-js'
-import { onUnmounted, ref  } from 'vue'
-import type {Ref} from 'vue';
+import type { RealtimeChannel, SupabaseClient } from '@supabase/supabase-js'
+import type { Ref } from 'vue'
+import { onUnmounted, ref } from 'vue'
 import type { CaptionEvent, ConnectionState } from '@/lib/preklad/types'
-import { getSupabase } from '@/lib/supabase'
+import { getBroadcasterClient, getSupabase } from '@/lib/supabase'
 
 const CAPTION_EVENT = 'caption'
 
@@ -21,8 +21,8 @@ export interface PrekladChannel {
 /**
  * Subscribe to the private Realtime Broadcast channel `sermon:{id}`. Supabase's
  * client handles its own reconnect, so we only surface a connection indicator
- * (spec §9.8). Writes require a broadcaster JWT (set via `accessToken`); reads
- * work for the anon role.
+ * (spec §9.8). Viewers use the anon client (read-only); the broadcaster passes a
+ * Laravel-minted token and gets an authorized client (write).
  */
 export function usePrekladChannel(sessionId: Ref<string | null>, accessToken?: Ref<string | null>): PrekladChannel {
     const connectionState = ref<ConnectionState>('idle')
@@ -31,8 +31,16 @@ export function usePrekladChannel(sessionId: Ref<string | null>, accessToken?: R
 
     let channel: RealtimeChannel | null = null
 
+    function resolveClient(): SupabaseClient | null {
+        if (accessToken?.value) {
+            return getBroadcasterClient(accessToken.value)
+        }
+
+        return getSupabase()
+    }
+
     function ensureChannel(): RealtimeChannel | null {
-        const supabase = getSupabase()
+        const supabase = resolveClient()
 
         if (!supabase || !sessionId.value) {
             return null
@@ -43,7 +51,10 @@ export function usePrekladChannel(sessionId: Ref<string | null>, accessToken?: R
         }
 
         connectionState.value = 'connecting'
-        supabase.realtime.setAuth(accessToken?.value ?? undefined)
+
+        if (accessToken?.value) {
+            supabase.realtime.setAuth(accessToken.value)
+        }
 
         channel = supabase.channel(`sermon:${sessionId.value}`, {
             config: { broadcast: { self: false }, private: true },
@@ -90,7 +101,7 @@ export function usePrekladChannel(sessionId: Ref<string | null>, accessToken?: R
 
     function leave(): void {
         if (channel) {
-            void getSupabase()?.removeChannel(channel)
+            void resolveClient()?.removeChannel(channel)
             channel = null
         }
 

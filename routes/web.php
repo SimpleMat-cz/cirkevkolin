@@ -49,9 +49,13 @@ Route::get('/akce/{slug}', [AkceController::class, 'show'])->name('akce.show');
 Route::get('/kontakt', [KontaktController::class, 'index'])->name('kontakt');
 Route::get('/prispet', [PrispetController::class, 'index'])->name('prispet');
 
-// Live sermon translation (auth is enforced client-side via Supabase on the admin page)
+// Live sermon translation
 Route::get('/preklad', [PrekladController::class, 'viewer'])->name('preklad');
-Route::get('/preklad/admin', [PrekladController::class, 'admin'])->name('preklad.admin');
+Route::middleware('auth')->group(function () {
+    Route::get('/preklad/admin', [PrekladController::class, 'admin'])->name('preklad.admin');
+    Route::post('/preklad/soniox-key', [PrekladController::class, 'sonioxKey'])->name('preklad.soniox-key');
+    Route::post('/preklad/realtime-token', [PrekladController::class, 'realtimeToken'])->name('preklad.realtime-token');
+});
 
 Route::post('/jsem-tu-poprve/prihlaseni', [VisitRequestController::class, 'store'])->name('visit-request.store');
 

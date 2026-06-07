@@ -2,24 +2,23 @@
 import { Head } from '@inertiajs/vue3'
 import { useEventListener, useWakeLock } from '@vueuse/core'
 import { Mic, Pause, Play, Square } from 'lucide-vue-next'
-import { computed, onUnmounted, reactive, ref } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { usePrekladChannel } from '@/composables/usePrekladChannel'
+import { postJson } from '@/lib/http'
 import { LanguageAggregator, splitTokens } from '@/lib/preklad/aggregator'
 import { SERMON_GLOSSARY } from '@/lib/preklad/glossary'
 import { TRANSLATION_TARGETS } from '@/lib/preklad/languages'
 import { encodePcmChunk, rms } from '@/lib/preklad/pcm'
 import { SonioxSession } from '@/lib/preklad/sonioxClient'
 import type { CaptionEvent, CaptionLang, ConnectionState } from '@/lib/preklad/types'
-import { getSupabase, isSupabaseConfigured } from '@/lib/supabase'
+import { getBroadcasterClient, isSupabaseConfigured } from '@/lib/supabase'
 
-type Phase = 'auth' | 'ready' | 'live'
+type Phase = 'ready' | 'live'
 
-const phase = ref<Phase>('auth')
-const authError = ref('')
-const email = ref('')
-const password = ref('')
+const phase = ref<Phase>('ready')
+const startError = ref('')
+
 const accessToken = ref<string | null>(null)
-
 const sessionId = ref<string | null>(null)
 const sessionTitle = ref(defaultTitle())
 const paused = ref(false)
@@ -50,42 +49,7 @@ function defaultTitle(): string {
     return `Nedělní bohoslužba ${new Date().toLocaleDateString('cs-CZ')}`
 }
 
-// --- auth -----------------------------------------------------------------
-
-async function signIn(): Promise<void> {
-    authError.value = ''
-    const supabase = getSupabase()
-
-    if (!supabase) {
-        authError.value = 'Supabase není nakonfigurován.'
-
-        return
-    }
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email: email.value,
-        password: password.value,
-    })
-
-    if (error || !data.session) {
-        authError.value = error?.message ?? 'Přihlášení selhalo.'
-
-        return
-    }
-
-    const { data: isBroadcaster } = await supabase.rpc('is_broadcaster')
-
-    if (isBroadcaster !== true) {
-        authError.value = 'Tento účet nemá oprávnění broadcaster.'
-        await supabase.auth.signOut()
-
-        return
-    }
-
-    accessToken.value = data.session.access_token
-    phase.value = 'ready'
-    await loadDevices()
-}
+// --- audio devices --------------------------------------------------------
 
 async function loadDevices(): Promise<void> {
     try {
@@ -103,30 +67,33 @@ async function loadDevices(): Promise<void> {
     }
 }
 
-// --- Soniox temp key via edge function ------------------------------------
+// --- credentials from the Laravel backend ---------------------------------
 
 async function getTempKey(): Promise<string> {
-    const supabase = getSupabase()
+    const { api_key } = await postJson<{ api_key: string }>('/preklad/soniox-key')
 
-    if (!supabase) {
-        throw new Error('Supabase není nakonfigurován.')
-    }
-
-    const { data, error } = await supabase.functions.invoke('soniox-temp-key', { body: {} })
-
-    if (error || !data?.api_key) {
-        throw new Error(error?.message ?? 'Nepodařilo se získat klíč Soniox.')
-    }
-
-    return data.api_key as string
+    return api_key
 }
 
 // --- start / pause / stop -------------------------------------------------
 
 async function start(): Promise<void> {
-    const supabase = getSupabase()
+    startError.value = ''
+
+    try {
+        const { token } = await postJson<{ token: string }>('/preklad/realtime-token')
+        accessToken.value = token
+    } catch {
+        startError.value = 'Nepodařilo se získat oprávnění (realtime token).'
+
+        return
+    }
+
+    const supabase = getBroadcasterClient(accessToken.value)
 
     if (!supabase) {
+        startError.value = 'Supabase není nakonfigurován.'
+
         return
     }
 
@@ -137,7 +104,7 @@ async function start(): Promise<void> {
         .single()
 
     if (error || !data) {
-        sonioxError.value = error?.message ?? 'Nepodařilo se založit session.'
+        startError.value = error?.message ?? 'Nepodařilo se založit session.'
 
         return
     }
@@ -231,7 +198,6 @@ function togglePause(): void {
 }
 
 async function stop(): Promise<void> {
-    const supabase = getSupabase()
     session?.finalize()
 
     for (const [lang, aggregator] of aggregators) {
@@ -252,6 +218,8 @@ async function stop(): Promise<void> {
         flushTimer = null
     }
 
+    const supabase = accessToken.value ? getBroadcasterClient(accessToken.value) : null
+
     if (supabase && sessionId.value) {
         await supabase
             .from('sermon_sessions')
@@ -263,6 +231,7 @@ async function stop(): Promise<void> {
     leave()
     phase.value = 'ready'
     sessionId.value = null
+    accessToken.value = null
     sessionTitle.value = defaultTitle()
 }
 
@@ -284,6 +253,10 @@ useEventListener(window, 'beforeunload', (event: BeforeUnloadEvent) => {
     }
 })
 
+onMounted(() => {
+    void loadDevices()
+})
+
 onUnmounted(() => {
     stopAudio()
 
@@ -302,40 +275,15 @@ const vuPercent = computed(() => Math.min(100, Math.round(vuLevel.value * 280)))
     </Head>
 
     <div class="min-h-screen bg-neutral-950 text-neutral-100">
-        <!-- Login -->
-        <div v-if="phase === 'auth'" class="flex min-h-screen items-center justify-center p-6">
-            <form class="w-full max-w-sm space-y-4 rounded-2xl border border-white/10 bg-white/5 p-6" @submit.prevent="signIn">
-                <h1 class="text-lg font-semibold">Překlad — přihlášení obsluhy</h1>
-                <input
-                    v-model="email"
-                    type="email"
-                    placeholder="E-mail"
-                    autocomplete="username"
-                    class="w-full rounded-lg border border-white/15 bg-neutral-900 px-3 py-2 text-sm"
-                />
-                <input
-                    v-model="password"
-                    type="password"
-                    placeholder="Heslo"
-                    autocomplete="current-password"
-                    class="w-full rounded-lg border border-white/15 bg-neutral-900 px-3 py-2 text-sm"
-                />
-                <p v-if="authError" class="text-sm text-red-400">{{ authError }}</p>
-                <p v-if="!isSupabaseConfigured" class="text-xs text-amber-400/80">
-                    Chybí VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY.
-                </p>
-                <button type="submit" class="w-full rounded-lg bg-white px-4 py-2 text-sm font-semibold text-neutral-900">
-                    Přihlásit
-                </button>
-            </form>
-        </div>
-
-        <!-- Console -->
-        <div v-else class="mx-auto max-w-2xl space-y-6 p-6">
+        <div class="mx-auto max-w-2xl space-y-6 p-6">
             <header class="flex items-center justify-between">
                 <h1 class="text-lg font-semibold">Ovládání živého překladu</h1>
                 <span class="rounded-full bg-white/10 px-3 py-1 text-xs">👂 {{ listenerCount }}</span>
             </header>
+
+            <p v-if="!isSupabaseConfigured" class="rounded-lg bg-amber-500/15 px-4 py-3 text-sm text-amber-300">
+                Chybí VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY — překlad se nespustí.
+            </p>
 
             <div class="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-5">
                 <label class="block text-sm">
@@ -378,6 +326,7 @@ const vuPercent = computed(() => Math.min(100, Math.round(vuLevel.value * 280)))
                     </span>
                 </div>
                 <p v-if="sonioxError" class="text-xs text-red-400">{{ sonioxError }}</p>
+                <p v-if="startError" class="text-xs text-red-400">{{ startError }}</p>
 
                 <!-- Controls -->
                 <div class="flex gap-3">

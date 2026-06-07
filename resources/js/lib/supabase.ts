@@ -26,4 +26,29 @@ export function getSupabase(): SupabaseClient | null {
     return client
 }
 
+let broadcasterClient: { token: string; client: SupabaseClient } | null = null
+
+/**
+ * Client authorized as a broadcaster via a Laravel-minted Supabase JWT. The
+ * token is sent as the Authorization header (so PostgREST writes pass RLS) and
+ * via realtime.setAuth (so private-channel broadcasts pass RLS). Memoized per
+ * token to avoid recreating channels.
+ */
+export function getBroadcasterClient(token: string): SupabaseClient | null {
+    if (!supabaseUrl || !supabaseAnonKey) {
+        return null
+    }
+
+    if (!broadcasterClient || broadcasterClient.token !== token) {
+        const client = createClient(supabaseUrl, supabaseAnonKey, {
+            global: { headers: { Authorization: `Bearer ${token}` } },
+            realtime: { params: { eventsPerSecond: 10 } },
+        })
+        client.realtime.setAuth(token)
+        broadcasterClient = { token, client }
+    }
+
+    return broadcasterClient.client
+}
+
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey)

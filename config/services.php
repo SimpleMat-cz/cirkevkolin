@@ -45,4 +45,12 @@ return [
         'secret_key' => env('TURNSTILE_SECRET_KEY'),
     ],
 
+    'soniox' => [
+        'api_key' => env('SONIOX_API_KEY'),
+    ],
+
+    'supabase' => [
+        'jwt_secret' => env('SUPABASE_JWT_SECRET'),
+    ],
+
 ];

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\PrekladController::viewer
-* @see app/Http/Controllers/PrekladController.php:10
+* @see app/Http/Controllers/PrekladController.php:18
 * @route '/preklad'
 */
 export const viewer = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ viewer.definition = {
 
 /**
 * @see \App\Http\Controllers\PrekladController::viewer
-* @see app/Http/Controllers/PrekladController.php:10
+* @see app/Http/Controllers/PrekladController.php:18
 * @route '/preklad'
 */
 viewer.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ viewer.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\PrekladController::viewer
-* @see app/Http/Controllers/PrekladController.php:10
+* @see app/Http/Controllers/PrekladController.php:18
 * @route '/preklad'
 */
 viewer.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ viewer.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\PrekladController::viewer
-* @see app/Http/Controllers/PrekladController.php:10
+* @see app/Http/Controllers/PrekladController.php:18
 * @route '/preklad'
 */
 viewer.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ viewer.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\PrekladController::viewer
-* @see app/Http/Controllers/PrekladController.php:10
+* @see app/Http/Controllers/PrekladController.php:18
 * @route '/preklad'
 */
 const viewerForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const viewerForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 
 /**
 * @see \App\Http\Controllers\PrekladController::viewer
-* @see app/Http/Controllers/PrekladController.php:10
+* @see app/Http/Controllers/PrekladController.php:18
 * @route '/preklad'
 */
 viewerForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ viewerForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\PrekladController::viewer
-* @see app/Http/Controllers/PrekladController.php:10
+* @see app/Http/Controllers/PrekladController.php:18
 * @route '/preklad'
 */
 viewerForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ viewer.form = viewerForm
 
 /**
 * @see \App\Http\Controllers\PrekladController::admin
-* @see app/Http/Controllers/PrekladController.php:15
+* @see app/Http/Controllers/PrekladController.php:23
 * @route '/preklad/admin'
 */
 export const admin = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -97,7 +97,7 @@ admin.definition = {
 
 /**
 * @see \App\Http\Controllers\PrekladController::admin
-* @see app/Http/Controllers/PrekladController.php:15
+* @see app/Http/Controllers/PrekladController.php:23
 * @route '/preklad/admin'
 */
 admin.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ admin.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\PrekladController::admin
-* @see app/Http/Controllers/PrekladController.php:15
+* @see app/Http/Controllers/PrekladController.php:23
 * @route '/preklad/admin'
 */
 admin.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -116,7 +116,7 @@ admin.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\PrekladController::admin
-* @see app/Http/Controllers/PrekladController.php:15
+* @see app/Http/Controllers/PrekladController.php:23
 * @route '/preklad/admin'
 */
 admin.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -126,7 +126,7 @@ admin.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\PrekladController::admin
-* @see app/Http/Controllers/PrekladController.php:15
+* @see app/Http/Controllers/PrekladController.php:23
 * @route '/preklad/admin'
 */
 const adminForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -136,7 +136,7 @@ const adminForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\PrekladController::admin
-* @see app/Http/Controllers/PrekladController.php:15
+* @see app/Http/Controllers/PrekladController.php:23
 * @route '/preklad/admin'
 */
 adminForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -146,7 +146,7 @@ adminForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\PrekladController::admin
-* @see app/Http/Controllers/PrekladController.php:15
+* @see app/Http/Controllers/PrekladController.php:23
 * @route '/preklad/admin'
 */
 adminForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -161,6 +161,118 @@ adminForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 admin.form = adminForm
 
-const PrekladController = { viewer, admin }
+/**
+* @see \App\Http\Controllers\PrekladController::sonioxKey
+* @see app/Http/Controllers/PrekladController.php:34
+* @route '/preklad/soniox-key'
+*/
+export const sonioxKey = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: sonioxKey.url(options),
+    method: 'post',
+})
+
+sonioxKey.definition = {
+    methods: ["post"],
+    url: '/preklad/soniox-key',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\PrekladController::sonioxKey
+* @see app/Http/Controllers/PrekladController.php:34
+* @route '/preklad/soniox-key'
+*/
+sonioxKey.url = (options?: RouteQueryOptions) => {
+    return sonioxKey.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\PrekladController::sonioxKey
+* @see app/Http/Controllers/PrekladController.php:34
+* @route '/preklad/soniox-key'
+*/
+sonioxKey.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: sonioxKey.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\PrekladController::sonioxKey
+* @see app/Http/Controllers/PrekladController.php:34
+* @route '/preklad/soniox-key'
+*/
+const sonioxKeyForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: sonioxKey.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\PrekladController::sonioxKey
+* @see app/Http/Controllers/PrekladController.php:34
+* @route '/preklad/soniox-key'
+*/
+sonioxKeyForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: sonioxKey.url(options),
+    method: 'post',
+})
+
+sonioxKey.form = sonioxKeyForm
+
+/**
+* @see \App\Http\Controllers\PrekladController::realtimeToken
+* @see app/Http/Controllers/PrekladController.php:64
+* @route '/preklad/realtime-token'
+*/
+export const realtimeToken = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: realtimeToken.url(options),
+    method: 'post',
+})
+
+realtimeToken.definition = {
+    methods: ["post"],
+    url: '/preklad/realtime-token',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\PrekladController::realtimeToken
+* @see app/Http/Controllers/PrekladController.php:64
+* @route '/preklad/realtime-token'
+*/
+realtimeToken.url = (options?: RouteQueryOptions) => {
+    return realtimeToken.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\PrekladController::realtimeToken
+* @see app/Http/Controllers/PrekladController.php:64
+* @route '/preklad/realtime-token'
+*/
+realtimeToken.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: realtimeToken.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\PrekladController::realtimeToken
+* @see app/Http/Controllers/PrekladController.php:64
+* @route '/preklad/realtime-token'
+*/
+const realtimeTokenForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: realtimeToken.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\PrekladController::realtimeToken
+* @see app/Http/Controllers/PrekladController.php:64
+* @route '/preklad/realtime-token'
+*/
+realtimeTokenForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: realtimeToken.url(options),
+    method: 'post',
+})
+
+realtimeToken.form = realtimeTokenForm
+
+const PrekladController = { viewer, admin, sonioxKey, realtimeToken }
 
 export default PrekladController
