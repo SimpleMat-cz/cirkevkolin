@@ -42,7 +42,9 @@
   },
   "build": {
     "env": {
-      "COMPOSER_NO_DEV": "1"
+      "COMPOSER_NO_DEV": "1",
+      "VITE_SUPABASE_URL": "https://ybesajwrpxgbiiyshynz.supabase.co",
+      "VITE_SUPABASE_ANON_KEY": "sb_publishable_ptbZCSj3p-TBcjQIBb3NRQ_XtGa2E__"
     }
   }
 }
