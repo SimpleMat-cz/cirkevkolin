@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Models\Event;
 use App\Services\RruleExpanderService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -81,5 +82,79 @@ class RruleExpanderServiceTest extends TestCase
     public function test_service_instantiates_correctly(): void
     {
         $this->assertInstanceOf(RruleExpanderService::class, $this->service);
+    }
+
+    private function makeRealEvent(string $rrule, string $startsAt, ?string $endsAt = null): Event
+    {
+        return new Event([
+            'title' => 'Testovací akce',
+            'slug' => 'testovaci-akce',
+            'rrule' => $rrule,
+            'starts_at' => $startsAt,
+            'ends_at' => $endsAt,
+        ]);
+    }
+
+    public function test_weekly_occurrences_keep_event_start_time(): void
+    {
+        $event = $this->makeRealEvent('FREQ=WEEKLY;BYDAY=SU', '2026-06-07 10:00:00');
+
+        $occurrences = $this->service->expand(
+            $event,
+            Carbon::parse('2026-06-08'),
+            Carbon::parse('2026-06-30'),
+        );
+
+        $this->assertNotEmpty($occurrences);
+        foreach ($occurrences as $occurrence) {
+            $this->assertSame('10:00:00', $occurrence->format('H:i:s'));
+            $this->assertSame(Carbon::SUNDAY, $occurrence->dayOfWeek);
+        }
+    }
+
+    public function test_no_occurrences_before_event_start(): void
+    {
+        // Událost začíná ve středu — BYDAY pondělí nesmí vygenerovat výskyt
+        // v témže týdnu před skutečným začátkem.
+        $event = $this->makeRealEvent('FREQ=WEEKLY;BYDAY=MO', '2026-06-10 18:00:00');
+
+        $occurrences = $this->service->expand(
+            $event,
+            Carbon::parse('2026-06-01'),
+            Carbon::parse('2026-06-30'),
+        );
+
+        $this->assertNotEmpty($occurrences);
+        $this->assertTrue($occurrences->every(
+            fn (Carbon $occurrence) => $occurrence->gte(Carbon::parse('2026-06-10 18:00:00')),
+        ));
+    }
+
+    public function test_interval_zero_does_not_loop_forever(): void
+    {
+        $event = $this->makeRealEvent('FREQ=WEEKLY;BYDAY=SU;INTERVAL=0', '2026-06-07 10:00:00');
+
+        $occurrences = $this->service->expand(
+            $event,
+            Carbon::parse('2026-06-01'),
+            Carbon::parse('2026-06-30'),
+        );
+
+        $this->assertCount(4, $occurrences);
+    }
+
+    public function test_yearly_recurrence_is_supported(): void
+    {
+        $event = $this->makeRealEvent('FREQ=YEARLY', '2025-12-24 16:00:00');
+
+        $occurrences = $this->service->expand(
+            $event,
+            Carbon::parse('2026-01-01'),
+            Carbon::parse('2027-12-31'),
+        );
+
+        $this->assertCount(2, $occurrences);
+        $this->assertSame('2026-12-24 16:00:00', $occurrences[0]->toDateTimeString());
+        $this->assertSame('2027-12-24 16:00:00', $occurrences[1]->toDateTimeString());
     }
 }
