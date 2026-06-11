@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Topics\Schemas;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 
 class TopicForm
 {
@@ -12,9 +13,15 @@ class TopicForm
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->required(),
+                    ->label('Název')
+                    ->required()
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn (string $operation, ?string $state, callable $set) => $operation === 'create' ? $set('slug', Str::slug($state ?? '')) : null
+                    ),
                 TextInput::make('slug')
-                    ->required(),
+                    ->label('Slug (URL)')
+                    ->required()
+                    ->unique(ignoreRecord: true),
             ]);
     }
 }
