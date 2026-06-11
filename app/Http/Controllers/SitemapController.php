@@ -17,7 +17,9 @@ class SitemapController extends Controller
 
         $events = Event::query()
             ->where('is_published', true)
-            ->where('starts_at', '>=', now()->subMonth())
+            ->where(fn ($query) => $query
+                ->whereNotNull('rrule')
+                ->orWhere('starts_at', '>=', now()->subMonth()))
             ->orderByDesc('starts_at')
             ->get(['slug', 'updated_at']);
 
@@ -25,6 +27,7 @@ class SitemapController extends Controller
 
         return response($content, 200, [
             'Content-Type' => 'application/xml',
+            'Cache-Control' => 'public, max-age=86400',
         ]);
     }
 }

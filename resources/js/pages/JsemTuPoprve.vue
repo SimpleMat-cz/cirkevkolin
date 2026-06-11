@@ -216,6 +216,16 @@ const faqs = computed(() => props.faqs ?? []);
                         Díky! Ozveme se ti brzy. Těšíme se na setkání.
                     </div>
 
+                    <!-- Honeypot proti spam botům — lidé pole nevidí a nechají ho prázdné -->
+                    <input
+                        type="text"
+                        name="website"
+                        tabindex="-1"
+                        autocomplete="off"
+                        aria-hidden="true"
+                        class="hidden"
+                    />
+
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div>
                             <label
