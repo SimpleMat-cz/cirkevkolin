@@ -12,6 +12,7 @@ use App\Http\Controllers\PrekladController;
 use App\Http\Controllers\PrispetController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\VisitRequestController;
+use App\Http\Controllers\YoutubeSyncCronController;
 use Illuminate\Support\Facades\Route;
 
 // 301 redirects from old site
@@ -60,6 +61,9 @@ Route::middleware('auth')->group(function () {
 Route::post('/jsem-tu-poprve/prihlaseni', [VisitRequestController::class, 'store'])->name('visit-request.store');
 
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+
+// Vercel Cron — denní synchronizace kázání z YouTube (chráněno CRON_SECRET)
+Route::get('/cron/youtube-sync', YoutubeSyncCronController::class)->name('cron.youtube-sync');
 
 // Auth & settings
 Route::middleware(['auth', 'verified'])->group(function () {
