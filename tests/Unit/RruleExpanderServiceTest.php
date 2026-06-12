@@ -143,6 +143,31 @@ class RruleExpanderServiceTest extends TestCase
         $this->assertCount(4, $occurrences);
     }
 
+    public function test_multiple_rules_are_unioned_without_duplicates(): void
+    {
+        // Kidztown: út + čt každý týden, st jednou za 2 týdny.
+        $event = $this->makeRealEvent(
+            "FREQ=WEEKLY;BYDAY=TU,TH\nFREQ=WEEKLY;INTERVAL=2;BYDAY=WE",
+            '2026-06-02 09:00:00',
+        );
+
+        $occurrences = $this->service->expand(
+            $event,
+            Carbon::parse('2026-06-01'),
+            Carbon::parse('2026-06-14 23:59:59'),
+        );
+
+        $dates = $occurrences->map(fn (Carbon $d) => $d->format('Y-m-d H:i'))->all();
+
+        $this->assertSame([
+            '2026-06-02 09:00', // út
+            '2026-06-03 09:00', // st (1. běh čtrnáctidenního)
+            '2026-06-04 09:00', // čt
+            '2026-06-09 09:00', // út
+            '2026-06-11 09:00', // čt
+        ], $dates);
+    }
+
     public function test_yearly_recurrence_is_supported(): void
     {
         $event = $this->makeRealEvent('FREQ=YEARLY', '2025-12-24 16:00:00');

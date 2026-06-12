@@ -2,7 +2,10 @@
 
 namespace App\Filament\Resources\Events\Schemas;
 
+use App\Services\RruleBuilder;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -68,13 +71,28 @@ class EventForm
                             ->columnSpanFull(),
                     ]),
 
-                Section::make('Opakování (RRULE)')
-                    ->collapsed()
+                Section::make('Opakování')
+                    ->description('Bez rozvrhu jde o jednorázovou akci. Rozvrhů může být víc — třeba úterý a čtvrtek každý týden plus středa jednou za 2 týdny.')
                     ->schema([
-                        TextInput::make('rrule')
-                            ->label('RRULE')
-                            ->placeholder('FREQ=WEEKLY;BYDAY=SU')
-                            ->helperText('RFC 5545 RRULE pro opakující se události. Prázdné = jednorázová akce.')
+                        Repeater::make('schedules')
+                            ->label('Rozvrhy opakování')
+                            ->addActionLabel('Přidat opakování')
+                            ->default([])
+                            ->columns(2)
+                            ->schema([
+                                Select::make('freq')
+                                    ->label('Opakovat')
+                                    ->options(RruleBuilder::FREQUENCIES)
+                                    ->default('WEEKLY')
+                                    ->required()
+                                    ->live(),
+                                CheckboxList::make('days')
+                                    ->label('Ve dnech')
+                                    ->options(RruleBuilder::DAYS)
+                                    ->columns(2)
+                                    ->visible(fn (callable $get): bool => in_array($get('freq'), ['WEEKLY', 'BIWEEKLY'], true)),
+                            ])
+                            ->helperText('U opakování „jednou za 2 týdny" se počítá od data začátku akce.')
                             ->columnSpanFull(),
                     ]),
             ]);

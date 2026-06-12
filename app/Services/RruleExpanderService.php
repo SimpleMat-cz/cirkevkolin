@@ -10,7 +10,9 @@ class RruleExpanderService
 {
     /**
      * Expand an event with RRULE into virtual occurrences within a date range.
-     * Returns a collection of Carbon dates for event starts within the range.
+     * The rrule column may hold several rules separated by newlines (e.g.
+     * Kidztown: úterý a čtvrtek týdně + středa jednou za 14 dní) — the result
+     * is their sjednocení bez duplicit.
      *
      * @return Collection<int, Carbon>
      */
@@ -20,8 +22,21 @@ class RruleExpanderService
             return collect();
         }
 
+        return collect(preg_split('/\R+/', trim($event->rrule)) ?: [])
+            ->filter(fn (string $rule): bool => trim($rule) !== '')
+            ->flatMap(fn (string $rule): Collection => $this->expandRule($rule, $event, $from, $to))
+            ->unique(fn (Carbon $date): int => $date->getTimestamp())
+            ->sortBy(fn (Carbon $date): int => $date->getTimestamp())
+            ->values();
+    }
+
+    /**
+     * @return Collection<int, Carbon>
+     */
+    private function expandRule(string $rrule, Event $event, Carbon $from, Carbon $to): Collection
+    {
         $occurrences = collect();
-        $rules = $this->parseRrule($event->rrule);
+        $rules = $this->parseRrule($rrule);
         $freq = strtoupper($rules['FREQ'] ?? '');
         $byDay = isset($rules['BYDAY']) ? explode(',', $rules['BYDAY']) : [];
         $count = isset($rules['COUNT']) ? (int) $rules['COUNT'] : null;
