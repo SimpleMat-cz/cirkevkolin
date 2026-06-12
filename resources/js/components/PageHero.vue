@@ -18,12 +18,14 @@ withDefaults(
     },
 );
 
+// Tmavší odstíny — světlé brand barvy nemají na cream pozadí (a nad bloby)
+// dostatečný kontrast pro text.
 const accentMap = {
-    coral: 'text-brand-coral',
-    teal: 'text-brand-teal',
-    sunny: 'text-brand-sunny',
-    mint: 'text-brand-mint',
-    primary: 'text-brand-primary',
+    coral: 'text-brand-coral-dark',
+    teal: 'text-brand-teal-dark',
+    sunny: 'text-brand-sunny-dark',
+    mint: 'text-brand-mint-dark',
+    primary: 'text-brand-primary-dark',
 };
 
 const blobMap = {
@@ -45,7 +47,15 @@ const blobMap = {
             variant="2"
             float="slow"
             :opacity="0.65"
-            class="-top-24 -right-24"
+            class="-top-24 -right-24 max-sm:hidden"
+        />
+        <Blob
+            :color="blobMap[accentColor].primary"
+            :size="240"
+            variant="2"
+            float="slow"
+            :opacity="0.55"
+            class="-top-16 -right-20 sm:hidden"
         />
         <Blob
             :color="blobMap[accentColor].secondary"
