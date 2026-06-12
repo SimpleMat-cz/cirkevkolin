@@ -58,7 +58,7 @@
     "APP_DEBUG": "false",
     "APP_STORAGE": "/tmp",
     "VIEW_COMPILED_PATH": "/tmp/views",
-    "CACHE_STORE": "array",
+    "CACHE_STORE": "database",
     "SESSION_DRIVER": "cookie",
     "QUEUE_CONNECTION": "sync",
     "LOG_CHANNEL": "stderr",
@@ -82,5 +82,8 @@
       "path": "/cron/youtube-sync",
       "schedule": "0 12 * * *"
     }
+  ],
+  "regions": [
+    "fra1"
   ]
 }
