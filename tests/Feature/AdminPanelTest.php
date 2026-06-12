@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Filament\Resources\Events\EventResource;
 use App\Filament\Resources\Faqs\FaqResource;
+use App\Filament\Resources\Leaders\LeaderResource;
 use App\Filament\Resources\NewsletterSubscribers\NewsletterSubscriberResource;
 use App\Filament\Resources\Pages\PageResource;
 use App\Filament\Resources\Series\SeriesResource;
@@ -11,9 +12,11 @@ use App\Filament\Resources\Sermons\SermonResource;
 use App\Filament\Resources\SiteSettings\SiteSettingResource;
 use App\Filament\Resources\Speakers\SpeakerResource;
 use App\Filament\Resources\Topics\TopicResource;
+use App\Filament\Resources\Users\UserResource;
 use App\Filament\Resources\VisitRequests\VisitRequestResource;
 use App\Models\Event;
 use App\Models\Faq;
+use App\Models\Leader;
 use App\Models\Page;
 use App\Models\Series;
 use App\Models\Sermon;
@@ -62,6 +65,7 @@ class AdminPanelTest extends TestCase
         $pages = [
             EventResource::getUrl('index'),
             FaqResource::getUrl('index'),
+            LeaderResource::getUrl('index'),
             NewsletterSubscriberResource::getUrl('index'),
             PageResource::getUrl('index'),
             SeriesResource::getUrl('index'),
@@ -69,6 +73,7 @@ class AdminPanelTest extends TestCase
             SiteSettingResource::getUrl('index'),
             SpeakerResource::getUrl('index'),
             TopicResource::getUrl('index'),
+            UserResource::getUrl('index'),
             VisitRequestResource::getUrl('index'),
         ];
 
@@ -82,10 +87,12 @@ class AdminPanelTest extends TestCase
         $pages = [
             EventResource::getUrl('create'),
             FaqResource::getUrl('create'),
+            LeaderResource::getUrl('create'),
             SeriesResource::getUrl('create'),
             SermonResource::getUrl('create'),
             SpeakerResource::getUrl('create'),
             TopicResource::getUrl('create'),
+            UserResource::getUrl('create'),
         ];
 
         foreach ($pages as $url) {
@@ -98,11 +105,13 @@ class AdminPanelTest extends TestCase
         $pages = [
             EventResource::getUrl('edit', ['record' => Event::factory()->create()]),
             FaqResource::getUrl('edit', ['record' => Faq::factory()->create()]),
+            LeaderResource::getUrl('edit', ['record' => Leader::factory()->create()]),
             PageResource::getUrl('edit', ['record' => Page::factory()->create()]),
             SeriesResource::getUrl('edit', ['record' => Series::factory()->create()]),
             SermonResource::getUrl('edit', ['record' => Sermon::factory()->create()]),
             SpeakerResource::getUrl('edit', ['record' => Speaker::factory()->create()]),
             TopicResource::getUrl('edit', ['record' => Topic::factory()->create()]),
+            UserResource::getUrl('edit', ['record' => User::factory()->create()]),
             VisitRequestResource::getUrl('edit', ['record' => VisitRequest::factory()->create()]),
         ];
 
