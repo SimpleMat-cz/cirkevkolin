@@ -8,11 +8,22 @@ import {
     ExternalLink,
     Facebook,
 } from 'lucide-vue-next';
+import { computed } from 'vue';
 import Blob from '@/components/Blob.vue';
 import LeadersBlock from '@/components/LeadersBlock.vue';
 import PublicLayout from '@/layouts/public.vue';
+import type { PageLeader } from '@/types';
 
-const leaders = [{ name: 'Mirka Smetanová', role: 'Vedoucí KidzTown' }];
+const fallbackLeaders: PageLeader[] = [
+    { name: 'Mirka Smetanová', role: 'Vedoucí KidzTown' },
+];
+
+const props = defineProps<{ leaders?: PageLeader[] }>();
+
+// Vedoucí z administrace; dokud tam žádní nejsou, platí původní statický seznam.
+const leaders = computed(() =>
+    props.leaders?.length ? props.leaders : fallbackLeaders,
+);
 </script>
 
 <template>

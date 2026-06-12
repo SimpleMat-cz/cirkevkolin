@@ -7,17 +7,26 @@ import {
     Users,
     ArrowRight,
 } from 'lucide-vue-next';
+import { computed } from 'vue';
 import Blob from '@/components/Blob.vue';
 import LeadersBlock from '@/components/LeadersBlock.vue';
 import PublicLayout from '@/layouts/public.vue';
+import type { PageLeader } from '@/types';
 
-const leaders = [
+const fallbackLeaders: PageLeader[] = [
     { name: 'Martin Penc', role: 'Vede Business setkání — ozvi se mu přímo' },
     {
         name: 'Michal Koudelka',
         role: 'Druhý pilíř setkání — taky se ho můžeš zeptat',
     },
 ];
+
+const props = defineProps<{ leaders?: PageLeader[] }>();
+
+// Vedoucí z administrace; dokud tam žádní nejsou, platí původní statický seznam.
+const leaders = computed(() =>
+    props.leaders?.length ? props.leaders : fallbackLeaders,
+);
 </script>
 
 <template>

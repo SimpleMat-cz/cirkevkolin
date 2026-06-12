@@ -1,20 +1,17 @@
 <script setup lang="ts">
+import { Mail, Phone } from 'lucide-vue-next';
+import type { PageLeader } from '@/types';
+
 /**
- * Zobrazuje 2 osoby, které vedou danou aktivitu.
+ * Zobrazuje vedoucí dané aktivity (libovolný počet).
  * Obrázky: lokální path nebo externí URL (z brand assets).
  * Pokud není fotka, zobrazí se kruh s iniciálou.
  */
-interface Leader {
-    name: string;
-    role?: string;
-    photo?: string;
-}
-
 withDefaults(
     defineProps<{
         title?: string;
         subtitle?: string;
-        leaders: Leader[];
+        leaders: PageLeader[];
     }>(),
     {
         title: 'Kdo to vede',
@@ -53,7 +50,9 @@ function initial(name: string): string {
                     'mt-10 grid gap-6',
                     leaders.length === 1
                         ? 'mx-auto max-w-sm grid-cols-1'
-                        : 'grid-cols-1 sm:grid-cols-2',
+                        : leaders.length === 2
+                          ? 'grid-cols-1 sm:grid-cols-2'
+                          : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
                 ]"
             >
                 <div
@@ -61,7 +60,7 @@ function initial(name: string): string {
                     :key="leader.name"
                     :class="[
                         'reveal hover-lift flex flex-col items-center gap-4 rounded-3xl bg-brand-cream p-6 ring-1 ring-brand-ink/5 sm:p-8',
-                        `reveal-delay-${i + 1}`,
+                        `reveal-delay-${Math.min(i + 1, 3)}`,
                     ]"
                 >
                     <div
@@ -91,6 +90,27 @@ function initial(name: string): string {
                         >
                             {{ leader.role }}
                         </p>
+                        <div
+                            v-if="leader.phone || leader.email"
+                            class="mt-3 flex flex-col items-center gap-1.5"
+                        >
+                            <a
+                                v-if="leader.phone"
+                                :href="`tel:${leader.phone.replace(/\s/g, '')}`"
+                                class="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-primary-dark hover:underline"
+                            >
+                                <Phone class="h-3.5 w-3.5" />
+                                {{ leader.phone }}
+                            </a>
+                            <a
+                                v-if="leader.email"
+                                :href="`mailto:${leader.email}`"
+                                class="inline-flex items-center gap-1.5 text-sm text-brand-ink-soft hover:underline"
+                            >
+                                <Mail class="h-3.5 w-3.5" />
+                                {{ leader.email }}
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
