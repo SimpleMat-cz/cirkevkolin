@@ -24,6 +24,7 @@ class StoreVisitRequestRequest extends FormRequest
             'people_count' => ['required', 'integer', 'min:1', 'max:20'],
             'planned_visit_date' => ['nullable', 'date', 'after:today'],
             'note' => ['nullable', 'string', 'max:1000'],
+            'website' => ['prohibited'],
         ];
     }
 

@@ -158,23 +158,6 @@ import BrandLogo from '@/components/BrandLogo.vue';
                     © {{ new Date().getFullYear() }} Apoštolská církev Kolín —
                     součást Apoštolské církve v ČR.
                 </p>
-                <div class="flex gap-5 text-xs text-white/40">
-                    <a
-                        href="/cookies"
-                        class="transition-colors hover:text-white/70"
-                        >Cookies</a
-                    >
-                    <a
-                        href="/gdpr"
-                        class="transition-colors hover:text-white/70"
-                        >GDPR</a
-                    >
-                    <a
-                        href="/pristupnost"
-                        class="transition-colors hover:text-white/70"
-                        >Přístupnost</a
-                    >
-                </div>
             </div>
         </div>
     </footer>

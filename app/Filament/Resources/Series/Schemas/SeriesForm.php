@@ -6,6 +6,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 
 class SeriesForm
 {
@@ -14,13 +15,22 @@ class SeriesForm
         return $schema
             ->components([
                 TextInput::make('title')
-                    ->required(),
+                    ->label('Název')
+                    ->required()
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn (string $operation, ?string $state, callable $set) => $operation === 'create' ? $set('slug', Str::slug($state ?? '')) : null
+                    ),
                 TextInput::make('slug')
-                    ->required(),
+                    ->label('Slug (URL)')
+                    ->required()
+                    ->unique(ignoreRecord: true),
                 Textarea::make('description')
+                    ->label('Popis')
+                    ->rows(4)
                     ->columnSpanFull(),
                 Toggle::make('is_published')
-                    ->required(),
+                    ->label('Publikováno')
+                    ->default(true),
             ]);
     }
 }

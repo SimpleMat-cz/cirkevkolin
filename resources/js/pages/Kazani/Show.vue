@@ -197,7 +197,7 @@ function formatDate(dateStr?: string): string {
                     <div class="py-8">
                         <div
                             v-if="activeTab === 'summary'"
-                            class="prose prose-sm max-w-none leading-relaxed text-brand-ink/70"
+                            class="leading-relaxed whitespace-pre-line text-brand-ink/70"
                         >
                             {{
                                 sermon.description || 'Popis není k dispozici.'

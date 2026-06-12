@@ -26,7 +26,7 @@ class RruleExpanderService
         $byDay = isset($rules['BYDAY']) ? explode(',', $rules['BYDAY']) : [];
         $count = isset($rules['COUNT']) ? (int) $rules['COUNT'] : null;
         $until = isset($rules['UNTIL']) ? Carbon::parse($rules['UNTIL']) : null;
-        $interval = (int) ($rules['INTERVAL'] ?? 1);
+        $interval = max(1, (int) ($rules['INTERVAL'] ?? 1));
 
         $start = Carbon::instance($event->starts_at);
         $cursor = $start->copy();
@@ -41,13 +41,14 @@ class RruleExpanderService
 
             $candidates = match ($freq) {
                 'DAILY' => [$cursor->copy()],
-                'WEEKLY' => $this->expandWeekly($cursor, $byDay),
+                'WEEKLY' => $this->expandWeekly($cursor, $byDay, $start),
                 'MONTHLY' => [$cursor->copy()],
+                'YEARLY' => [$cursor->copy()],
                 default => [],
             };
 
             foreach ($candidates as $candidate) {
-                if ($candidate->gte($from) && $candidate->lte($to)) {
+                if ($candidate->gte($start) && $candidate->gte($from) && $candidate->lte($to)) {
                     $occurrences->push($candidate);
                     $generated++;
                 }
@@ -57,6 +58,7 @@ class RruleExpanderService
                 'DAILY' => $cursor->addDays($interval),
                 'WEEKLY' => $cursor->addWeeks($interval),
                 'MONTHLY' => $cursor->addMonths($interval),
+                'YEARLY' => $cursor->addYears($interval),
                 default => $to->copy()->addDay(),
             };
         }
@@ -109,8 +111,13 @@ class RruleExpanderService
         return $rules;
     }
 
-    /** @return Collection<int, Carbon> */
-    private function expandWeekly(Carbon $weekStart, array $byDay): Collection
+    /**
+     * Vrátí dny v týdnu kurzoru podle BYDAY. `startOfWeek` nuluje čas,
+     * proto se čas začátku přenáší z původní události (`setTimeFrom`).
+     *
+     * @return Collection<int, Carbon>
+     */
+    private function expandWeekly(Carbon $weekStart, array $byDay, Carbon $eventStart): Collection
     {
         if (empty($byDay)) {
             return collect([$weekStart->copy()]);
@@ -119,14 +126,14 @@ class RruleExpanderService
         $dayMap = ['MO' => 1, 'TU' => 2, 'WE' => 3, 'TH' => 4, 'FR' => 5, 'SA' => 6, 'SU' => 0];
         $monday = $weekStart->copy()->startOfWeek(Carbon::MONDAY);
 
-        return collect($byDay)->map(function (string $day) use ($monday, $dayMap): ?Carbon {
+        return collect($byDay)->map(function (string $day) use ($monday, $dayMap, $eventStart): ?Carbon {
             $day = strtoupper(trim($day));
             if (! isset($dayMap[$day])) {
                 return null;
             }
             $offset = ($dayMap[$day] - 1 + 7) % 7;
 
-            return $monday->copy()->addDays($offset);
+            return $monday->copy()->addDays($offset)->setTimeFrom($eventStart);
         })->filter()->values();
     }
 }

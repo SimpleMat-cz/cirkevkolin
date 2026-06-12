@@ -7,21 +7,51 @@
   "functions": {
     "api/index.php": {
       "runtime": "vercel-php@0.8.0",
-      "maxDuration": 30,
+      "maxDuration": 60,
       "includeFiles": "vendor/laravel/framework/src/Illuminate/{Testing,Http/Middleware,Foundation/Http/Middleware}/**"
     }
   },
   "routes": [
-    { "src": "/build/(.*)", "dest": "/build/$1" },
-    { "src": "/fonts/(.*)", "dest": "/fonts/$1" },
-    { "src": "/images/(.*)", "dest": "/images/$1" },
-    { "src": "/css/(.*)", "dest": "/css/$1" },
-    { "src": "/js/(.*)", "dest": "/js/$1" },
-    { "src": "/favicon.ico", "dest": "/favicon.ico" },
-    { "src": "/favicon.svg", "dest": "/favicon.svg" },
-    { "src": "/apple-touch-icon.png", "dest": "/apple-touch-icon.png" },
-    { "src": "/robots.txt", "dest": "/robots.txt" },
-    { "src": "/(.*)", "dest": "/api/index.php" }
+    {
+      "src": "/build/(.*)",
+      "dest": "/build/$1"
+    },
+    {
+      "src": "/fonts/(.*)",
+      "dest": "/fonts/$1"
+    },
+    {
+      "src": "/images/(.*)",
+      "dest": "/images/$1"
+    },
+    {
+      "src": "/css/(.*)",
+      "dest": "/css/$1"
+    },
+    {
+      "src": "/js/(.*)",
+      "dest": "/js/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/favicon.ico"
+    },
+    {
+      "src": "/favicon.svg",
+      "dest": "/favicon.svg"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "dest": "/apple-touch-icon.png"
+    },
+    {
+      "src": "/robots.txt",
+      "dest": "/robots.txt"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.php"
+    }
   ],
   "env": {
     "APP_ENV": "production",
@@ -46,5 +76,11 @@
       "VITE_SUPABASE_URL": "https://ybesajwrpxgbiiyshynz.supabase.co",
       "VITE_SUPABASE_ANON_KEY": "sb_publishable_ptbZCSj3p-TBcjQIBb3NRQ_XtGa2E__"
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/cron/youtube-sync",
+      "schedule": "0 12 * * *"
+    }
+  ]
 }

@@ -181,10 +181,6 @@ const beliefs = [
                             i&nbsp;ve&nbsp;vztazích. Jsou rodiče, manželé
                             a&nbsp;lidé, kteří mají rádi lidi.
                         </p>
-                        <p class="mt-4 text-sm text-brand-ink/50 italic">
-                            (Delší představení Martina a&nbsp;Slávky —
-                            doplníme.)
-                        </p>
                     </div>
                 </div>
             </div>
