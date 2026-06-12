@@ -13,9 +13,9 @@ import {
 } from 'vue';
 import { usePrekladChannel } from '@/composables/usePrekladChannel';
 import {
-    ENABLED_LANGUAGES,
-    UI_STRINGS,
+    languagesForCodes,
     langOption,
+    UI_STRINGS,
 } from '@/lib/preklad/languages';
 import type {
     CaptionEvent,
@@ -39,6 +39,11 @@ const fontStep = useLocalStorage<number>('preklad-font', 0);
 const ui = computed(() => UI_STRINGS[selectedLang.value ?? 'cs']);
 const showPicker = computed(
     () => phase.value === 'live' && !selectedLang.value,
+);
+
+/** Jazyky nabízené hostovi — jen ty, které vysílací konzole skutečně vysílá. */
+const availableLanguages = computed(() =>
+    languagesForCodes(session.value?.languages),
 );
 
 /** Captions kept per language so switching languages preserves what arrived. */
@@ -94,16 +99,27 @@ async function loadActiveSession(): Promise<void> {
         return;
     }
 
-    const { data } = await supabase
+    let result = await supabase
         .from('sermon_sessions')
-        .select('id, title, status')
+        .select('id, title, status, languages')
         .eq('status', 'live')
         .order('started_at', { ascending: false })
         .limit(1)
         .maybeSingle();
 
-    if (data) {
-        session.value = data as SessionInfo;
+    if (result.error && /languages/i.test(result.error.message)) {
+        // Sloupec languages ještě nemusí v DB existovat.
+        result = await supabase
+            .from('sermon_sessions')
+            .select('id, title, status')
+            .eq('status', 'live')
+            .order('started_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+    }
+
+    if (result.data) {
+        session.value = result.data as SessionInfo;
         phase.value = 'live';
     } else if (phase.value !== 'live') {
         phase.value = 'no-session';
@@ -250,7 +266,7 @@ onUnmounted(() => {
             </h1>
             <div class="grid w-full max-w-md gap-3">
                 <button
-                    v-for="lang in ENABLED_LANGUAGES"
+                    v-for="lang in availableLanguages"
                     :key="lang.code"
                     class="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-left transition-colors hover:bg-white/10"
                     @click="chooseLanguage(lang.code)"

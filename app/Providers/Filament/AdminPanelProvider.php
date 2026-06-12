@@ -7,6 +7,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -42,6 +43,13 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 AccountWidget::class,
                 StatsOverview::class,
+            ])
+            ->navigationItems([
+                NavigationItem::make('Živý překlad')
+                    ->url(fn (): string => route('preklad.admin'))
+                    ->icon('heroicon-o-language')
+                    ->group('Kázání')
+                    ->sort(99),
             ])
             ->middleware([
                 EncryptCookies::class,

@@ -28,6 +28,20 @@ class PrekladController extends Controller
     }
 
     /**
+     * Stav serverové konfigurace pro vysílací konzoli — jen booleany, žádné
+     * hodnoty. Technik tak hned vidí, který klíč na serveru chybí.
+     */
+    public function health(Request $request): JsonResponse
+    {
+        $this->authorizeBroadcaster($request);
+
+        return response()->json([
+            'soniox_key_configured' => (bool) config('services.soniox.api_key'),
+            'supabase_jwt_configured' => (bool) config('services.supabase.jwt_secret'),
+        ]);
+    }
+
+    /**
      * Mint a short-lived Soniox temporary API key. The main key never reaches
      * the browser; only an authorized broadcaster can request one.
      */

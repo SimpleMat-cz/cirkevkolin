@@ -54,6 +54,7 @@ Route::get('/prispet', [PrispetController::class, 'index'])->name('prispet');
 Route::get('/preklad', [PrekladController::class, 'viewer'])->name('preklad');
 Route::middleware('auth')->group(function () {
     Route::get('/preklad/admin', [PrekladController::class, 'admin'])->name('preklad.admin');
+    Route::get('/preklad/health', [PrekladController::class, 'health'])->name('preklad.health');
     Route::post('/preklad/soniox-key', [PrekladController::class, 'sonioxKey'])->name('preklad.soniox-key');
     Route::post('/preklad/realtime-token', [PrekladController::class, 'realtimeToken'])->name('preklad.realtime-token');
 });

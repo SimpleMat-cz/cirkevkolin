@@ -4,6 +4,23 @@ function readCookie(name: string): string | null {
     return match ? decodeURIComponent(match[1]) : null;
 }
 
+/** GET a same-origin Laravel JSON endpoint. */
+export async function getJson<T>(url: string): Promise<T> {
+    const response = await fetch(url, {
+        credentials: 'same-origin',
+        headers: {
+            Accept: 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+    }
+
+    return response.json() as Promise<T>;
+}
+
 /**
  * POST to a same-origin Laravel JSON endpoint with the CSRF token Laravel sets
  * in the XSRF-TOKEN cookie. Used for the broadcaster's server-side credential
