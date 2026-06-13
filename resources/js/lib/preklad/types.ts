@@ -1,4 +1,8 @@
-export type CaptionLang = 'cs' | 'en' | 'uk' | 'pl' | 'sr';
+/**
+ * Kód jazyka (ISO 639-1). Otevřená množina — Soniox umí 60 jazyků, takže
+ * místo úzkého unionu používáme string a katalog řešíme v languages.ts.
+ */
+export type CaptionLang = string;
 
 /** A single token as returned by the Soniox real-time WebSocket API. */
 export interface SonioxToken {
@@ -28,6 +32,8 @@ export interface SessionInfo {
     id: string;
     title: string;
     status: 'idle' | 'live' | 'ended';
-    /** Vysílané jazyky; starší sessions sloupec nemají → fallback cs+en. */
+    /** Nabízené jazyky; starší sessions sloupec nemají. */
     languages?: CaptionLang[] | null;
+    /** Heartbeat — divácká stránka podle něj pozná, že vysílání opravdu běží. */
+    last_seen_at?: string | null;
 }

@@ -52,6 +52,7 @@ Route::get('/prispet', [PrispetController::class, 'index'])->name('prispet');
 
 // Live sermon translation
 Route::get('/preklad', [PrekladController::class, 'viewer'])->name('preklad');
+Route::get('/preklad/karta', [PrekladController::class, 'karta'])->name('preklad.karta');
 Route::middleware('auth')->group(function () {
     Route::get('/preklad/admin', [PrekladController::class, 'admin'])->name('preklad.admin');
     Route::get('/preklad/health', [PrekladController::class, 'health'])->name('preklad.health');

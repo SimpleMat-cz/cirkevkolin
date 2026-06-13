@@ -20,6 +20,11 @@ class PrekladController extends Controller
         return Inertia::render('Preklad/Viewer');
     }
 
+    public function karta(): Response
+    {
+        return Inertia::render('Preklad/Karta');
+    }
+
     public function admin(Request $request): Response
     {
         $this->authorizeBroadcaster($request);

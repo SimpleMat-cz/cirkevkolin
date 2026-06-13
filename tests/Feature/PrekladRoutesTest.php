@@ -30,6 +30,13 @@ class PrekladRoutesTest extends TestCase
             ->assertInertia(fn (AssertableInertia $page) => $page->component('Preklad/Viewer'));
     }
 
+    public function test_card_page_is_public(): void
+    {
+        $this->get(route('preklad.karta'))
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page->component('Preklad/Karta'));
+    }
+
     public function test_admin_page_requires_login(): void
     {
         $this->get(route('preklad.admin'))->assertRedirect(route('login'));
