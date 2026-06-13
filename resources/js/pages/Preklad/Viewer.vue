@@ -1,16 +1,8 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { useLocalStorage } from '@vueuse/core';
-import { ArrowDown, Languages, Type } from 'lucide-vue-next';
-import {
-    computed,
-    nextTick,
-    onMounted,
-    onUnmounted,
-    reactive,
-    ref,
-    watch,
-} from 'vue';
+import { Languages, Type } from 'lucide-vue-next';
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import Blob from '@/components/Blob.vue';
 import { usePrekladChannel } from '@/composables/usePrekladChannel';
 import { LANGUAGES, langOption, UI_STRINGS } from '@/lib/preklad/languages';
@@ -24,6 +16,8 @@ import { getSupabase, isSupabaseConfigured } from '@/lib/supabase';
 type Phase = 'loading' | 'no-session' | 'live';
 
 const MAX_SEGMENTS = 50;
+/** Kolik posledních vět teleprompter drží na obrazovce (zbytek odplyne nahoru). */
+const VISIBLE_SEGMENTS = 6;
 const FONT_STEPS = ['text-2xl', 'text-3xl', 'text-4xl'] as const;
 
 const phase = ref<Phase>('loading');
@@ -31,7 +25,7 @@ const session = ref<SessionInfo | null>(null);
 const sessionId = computed(() => session.value?.id ?? null);
 
 const selectedLang = useLocalStorage<CaptionLang | null>('preklad-lang', null);
-const fontStep = useLocalStorage<number>('preklad-font', 0);
+const fontStep = useLocalStorage<number>('preklad-font', 1);
 
 const ui = computed(() => UI_STRINGS[selectedLang.value ?? 'cs']);
 const showPicker = computed(
@@ -56,6 +50,11 @@ const segments = computed<CaptionEvent[]>(() => {
         .slice(-MAX_SEGMENTS);
 });
 
+/** Jen posledních pár vět — teleprompter ukotvený dole, bez scrollování. */
+const visibleSegments = computed<CaptionEvent[]>(() =>
+    segments.value.slice(-VISIBLE_SEGMENTS),
+);
+
 const { connectionState, onCaption, trackPresence, leave } =
     usePrekladChannel(sessionId);
 
@@ -75,10 +74,6 @@ onCaption((payload) => {
         for (const key of oldest) {
             map.delete(key);
         }
-    }
-
-    if (payload.lang === selectedLang.value) {
-        maybeAutoScroll();
     }
 });
 
@@ -123,54 +118,13 @@ async function loadActiveSession(): Promise<void> {
     }
 }
 
-// --- auto-scroll ----------------------------------------------------------
-
-const scrollEl = ref<HTMLElement | null>(null);
-const autoScroll = ref(true);
-
-function maybeAutoScroll(): void {
-    if (!autoScroll.value) {
-        return;
-    }
-
-    void nextTick(() => {
-        const el = scrollEl.value;
-
-        if (el) {
-            el.scrollTop = el.scrollHeight;
-        }
-    });
-}
-
-function onScroll(): void {
-    const el = scrollEl.value;
-
-    if (!el) {
-        return;
-    }
-
-    const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
-    autoScroll.value = atBottom;
-}
-
-function jumpToLive(): void {
-    autoScroll.value = true;
-    maybeAutoScroll();
-}
-
 function cycleFont(): void {
     fontStep.value = (fontStep.value + 1) % FONT_STEPS.length;
 }
 
 function chooseLanguage(code: CaptionLang): void {
     selectedLang.value = code;
-    void nextTick(maybeAutoScroll);
 }
-
-watch(selectedLang, () => {
-    autoScroll.value = true;
-    maybeAutoScroll();
-});
 
 onMounted(() => {
     void loadActiveSession();
@@ -193,7 +147,7 @@ onUnmounted(() => {
     </Head>
 
     <div
-        class="relative flex min-h-screen flex-col overflow-hidden bg-brand-cream text-brand-ink"
+        class="relative flex h-[100dvh] flex-col overflow-hidden bg-brand-cream text-brand-ink"
     >
         <Blob
             color="#ff8c69"
@@ -310,7 +264,7 @@ onUnmounted(() => {
             </div>
         </div>
 
-        <!-- Captions -->
+        <!-- Captions — teleprompter: ukotveno dole, mění se samo, bez scrollu -->
         <div v-else class="relative z-10 flex flex-1 flex-col overflow-hidden">
             <div
                 v-if="
@@ -323,40 +277,79 @@ onUnmounted(() => {
             </div>
 
             <div
-                ref="scrollEl"
-                class="flex-1 space-y-4 overflow-y-auto px-4 py-6 sm:px-6"
-                @scroll="onScroll"
+                v-if="visibleSegments.length === 0"
+                class="flex flex-1 flex-col items-center justify-center gap-3 text-center text-brand-ink/40"
+            >
+                <div
+                    class="h-8 w-8 animate-spin rounded-full border-2 border-brand-coral/30 border-t-brand-coral"
+                />
+                <p class="text-sm">{{ ui.connecting }}</p>
+            </div>
+
+            <transition-group
+                v-else
+                tag="div"
+                name="caption"
+                class="preklad-stream flex flex-1 flex-col justify-end gap-3 overflow-hidden px-5 py-8 sm:px-8"
             >
                 <p
-                    v-for="seg in segments"
+                    v-for="(seg, i) in visibleSegments"
                     :key="seg.seq"
-                    :class="FONT_STEPS[fontStep]"
-                    class="leading-relaxed font-medium text-brand-ink"
+                    :class="[
+                        FONT_STEPS[fontStep],
+                        i === visibleSegments.length - 1
+                            ? 'text-brand-ink'
+                            : 'text-brand-ink/45',
+                    ]"
+                    class="leading-snug font-semibold transition-colors duration-500"
                 >
                     <span>{{ seg.final }}</span>
-                    <span v-if="seg.partial" class="text-brand-ink/45 italic">
+                    <span v-if="seg.partial" class="text-brand-ink/40 italic">
                         {{ seg.partial }}</span
                     >
                 </p>
-                <div
-                    v-if="segments.length === 0"
-                    class="flex flex-col items-center gap-3 pt-16 text-center text-brand-ink/40"
-                >
-                    <div
-                        class="h-8 w-8 animate-spin rounded-full border-2 border-brand-coral/30 border-t-brand-coral"
-                    />
-                    <p class="text-sm">{{ ui.connecting }}</p>
-                </div>
-            </div>
-
-            <button
-                v-if="!autoScroll"
-                class="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-brand-coral px-4 py-2 text-sm font-semibold text-white shadow-lg transition-colors hover:bg-brand-coral-dark"
-                @click="jumpToLive"
-            >
-                <ArrowDown class="h-4 w-4" />
-                {{ ui.liveButton }}
-            </button>
+            </transition-group>
         </div>
     </div>
 </template>
+
+<style scoped>
+/* Horní okraj toku titulků plynule mizí — staré věty se „rozplynou" nahoře. */
+.preklad-stream {
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0,
+        rgba(0, 0, 0, 0.35) 14%,
+        black 38%
+    );
+    mask-image: linear-gradient(
+        to bottom,
+        transparent 0,
+        rgba(0, 0, 0, 0.35) 14%,
+        black 38%
+    );
+}
+
+/* Nová věta naskočí zespodu, ostatní se plynule posunou nahoru. */
+.caption-enter-active {
+    transition:
+        opacity 0.45s ease,
+        transform 0.45s ease;
+}
+
+.caption-enter-from {
+    opacity: 0;
+    transform: translateY(12px);
+}
+
+.caption-move {
+    transition: transform 0.45s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .caption-enter-active,
+    .caption-move {
+        transition: none;
+    }
+}
+</style>
