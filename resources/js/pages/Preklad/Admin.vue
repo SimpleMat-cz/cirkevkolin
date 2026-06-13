@@ -43,6 +43,13 @@ interface HealthInfo {
 /** Všechny nabízené jazyky (host si vybírá ve své aplikaci). */
 const OFFERED_CODES = LANGUAGES.map((l) => l.code);
 
+/**
+ * Zdrojové jazyky, které kázání obsahuje. Soniox v4 umí code-switching —
+ * pozná, když řečník přejde do slovenštiny/angličtiny, a správně to přepíše
+ * i přeloží. Češtinu necháváme jako hlavní.
+ */
+const SOURCE_LANGUAGE_HINTS = ['cs', 'sk', 'en'];
+
 const phase = ref<Phase>('ready');
 const startError = ref('');
 
@@ -294,7 +301,7 @@ function startCzechSession(): void {
     const session = new SonioxSession({
         getTempKey,
         context: SERMON_GLOSSARY,
-        languageHints: ['cs'],
+        languageHints: SOURCE_LANGUAGE_HINTS,
         onStateChange: (state) => (sonioxStates.cs = state),
         onError: (message) => (sonioxError.value = `cs: ${message}`),
         onTokens: (tokens) => handleLang('cs', tokens),
@@ -346,7 +353,7 @@ function reconcileTranslations(): void {
             targetLanguage: target.targetLanguage,
             getTempKey,
             context: SERMON_GLOSSARY,
-            languageHints: ['cs'],
+            languageHints: SOURCE_LANGUAGE_HINTS,
             onStateChange: (state) => (sonioxStates[lang] = state),
             onError: (message) => (sonioxError.value = `${lang}: ${message}`),
             onTokens: (tokens) =>

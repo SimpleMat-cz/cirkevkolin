@@ -263,3 +263,13 @@ export const HARD_OF_HEARING_INVITE: Record<string, string> = {
     pl: 'Słabo słyszysz? Włącz napisy na żywo i tłumaczenie.',
     sr: 'Slabije čujete? Pratite prevod uživo.',
 };
+
+/** Pozvánka „nerozumíte česky → čtěte překlad" pro kartičku cizinců. */
+export const UNDERSTAND_INVITE: Record<string, string> = {
+    en: "Don't understand Czech? Read the live translation.",
+    de: 'Verstehen Sie kein Tschechisch? Lesen Sie die Live-Übersetzung.',
+    ru: 'Не понимаете по-чешски? Читайте перевод в прямом эфире.',
+    uk: 'Не розумієте чеської? Читайте переклад наживо.',
+    pl: 'Nie rozumiesz po czesku? Czytaj tłumaczenie na żywo.',
+    sr: 'Ne razumete češki? Čitajte prevod uživo.',
+};
