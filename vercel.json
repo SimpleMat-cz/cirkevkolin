@@ -33,6 +33,10 @@
       "dest": "/js/$1"
     },
     {
+      "src": "/worklets/(.*)",
+      "dest": "/worklets/$1"
+    },
+    {
       "src": "/favicon.ico",
       "dest": "/favicon.ico"
     },
