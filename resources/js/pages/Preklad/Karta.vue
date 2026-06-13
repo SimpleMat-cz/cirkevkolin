@@ -46,8 +46,22 @@ interface CardConfig {
     invites: CardInvite[];
 }
 
-/** Cizojazyčné oblíbené (bez češtiny) — pro kartičku „Špatně rozumíte?". */
-const foreignFavorites = FAVORITE_LANGUAGES.filter((l) => l.code !== 'cs');
+/**
+ * Cizojazyčné oblíbené (bez češtiny) — pro kartičku „Špatně rozumíte?".
+ * Pořadí podle publika sboru: angličtina, ukrajinština, srbština, pak ostatní.
+ */
+const FOREIGN_PRIORITY = ['en', 'uk', 'sr'];
+const foreignFavorites = [...FAVORITE_LANGUAGES.filter((l) => l.code !== 'cs')]
+    .map((lang, index) => ({ lang, index }))
+    .sort((a, b) => {
+        const ap = FOREIGN_PRIORITY.indexOf(a.lang.code);
+        const bp = FOREIGN_PRIORITY.indexOf(b.lang.code);
+
+        return (
+            (ap === -1 ? 100 + a.index : ap) - (bp === -1 ? 100 + b.index : bp)
+        );
+    })
+    .map((entry) => entry.lang);
 
 const understandInvites: CardInvite[] = foreignFavorites
     .filter((lang) => UNDERSTAND_INVITE[lang.code])
@@ -76,8 +90,7 @@ const cards: CardConfig[] = [
     {
         key: 'understand',
         title: 'Špatně rozumíte?',
-        subtitle:
-            "Don't understand Czech? · Не розумієте? · Nie rozumiesz? · Не понимаете?",
+        subtitle: "Don't understand Czech? · Не розумієте? · Ne razumete?",
         message:
             'Scan the QR code and read a live translation of the sermon in your own language.',
         chips: foreignFavorites,
