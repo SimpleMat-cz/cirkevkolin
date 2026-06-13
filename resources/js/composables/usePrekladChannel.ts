@@ -1,28 +1,43 @@
 import type { RealtimeChannel, SupabaseClient } from '@supabase/supabase-js';
 import type { Ref } from 'vue';
 import { onUnmounted, ref } from 'vue';
-import type { CaptionEvent, ConnectionState } from '@/lib/preklad/types';
+import type {
+    CaptionEvent,
+    CaptionLang,
+    ConnectionState,
+} from '@/lib/preklad/types';
 import { getBroadcasterClient, getSupabase } from '@/lib/supabase';
 
 const CAPTION_EVENT = 'caption';
 
+interface PresenceMeta {
+    at: number;
+    lang?: CaptionLang | null;
+}
+
 export interface PrekladChannel {
     connectionState: Ref<ConnectionState>;
     listenerCount: Ref<number>;
+    /** Broadcaster: distinct languages currently requested by at least one guest. */
+    requestedLangs: Ref<CaptionLang[]>;
+    /** Broadcaster: ensure the channel is subscribed (to start receiving presence). */
+    connect: () => void;
     /** Broadcaster: publish a caption segment. */
     publish: (payload: CaptionEvent) => void;
     /** Viewer: register a handler for incoming caption segments. */
     onCaption: (handler: (payload: CaptionEvent) => void) => void;
-    /** Viewer: announce presence so the broadcaster can count listeners. */
-    trackPresence: () => void;
+    /** Viewer: announce presence (and which language the guest is reading). */
+    trackPresence: (lang?: CaptionLang | null) => void;
     leave: () => void;
 }
 
 /**
  * Subscribe to the private Realtime Broadcast channel `sermon:{id}`. Supabase's
- * client handles its own reconnect, so we only surface a connection indicator
- * (spec §9.8). Viewers use the anon client (read-only); the broadcaster passes a
- * Laravel-minted token and gets an authorized client (write).
+ * client handles its own reconnect, so we only surface a connection indicator.
+ * Viewers use the anon client (read-only) and announce — via presence — which
+ * language they're reading; the broadcaster reads that to spin translation
+ * sessions up and down on demand. The broadcaster passes a Laravel-minted token
+ * and gets an authorized client (write).
  */
 export function usePrekladChannel(
     sessionId: Ref<string | null>,
@@ -30,9 +45,12 @@ export function usePrekladChannel(
 ): PrekladChannel {
     const connectionState = ref<ConnectionState>('idle');
     const listenerCount = ref(0);
+    const requestedLangs = ref<CaptionLang[]>([]);
     const captionHandlers: Array<(payload: CaptionEvent) => void> = [];
 
     let channel: RealtimeChannel | null = null;
+    let presenceLang: CaptionLang | null = null;
+    let tracking = false;
 
     function resolveClient(): SupabaseClient | null {
         if (accessToken?.value) {
@@ -70,13 +88,33 @@ export function usePrekladChannel(
         });
 
         channel.on('presence', { event: 'sync' }, () => {
-            const state = channel?.presenceState() ?? {};
-            listenerCount.value = Object.keys(state).length;
+            const state = (channel?.presenceState() ?? {}) as Record<
+                string,
+                PresenceMeta[]
+            >;
+            const keys = Object.keys(state);
+            listenerCount.value = keys.length;
+
+            const langs = new Set<CaptionLang>();
+
+            for (const key of keys) {
+                for (const meta of state[key]) {
+                    if (meta.lang) {
+                        langs.add(meta.lang);
+                    }
+                }
+            }
+
+            requestedLangs.value = [...langs];
         });
 
         channel.subscribe((status) => {
             if (status === 'SUBSCRIBED') {
                 connectionState.value = 'open';
+
+                if (tracking) {
+                    void channel?.track({ at: Date.now(), lang: presenceLang });
+                }
             } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
                 connectionState.value = 'reconnecting';
             } else if (status === 'CLOSED') {
@@ -85,6 +123,10 @@ export function usePrekladChannel(
         });
 
         return channel;
+    }
+
+    function connect(): void {
+        ensureChannel();
     }
 
     function publish(payload: CaptionEvent): void {
@@ -97,9 +139,11 @@ export function usePrekladChannel(
         ensureChannel();
     }
 
-    function trackPresence(): void {
+    function trackPresence(lang?: CaptionLang | null): void {
+        presenceLang = lang ?? null;
+        tracking = true;
         const ch = ensureChannel();
-        void ch?.track({ at: Date.now() });
+        void ch?.track({ at: Date.now(), lang: presenceLang });
     }
 
     function leave(): void {
@@ -108,6 +152,7 @@ export function usePrekladChannel(
             channel = null;
         }
 
+        tracking = false;
         connectionState.value = 'closed';
     }
 
@@ -116,6 +161,8 @@ export function usePrekladChannel(
     return {
         connectionState,
         listenerCount,
+        requestedLangs,
+        connect,
         publish,
         onCaption,
         trackPresence,
