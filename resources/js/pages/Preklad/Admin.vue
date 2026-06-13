@@ -1,14 +1,19 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { useEventListener, useWakeLock } from '@vueuse/core';
-import { Download, Mic, Pause, Play, Square } from 'lucide-vue-next';
+import { Download, Mic, Pause, Play, Square, Users } from 'lucide-vue-next';
 import { renderSVG } from 'uqr';
-import { computed, onMounted, onUnmounted, reactive, ref } from 'vue';
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
+import Blob from '@/components/Blob.vue';
 import { usePrekladChannel } from '@/composables/usePrekladChannel';
 import { getJson, postJson } from '@/lib/http';
 import { LanguageAggregator, splitTokens } from '@/lib/preklad/aggregator';
 import { SERMON_GLOSSARY } from '@/lib/preklad/glossary';
-import { langOption, TRANSLATION_TARGETS } from '@/lib/preklad/languages';
+import {
+    LANGUAGES,
+    langOption,
+    TRANSLATION_TARGETS,
+} from '@/lib/preklad/languages';
 import { encodePcmChunk, rms } from '@/lib/preklad/pcm';
 import { SonioxSession } from '@/lib/preklad/sonioxClient';
 import type {
@@ -25,6 +30,9 @@ interface HealthInfo {
     supabase_jwt_configured: boolean;
 }
 
+/** Všechny nabízené jazyky (host si vybírá ve své aplikaci). */
+const OFFERED_CODES = LANGUAGES.map((l) => l.code);
+
 const phase = ref<Phase>('ready');
 const startError = ref('');
 
@@ -37,24 +45,23 @@ const devices = ref<MediaDeviceInfo[]>([]);
 const selectedDeviceId = ref<string>('');
 const vuLevel = ref(0);
 
-/** Překladové cíle zaškrtnuté technikem; čeština (originál) jede vždy. */
-const selectedTargets = ref<CaptionLang[]>(['en']);
-const broadcastLangs = computed<CaptionLang[]>(() => [
-    'cs',
-    ...selectedTargets.value,
-]);
-
 const sonioxStates = reactive<Record<string, ConnectionState>>({});
 const sonioxError = ref('');
 const previews = reactive<Record<string, CaptionEvent | null>>({});
+/** Čeština (originál) + právě překládané jazyky — pořadí pro náhled a štítky. */
+const activeLangs = ref<CaptionLang[]>([]);
 
 const health = ref<HealthInfo | null>(null);
 const healthFailed = ref(false);
 
-const { connectionState, listenerCount, publish, leave } = usePrekladChannel(
-    sessionId,
-    accessToken,
-);
+const {
+    connectionState,
+    listenerCount,
+    requestedLangs,
+    connect,
+    publish,
+    leave,
+} = usePrekladChannel(sessionId, accessToken);
 
 let audioContext: AudioContext | null = null;
 let mediaStream: MediaStream | null = null;
@@ -62,7 +69,7 @@ let workletNode: AudioWorkletNode | null = null;
 const sessions = new Map<CaptionLang, SonioxSession>();
 const aggregators = new Map<CaptionLang, LanguageAggregator>();
 
-// Throttle broadcasts to ~4/s per language (spec §7).
+// Throttle broadcasts to ~4/s per language.
 const pending = new Map<CaptionLang, CaptionEvent>();
 let flushTimer: ReturnType<typeof setInterval> | null = null;
 
@@ -77,7 +84,6 @@ function defaultTitle(): string {
 }
 
 // --- QR kód pro hosty -------------------------------------------------------
-// URL je stálá (/preklad), takže QR stačí vytisknout jednou a platí napořád.
 
 const viewerUrl =
     typeof window !== 'undefined'
@@ -158,12 +164,11 @@ async function start(): Promise<void> {
 
     let insert = await supabase
         .from('sermon_sessions')
-        .insert({ ...base, languages: broadcastLangs.value })
+        .insert({ ...base, languages: OFFERED_CODES })
         .select('id')
         .single();
 
     if (insert.error && /languages/i.test(insert.error.message)) {
-        // Sloupec languages ještě nemusí v DB existovat — vysílání má přednost.
         insert = await supabase
             .from('sermon_sessions')
             .insert(base)
@@ -179,16 +184,8 @@ async function start(): Promise<void> {
     }
 
     sessionId.value = insert.data.id;
+    connect();
 
-    aggregators.clear();
-
-    for (const lang of broadcastLangs.value) {
-        aggregators.set(lang, new LanguageAggregator(lang));
-    }
-
-    // Zvuk může selhat (zamítnutý mikrofon, nedostupný audio worklet) — chybu
-    // ukážeme a založenou session hned uzavřeme, ať v divácké stránce nezůstane
-    // viset „živé" vysílání bez titulků.
     try {
         await startAudio();
     } catch (error) {
@@ -200,7 +197,8 @@ async function start(): Promise<void> {
         return;
     }
 
-    startSoniox();
+    startCzechSession();
+    reconcileTranslations();
 
     flushTimer = setInterval(flushPending, 250);
     phase.value = 'live';
@@ -209,24 +207,6 @@ async function start(): Promise<void> {
     if (wakeLockSupported.value) {
         void requestWakeLock('screen');
     }
-}
-
-/** Označí rozdělanou session jako ukončenou a uvolní kanál (úklid po chybě startu). */
-async function endSession(): Promise<void> {
-    const supabase = accessToken.value
-        ? getBroadcasterClient(accessToken.value)
-        : null;
-
-    if (supabase && sessionId.value) {
-        await supabase
-            .from('sermon_sessions')
-            .update({ status: 'ended', ended_at: new Date().toISOString() })
-            .eq('id', sessionId.value);
-    }
-
-    leave();
-    sessionId.value = null;
-    accessToken.value = null;
 }
 
 async function startAudio(): Promise<void> {
@@ -262,57 +242,86 @@ async function startAudio(): Promise<void> {
     workletNode.connect(audioContext.destination);
 }
 
+/** Čeština jede vždy — přepisová session (bez překladu) vysílá originál. */
+function startCzechSession(): void {
+    aggregators.set('cs', new LanguageAggregator('cs'));
+
+    const session = new SonioxSession({
+        getTempKey,
+        context: SERMON_GLOSSARY,
+        languageHints: ['cs'],
+        onStateChange: (state) => (sonioxStates.cs = state),
+        onError: (message) => (sonioxError.value = `cs: ${message}`),
+        onTokens: (tokens) => handleLang('cs', tokens),
+    });
+    sessions.set('cs', session);
+    void session.connect();
+    refreshActiveLangs();
+}
+
 /**
- * Jedna Soniox session na každý cílový jazyk (API umí jen one-way překlad).
- * Český originál agreguje jen první session, jinak by se titulky duplikovaly.
- * Bez zaškrtnutého cíle běží jediná čistě přepisová session (jen čeština).
+ * On-demand: pro každý jazyk, který si právě čte aspoň jeden host, běží
+ * překladová Soniox session. Když o jazyk nikdo nestojí, session se zavře
+ * (šetří kredit). Čeština se řeší zvlášť přepisovou session a běží pořád.
  */
-function startSoniox(): void {
-    sessions.clear();
-
-    const targets = TRANSLATION_TARGETS.filter((t) =>
-        selectedTargets.value.includes(t.code),
-    );
-
-    if (targets.length === 0) {
-        const session = new SonioxSession({
-            getTempKey,
-            context: SERMON_GLOSSARY,
-            languageHints: ['cs'],
-            onStateChange: (state) => (sonioxStates.cs = state),
-            onError: (message) => (sonioxError.value = `cs: ${message}`),
-            onTokens: (tokens) => handleLang('cs', tokens),
-        });
-        sessions.set('cs', session);
-        void session.connect();
-
+function reconcileTranslations(): void {
+    if (phase.value !== 'live') {
         return;
     }
 
-    targets.forEach((target, index) => {
-        const handlesOriginal = index === 0;
+    const wanted = new Set(
+        requestedLangs.value.filter((lang) => lang !== 'cs'),
+    );
+
+    for (const [lang, session] of [...sessions]) {
+        if (lang === 'cs' || wanted.has(lang)) {
+            continue;
+        }
+
+        session.close();
+        sessions.delete(lang);
+        aggregators.delete(lang);
+        delete previews[lang];
+        delete sonioxStates[lang];
+    }
+
+    for (const lang of wanted) {
+        if (sessions.has(lang)) {
+            continue;
+        }
+
+        const target = TRANSLATION_TARGETS.find((t) => t.code === lang);
+
+        if (!target?.targetLanguage) {
+            continue;
+        }
+
+        aggregators.set(lang, new LanguageAggregator(lang));
         const session = new SonioxSession({
             targetLanguage: target.targetLanguage,
             getTempKey,
             context: SERMON_GLOSSARY,
             languageHints: ['cs'],
-            onStateChange: (state) => (sonioxStates[target.code] = state),
-            onError: (message) =>
-                (sonioxError.value = `${target.code}: ${message}`),
-            onTokens: (tokens) => {
-                const { original, translation } = splitTokens(tokens);
-
-                if (handlesOriginal) {
-                    handleLang('cs', original);
-                }
-
-                handleLang(target.code, translation);
-            },
+            onStateChange: (state) => (sonioxStates[lang] = state),
+            onError: (message) => (sonioxError.value = `${lang}: ${message}`),
+            onTokens: (tokens) =>
+                handleLang(lang, splitTokens(tokens).translation),
         });
-        sessions.set(target.code, session);
+        sessions.set(lang, session);
         void session.connect();
-    });
+    }
+
+    refreshActiveLangs();
 }
+
+function refreshActiveLangs(): void {
+    activeLangs.value = [
+        'cs',
+        ...[...sessions.keys()].filter((lang) => lang !== 'cs'),
+    ];
+}
+
+watch(requestedLangs, reconcileTranslations, { deep: true });
 
 function handleLang(
     lang: CaptionLang,
@@ -360,6 +369,7 @@ async function stop(): Promise<void> {
     }
 
     sessions.clear();
+    aggregators.clear();
     stopAudio();
 
     if (flushTimer) {
@@ -367,6 +377,16 @@ async function stop(): Promise<void> {
         flushTimer = null;
     }
 
+    await endSession();
+
+    void releaseWakeLock();
+    phase.value = 'ready';
+    sessionTitle.value = defaultTitle();
+    activeLangs.value = [];
+}
+
+/** Označí session jako ukončenou a uvolní kanál (po Stopu i po chybě startu). */
+async function endSession(): Promise<void> {
     const supabase = accessToken.value
         ? getBroadcasterClient(accessToken.value)
         : null;
@@ -378,12 +398,9 @@ async function stop(): Promise<void> {
             .eq('id', sessionId.value);
     }
 
-    void releaseWakeLock();
     leave();
-    phase.value = 'ready';
     sessionId.value = null;
     accessToken.value = null;
-    sessionTitle.value = defaultTitle();
 }
 
 function stopAudio(): void {
@@ -424,6 +441,13 @@ onUnmounted(() => {
 const vuPercent = computed(() =>
     Math.min(100, Math.round(vuLevel.value * 280)),
 );
+
+const serverReady = computed(
+    () =>
+        health.value?.soniox_key_configured &&
+        health.value?.supabase_jwt_configured &&
+        isSupabaseConfigured,
+);
 </script>
 
 <template>
@@ -432,17 +456,47 @@ const vuPercent = computed(() =>
         <meta name="robots" content="noindex" />
     </Head>
 
-    <div class="min-h-screen bg-neutral-950 text-neutral-100">
-        <div class="mx-auto max-w-2xl space-y-6 p-6">
+    <div
+        class="relative min-h-screen overflow-hidden bg-brand-cream text-brand-ink"
+    >
+        <Blob
+            color="#ff8c69"
+            :size="300"
+            variant="2"
+            float="slow"
+            :opacity="0.4"
+            class="-top-24 -right-24"
+        />
+        <Blob
+            color="#4db6ac"
+            :size="220"
+            variant="3"
+            float="none"
+            :opacity="0.3"
+            class="top-1/2 -left-20"
+        />
+
+        <div class="relative z-10 mx-auto max-w-2xl space-y-5 p-5 sm:p-6">
             <header class="flex items-center justify-between">
-                <h1 class="text-lg font-semibold">Ovládání živého překladu</h1>
-                <div class="flex items-center gap-2">
-                    <span class="rounded-full bg-white/10 px-3 py-1 text-xs"
-                        >👂 {{ listenerCount }}</span
+                <div>
+                    <span
+                        class="text-xs font-bold tracking-[0.2em] text-brand-coral uppercase"
+                        >Živý překlad</span
                     >
+                    <h1 class="font-display text-2xl text-brand-ink">
+                        Ovládání vysílání
+                    </h1>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span
+                        class="flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold shadow-sm ring-1 ring-brand-ink/5"
+                    >
+                        <Users class="h-4 w-4 text-brand-teal" />
+                        {{ listenerCount }}
+                    </span>
                     <a
                         href="/admin"
-                        class="rounded-full bg-white/10 px-3 py-1 text-xs hover:bg-white/20"
+                        class="rounded-full bg-white px-3 py-1.5 text-sm font-semibold shadow-sm ring-1 ring-brand-ink/5 transition-colors hover:bg-brand-cream-deep"
                         >← Administrace</a
                     >
                 </div>
@@ -455,68 +509,65 @@ const vuPercent = computed(() =>
             >
                 <span
                     v-if="health"
-                    class="rounded-full px-2.5 py-1"
+                    class="rounded-full px-3 py-1 font-semibold"
                     :class="
                         health.soniox_key_configured
-                            ? 'bg-emerald-500/20 text-emerald-300'
-                            : 'bg-red-500/20 text-red-300'
+                            ? 'bg-brand-mint/30 text-emerald-800'
+                            : 'bg-red-100 text-red-700'
                     "
                 >
                     {{
                         health.soniox_key_configured
-                            ? '✓ Soniox klíč nastaven'
-                            : '✗ Chybí SONIOX_API_KEY na serveru'
+                            ? '✓ Soniox klíč'
+                            : '✗ Chybí SONIOX_API_KEY'
                     }}
                 </span>
                 <span
                     v-if="health"
-                    class="rounded-full px-2.5 py-1"
+                    class="rounded-full px-3 py-1 font-semibold"
                     :class="
                         health.supabase_jwt_configured
-                            ? 'bg-emerald-500/20 text-emerald-300'
-                            : 'bg-red-500/20 text-red-300'
+                            ? 'bg-brand-mint/30 text-emerald-800'
+                            : 'bg-red-100 text-red-700'
                     "
                 >
                     {{
                         health.supabase_jwt_configured
-                            ? '✓ Supabase JWT nastaven'
-                            : '✗ Chybí SUPABASE_JWT_SECRET na serveru'
+                            ? '✓ Supabase JWT'
+                            : '✗ Chybí SUPABASE_JWT_SECRET'
                     }}
                 </span>
                 <span
-                    v-if="healthFailed"
-                    class="rounded-full bg-red-500/20 px-2.5 py-1 text-red-300"
+                    v-if="healthFailed || !isSupabaseConfigured"
+                    class="rounded-full bg-red-100 px-3 py-1 font-semibold text-red-700"
                 >
-                    ✗ Kontrola konfigurace selhala
-                </span>
-                <span
-                    v-if="!isSupabaseConfigured"
-                    class="rounded-full bg-red-500/20 px-2.5 py-1 text-red-300"
-                >
-                    ✗ Chybí VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY
+                    ✗ Konfigurace serveru
                 </span>
             </div>
 
+            <!-- Nastavení -->
             <div
-                class="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-5"
+                class="space-y-4 rounded-3xl bg-white p-5 shadow-sm ring-1 ring-brand-ink/5"
             >
                 <label class="block text-sm">
-                    <span class="text-neutral-400">Název session</span>
+                    <span class="font-semibold text-brand-ink-soft"
+                        >Název session</span
+                    >
                     <input
                         v-model="sessionTitle"
                         :disabled="phase === 'live'"
-                        class="mt-1 w-full rounded-lg border border-white/15 bg-neutral-900 px-3 py-2 text-sm disabled:opacity-60"
+                        class="mt-1 w-full rounded-xl border border-brand-ink/10 bg-brand-cream px-3 py-2.5 text-sm text-brand-ink focus:border-brand-coral focus:ring-2 focus:ring-brand-coral/20 focus:outline-none disabled:opacity-60"
                     />
                 </label>
 
                 <label class="block text-sm">
-                    <span class="text-neutral-400"
+                    <span class="font-semibold text-brand-ink-soft"
                         >Audio vstup (zvuk z OBS / mixu)</span
                     >
                     <select
                         v-model="selectedDeviceId"
                         :disabled="phase === 'live'"
-                        class="mt-1 w-full rounded-lg border border-white/15 bg-neutral-900 px-3 py-2 text-sm disabled:opacity-60"
+                        class="mt-1 w-full rounded-xl border border-brand-ink/10 bg-brand-cream px-3 py-2.5 text-sm text-brand-ink focus:border-brand-coral focus:ring-2 focus:ring-brand-coral/20 focus:outline-none disabled:opacity-60"
                     >
                         <option
                             v-for="d in devices"
@@ -528,46 +579,27 @@ const vuPercent = computed(() =>
                     </select>
                 </label>
 
-                <fieldset class="text-sm">
-                    <legend class="text-neutral-400">
-                        Jazyky překladu (čeština jede vždy)
-                    </legend>
-                    <div class="mt-2 flex flex-wrap gap-2">
-                        <label
-                            v-for="target in TRANSLATION_TARGETS"
-                            :key="target.code"
-                            class="flex cursor-pointer items-center gap-2 rounded-lg border border-white/15 px-3 py-2"
-                            :class="{
-                                'bg-white/10': selectedTargets.includes(
-                                    target.code,
-                                ),
-                                'opacity-60': phase === 'live',
-                            }"
-                        >
-                            <input
-                                v-model="selectedTargets"
-                                type="checkbox"
-                                :value="target.code"
-                                :disabled="phase === 'live'"
-                                class="accent-emerald-400"
-                            />
-                            {{ target.flag }} {{ target.nativeName }}
-                        </label>
-                    </div>
-                    <p class="mt-1.5 text-xs text-neutral-500">
-                        Každý jazyk = samostatná Soniox session (vyšší spotřeba
-                        kreditu).
+                <div
+                    class="rounded-2xl bg-brand-cream px-4 py-3 text-sm text-brand-ink-soft"
+                >
+                    <p class="font-semibold text-brand-ink">
+                        Jazyky se spouštějí samy 🎧
                     </p>
-                </fieldset>
+                    <p class="mt-1">
+                        Čeština jede vždy. Překlad do dalšího jazyka se zapne
+                        teprve, když si ho host vybere ve své aplikaci — takže
+                        se nepřekládá zbytečně.
+                    </p>
+                </div>
 
                 <!-- VU meter -->
                 <div class="flex items-center gap-2">
-                    <Mic class="h-4 w-4 text-neutral-400" />
+                    <Mic class="h-4 w-4 text-brand-ink/50" />
                     <div
-                        class="h-2 flex-1 overflow-hidden rounded-full bg-white/10"
+                        class="h-2.5 flex-1 overflow-hidden rounded-full bg-brand-ink/10"
                     >
                         <div
-                            class="h-full rounded-full bg-emerald-400 transition-[width] duration-75"
+                            class="h-full rounded-full bg-brand-teal transition-[width] duration-75"
                             :style="{ width: vuPercent + '%' }"
                         />
                     </div>
@@ -579,32 +611,33 @@ const vuPercent = computed(() =>
                     class="flex flex-wrap gap-2 text-xs"
                 >
                     <span
-                        v-for="(state, lang) in sonioxStates"
+                        v-for="lang in activeLangs"
                         :key="lang"
-                        class="rounded-full px-2.5 py-1"
+                        class="rounded-full px-3 py-1 font-semibold"
                         :class="
-                            state === 'open'
-                                ? 'bg-emerald-500/20 text-emerald-300'
-                                : 'bg-red-500/20 text-red-300'
+                            sonioxStates[lang] === 'open'
+                                ? 'bg-brand-mint/30 text-emerald-800'
+                                : 'bg-brand-sunny/40 text-amber-800'
                         "
                     >
-                        Soniox {{ lang }}: {{ state }}
+                        {{ langOption(lang).flag }} {{ lang }}:
+                        {{ sonioxStates[lang] ?? 'připojuji' }}
                     </span>
                     <span
-                        class="rounded-full px-2.5 py-1"
+                        class="rounded-full px-3 py-1 font-semibold"
                         :class="
                             connectionState === 'open'
-                                ? 'bg-emerald-500/20 text-emerald-300'
-                                : 'bg-amber-500/20 text-amber-300'
+                                ? 'bg-brand-mint/30 text-emerald-800'
+                                : 'bg-brand-sunny/40 text-amber-800'
                         "
                     >
                         Realtime: {{ connectionState }}
                     </span>
                 </div>
-                <p v-if="sonioxError" class="text-xs text-red-400">
+                <p v-if="sonioxError" class="text-xs text-red-600">
                     {{ sonioxError }}
                 </p>
-                <p v-if="startError" class="text-xs text-red-400">
+                <p v-if="startError" class="text-xs text-red-600">
                     {{ startError }}
                 </p>
 
@@ -612,14 +645,15 @@ const vuPercent = computed(() =>
                 <div class="flex gap-3">
                     <button
                         v-if="phase === 'ready'"
-                        class="flex flex-1 items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-3 text-sm font-semibold text-neutral-900"
+                        class="flex flex-1 items-center justify-center gap-2 rounded-full bg-brand-coral px-4 py-3.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-coral-dark disabled:cursor-not-allowed disabled:opacity-50"
+                        :disabled="!serverReady"
                         @click="start"
                     >
-                        <Play class="h-4 w-4" /> Start
+                        <Play class="h-4 w-4" /> Spustit vysílání
                     </button>
                     <template v-else>
                         <button
-                            class="flex flex-1 items-center justify-center gap-2 rounded-lg bg-white/10 px-4 py-3 text-sm font-semibold"
+                            class="flex flex-1 items-center justify-center gap-2 rounded-full bg-white px-4 py-3.5 text-sm font-semibold text-brand-ink shadow-sm ring-1 ring-brand-ink/10 transition-colors hover:bg-brand-cream-deep"
                             @click="togglePause"
                         >
                             <component
@@ -629,7 +663,7 @@ const vuPercent = computed(() =>
                             {{ paused ? 'Pokračovat' : 'Pauza' }}
                         </button>
                         <button
-                            class="flex flex-1 items-center justify-center gap-2 rounded-lg bg-red-500 px-4 py-3 text-sm font-semibold text-neutral-900"
+                            class="flex flex-1 items-center justify-center gap-2 rounded-full bg-brand-coral px-4 py-3.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-coral-dark"
                             @click="stop"
                         >
                             <Square class="h-4 w-4" /> Konec
@@ -639,19 +673,21 @@ const vuPercent = computed(() =>
             </div>
 
             <!-- Live preview -->
-            <div v-if="phase === 'live'" class="grid gap-4 sm:grid-cols-2">
+            <div v-if="phase === 'live'" class="grid gap-3 sm:grid-cols-2">
                 <div
-                    v-for="lang in broadcastLangs"
+                    v-for="lang in activeLangs"
                     :key="lang"
-                    class="rounded-2xl border border-white/10 bg-white/5 p-4"
+                    class="rounded-3xl bg-white p-4 shadow-sm ring-1 ring-brand-ink/5"
                 >
-                    <p class="mb-2 text-xs font-semibold text-neutral-400">
+                    <p
+                        class="mb-2 text-xs font-semibold tracking-wide text-brand-ink-soft"
+                    >
                         {{ langOption(lang).flag }}
                         {{ langOption(lang).nativeName }}
                     </p>
-                    <p class="text-sm leading-relaxed">
+                    <p class="text-sm leading-relaxed text-brand-ink">
                         {{ previews[lang]?.final }}
-                        <span class="text-neutral-500 italic">{{
+                        <span class="text-brand-ink/40 italic">{{
                             previews[lang]?.partial
                         }}</span>
                     </p>
@@ -660,10 +696,12 @@ const vuPercent = computed(() =>
 
             <!-- QR kód pro hosty -->
             <div
-                class="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-5"
+                class="space-y-3 rounded-3xl bg-white p-5 shadow-sm ring-1 ring-brand-ink/5"
             >
-                <h2 class="text-sm font-semibold">QR kód pro hosty</h2>
-                <p class="text-xs text-neutral-400">
+                <h2 class="font-display text-lg text-brand-ink">
+                    QR kód pro hosty
+                </h2>
+                <p class="text-sm text-brand-ink-soft">
                     Adresa je stálá — QR stačí vytisknout jednou a platí pro
                     každé vysílání. Host ho načte telefonem, vybere si jazyk a
                     čte přepis.
@@ -671,17 +709,17 @@ const vuPercent = computed(() =>
                 <div class="flex flex-wrap items-center gap-5">
                     <!-- eslint-disable-next-line vue/no-v-html — SVG generované lokálně knihovnou uqr -->
                     <div
-                        class="w-36 shrink-0 rounded-xl bg-white p-2 [&_svg]:h-auto [&_svg]:w-full"
+                        class="w-36 shrink-0 rounded-2xl bg-white p-2 ring-1 ring-brand-ink/10 [&_svg]:h-auto [&_svg]:w-full"
                         v-html="qrSvg"
                     />
                     <div class="space-y-2 text-sm">
-                        <p class="font-mono text-emerald-300">
+                        <p class="font-mono text-brand-teal">
                             {{ viewerUrl }}
                         </p>
                         <a
                             :href="qrDownloadHref"
                             download="cirkev-kolin-preklad-qr.svg"
-                            class="inline-flex items-center gap-1.5 rounded-lg bg-white/10 px-3 py-2 text-xs font-semibold hover:bg-white/20"
+                            class="inline-flex items-center gap-1.5 rounded-full bg-brand-cream px-3 py-2 text-xs font-semibold text-brand-ink ring-1 ring-brand-ink/10 transition-colors hover:bg-brand-cream-deep"
                         >
                             <Download class="h-3.5 w-3.5" /> Stáhnout QR (SVG)
                         </a>

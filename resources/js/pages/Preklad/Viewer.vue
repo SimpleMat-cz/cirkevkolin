@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { useLocalStorage } from '@vueuse/core';
-import { ArrowDown, Languages } from 'lucide-vue-next';
+import { ArrowDown, Languages, Type } from 'lucide-vue-next';
 import {
     computed,
     nextTick,
@@ -11,12 +11,9 @@ import {
     ref,
     watch,
 } from 'vue';
+import Blob from '@/components/Blob.vue';
 import { usePrekladChannel } from '@/composables/usePrekladChannel';
-import {
-    languagesForCodes,
-    langOption,
-    UI_STRINGS,
-} from '@/lib/preklad/languages';
+import { LANGUAGES, langOption, UI_STRINGS } from '@/lib/preklad/languages';
 import type {
     CaptionEvent,
     CaptionLang,
@@ -27,7 +24,7 @@ import { getSupabase, isSupabaseConfigured } from '@/lib/supabase';
 type Phase = 'loading' | 'no-session' | 'live';
 
 const MAX_SEGMENTS = 50;
-const FONT_STEPS = ['text-xl', 'text-3xl', 'text-4xl'] as const;
+const FONT_STEPS = ['text-2xl', 'text-3xl', 'text-4xl'] as const;
 
 const phase = ref<Phase>('loading');
 const session = ref<SessionInfo | null>(null);
@@ -41,10 +38,8 @@ const showPicker = computed(
     () => phase.value === 'live' && !selectedLang.value,
 );
 
-/** Jazyky nabízené hostovi — jen ty, které vysílací konzole skutečně vysílá. */
-const availableLanguages = computed(() =>
-    languagesForCodes(session.value?.languages),
-);
+/** On-demand: hostovi nabízíme všechny jazyky; překlad se spustí, až si vybere. */
+const offeredLanguages = LANGUAGES;
 
 /** Captions kept per language so switching languages preserves what arrived. */
 const byLang = reactive<Record<string, Map<number, CaptionEvent>>>({});
@@ -61,7 +56,8 @@ const segments = computed<CaptionEvent[]>(() => {
         .slice(-MAX_SEGMENTS);
 });
 
-const { connectionState, onCaption, leave } = usePrekladChannel(sessionId);
+const { connectionState, onCaption, trackPresence, leave } =
+    usePrekladChannel(sessionId);
 
 onCaption((payload) => {
     if (!byLang[payload.lang]) {
@@ -86,6 +82,18 @@ onCaption((payload) => {
     }
 });
 
+// Whenever a session is live and the guest has a language chosen, announce it
+// via presence so the broadcaster spins that language's translation up.
+watch(
+    [phase, selectedLang],
+    () => {
+        if (phase.value === 'live' && selectedLang.value) {
+            trackPresence(selectedLang.value);
+        }
+    },
+    { immediate: true },
+);
+
 // --- session discovery ----------------------------------------------------
 
 let pollTimer: ReturnType<typeof setInterval> | null = null;
@@ -99,27 +107,16 @@ async function loadActiveSession(): Promise<void> {
         return;
     }
 
-    let result = await supabase
+    const { data } = await supabase
         .from('sermon_sessions')
-        .select('id, title, status, languages')
+        .select('id, title, status')
         .eq('status', 'live')
         .order('started_at', { ascending: false })
         .limit(1)
         .maybeSingle();
 
-    if (result.error && /languages/i.test(result.error.message)) {
-        // Sloupec languages ještě nemusí v DB existovat.
-        result = await supabase
-            .from('sermon_sessions')
-            .select('id, title, status')
-            .eq('status', 'live')
-            .order('started_at', { ascending: false })
-            .limit(1)
-            .maybeSingle();
-    }
-
-    if (result.data) {
-        session.value = result.data as SessionInfo;
+    if (data) {
+        session.value = data as SessionInfo;
         phase.value = 'live';
     } else if (phase.value !== 'live') {
         phase.value = 'no-session';
@@ -195,30 +192,50 @@ onUnmounted(() => {
         <meta name="robots" content="noindex" />
     </Head>
 
-    <div class="flex min-h-screen flex-col bg-neutral-950 text-neutral-100">
+    <div
+        class="relative flex min-h-screen flex-col overflow-hidden bg-brand-cream text-brand-ink"
+    >
+        <Blob
+            color="#ff8c69"
+            :size="320"
+            variant="2"
+            float="slow"
+            :opacity="0.5"
+            class="-top-24 -right-24"
+        />
+        <Blob
+            color="#4db6ac"
+            :size="240"
+            variant="3"
+            float="none"
+            :opacity="0.35"
+            class="-bottom-20 -left-16"
+        />
+
         <!-- Top bar -->
         <header
-            class="flex items-center justify-between border-b border-white/10 px-4 py-3"
+            class="relative z-10 flex items-center justify-between border-b border-brand-ink/10 px-4 py-3 backdrop-blur-sm"
         >
-            <span class="text-sm font-semibold tracking-wide text-neutral-400"
-                >Církev Kolín</span
+            <span
+                class="font-display text-lg tracking-tight text-brand-ink lowercase"
+                >církev kolín</span
             >
             <div
                 v-if="phase === 'live' && selectedLang"
                 class="flex items-center gap-2"
             >
                 <button
-                    class="rounded-full border border-white/15 px-3 py-1.5 text-sm font-semibold"
+                    class="flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-brand-ink shadow-sm ring-1 ring-brand-ink/5 transition-colors hover:bg-brand-cream-deep"
                     :aria-label="ui.fontSize"
                     @click="cycleFont"
                 >
-                    A<span class="text-xs">+</span>
+                    <Type class="h-4 w-4" />
                 </button>
                 <button
-                    class="flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-1.5 text-sm font-semibold"
+                    class="flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-brand-ink shadow-sm ring-1 ring-brand-ink/5 transition-colors hover:bg-brand-cream-deep"
                     @click="selectedLang = null"
                 >
-                    <Languages class="h-4 w-4" />
+                    <Languages class="h-4 w-4 text-brand-coral" />
                     {{ langOption(selectedLang).flag }}
                 </button>
             </div>
@@ -227,29 +244,34 @@ onUnmounted(() => {
         <!-- Loading -->
         <div
             v-if="phase === 'loading'"
-            class="flex flex-1 items-center justify-center p-8"
+            class="relative z-10 flex flex-1 items-center justify-center p-8"
         >
             <div
-                class="h-10 w-10 animate-spin rounded-full border-2 border-white/20 border-t-white/80"
+                class="h-10 w-10 animate-spin rounded-full border-2 border-brand-coral/30 border-t-brand-coral"
             />
         </div>
 
         <!-- No live session -->
         <div
             v-else-if="phase === 'no-session'"
-            class="flex flex-1 flex-col items-center justify-center gap-4 p-8 text-center"
+            class="relative z-10 flex flex-1 flex-col items-center justify-center gap-5 p-8 text-center"
         >
-            <p class="text-2xl font-semibold">{{ ui.notLive }}</p>
-            <p class="max-w-sm text-neutral-400">{{ ui.notLiveHint }}</p>
+            <span class="text-5xl">🕊️</span>
+            <h1 class="font-display text-3xl text-brand-ink sm:text-4xl">
+                {{ ui.notLive }}
+            </h1>
+            <p class="max-w-sm text-lg text-brand-ink-soft">
+                {{ ui.notLiveHint }}
+            </p>
             <a
                 href="/"
-                class="mt-2 rounded-full bg-white/10 px-5 py-2.5 text-sm font-semibold hover:bg-white/20"
+                class="mt-2 inline-flex items-center rounded-full bg-brand-coral px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-coral-dark"
             >
                 {{ ui.churchSite }}
             </a>
             <p
                 v-if="!isSupabaseConfigured"
-                class="mt-4 text-xs text-amber-400/80"
+                class="mt-4 text-xs text-brand-coral-dark"
             >
                 Supabase není nakonfigurován (chybí VITE_SUPABASE_URL /
                 VITE_SUPABASE_ANON_KEY).
@@ -259,20 +281,29 @@ onUnmounted(() => {
         <!-- Language picker -->
         <div
             v-else-if="showPicker"
-            class="flex flex-1 flex-col items-center justify-center gap-6 p-6"
+            class="relative z-10 flex flex-1 flex-col items-center justify-center gap-8 p-6"
         >
-            <h1 class="text-center text-xl font-semibold text-neutral-300">
-                {{ UI_STRINGS.en.chooseLanguage }}
-            </h1>
+            <div class="text-center">
+                <span
+                    class="text-xs font-bold tracking-[0.2em] text-brand-coral uppercase"
+                    >Live translation</span
+                >
+                <h1
+                    class="mt-2 font-display text-3xl text-brand-ink sm:text-4xl"
+                >
+                    {{ UI_STRINGS.en.chooseLanguage }}
+                </h1>
+                <p class="mt-1 text-brand-ink-soft">Vyber si jazyk</p>
+            </div>
             <div class="grid w-full max-w-md gap-3">
                 <button
-                    v-for="lang in availableLanguages"
+                    v-for="lang in offeredLanguages"
                     :key="lang.code"
-                    class="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-left transition-colors hover:bg-white/10"
+                    class="hover-lift flex items-center gap-4 rounded-3xl bg-white px-5 py-4 text-left shadow-sm ring-1 ring-brand-ink/5 transition-all hover:ring-brand-coral/40"
                     @click="chooseLanguage(lang.code)"
                 >
                     <span class="text-3xl">{{ lang.flag }}</span>
-                    <span class="text-lg font-semibold">{{
+                    <span class="text-lg font-semibold text-brand-ink">{{
                         lang.nativeName
                     }}</span>
                 </button>
@@ -280,43 +311,47 @@ onUnmounted(() => {
         </div>
 
         <!-- Captions -->
-        <div v-else class="relative flex flex-1 flex-col overflow-hidden">
+        <div v-else class="relative z-10 flex flex-1 flex-col overflow-hidden">
             <div
                 v-if="
                     connectionState === 'reconnecting' ||
                     connectionState === 'connecting'
                 "
-                class="bg-amber-500/20 py-1.5 text-center text-xs text-amber-200"
+                class="bg-brand-sunny/30 py-1.5 text-center text-xs font-medium text-brand-ink/70"
             >
                 {{ ui.connecting }}
             </div>
 
             <div
                 ref="scrollEl"
-                class="flex-1 space-y-4 overflow-y-auto px-5 py-6 leading-relaxed"
+                class="flex-1 space-y-4 overflow-y-auto px-4 py-6 sm:px-6"
                 @scroll="onScroll"
             >
                 <p
                     v-for="seg in segments"
                     :key="seg.seq"
                     :class="FONT_STEPS[fontStep]"
+                    class="leading-relaxed font-medium text-brand-ink"
                 >
                     <span>{{ seg.final }}</span>
-                    <span v-if="seg.partial" class="text-neutral-500 italic">
+                    <span v-if="seg.partial" class="text-brand-ink/45 italic">
                         {{ seg.partial }}</span
                     >
                 </p>
-                <p
+                <div
                     v-if="segments.length === 0"
-                    class="text-center text-neutral-600"
+                    class="flex flex-col items-center gap-3 pt-16 text-center text-brand-ink/40"
                 >
-                    …
-                </p>
+                    <div
+                        class="h-8 w-8 animate-spin rounded-full border-2 border-brand-coral/30 border-t-brand-coral"
+                    />
+                    <p class="text-sm">{{ ui.connecting }}</p>
+                </div>
             </div>
 
             <button
                 v-if="!autoScroll"
-                class="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-neutral-900 shadow-lg"
+                class="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-brand-coral px-4 py-2 text-sm font-semibold text-white shadow-lg transition-colors hover:bg-brand-coral-dark"
                 @click="jumpToLive"
             >
                 <ArrowDown class="h-4 w-4" />
