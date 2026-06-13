@@ -3,7 +3,11 @@ import { Head } from '@inertiajs/vue3';
 import { renderSVG } from 'uqr';
 import { computed } from 'vue';
 import Blob from '@/components/Blob.vue';
-import { FAVORITE_LANGUAGES, UNDERSTAND_INVITE } from '@/lib/preklad/languages';
+import {
+    EXTENDED_LANGUAGES,
+    FAVORITE_LANGUAGES,
+    UNDERSTAND_INVITE,
+} from '@/lib/preklad/languages';
 
 /** Veřejná adresa živého přepisu — co host po naskenování QR otevře. */
 const TARGET_PATH = '/preklad';
@@ -43,6 +47,7 @@ interface CardConfig {
     message: string;
     note?: string;
     chips: { code: string; flag: string; nativeName: string }[];
+    moreLanguages?: string;
     invites: CardInvite[];
 }
 
@@ -94,6 +99,7 @@ const cards: CardConfig[] = [
         message:
             'Scan the QR code and read a live translation of the sermon in your own language.',
         chips: foreignFavorites,
+        moreLanguages: `+ ${EXTENDED_LANGUAGES.length} more languages`,
         invites: understandInvites,
     },
 ];
@@ -221,6 +227,12 @@ function handlePrint(): void {
                         >
                             <span aria-hidden="true">{{ lang.flag }}</span>
                             <span>{{ lang.nativeName }}</span>
+                        </li>
+                        <li
+                            v-if="card.moreLanguages"
+                            class="inline-flex items-center rounded-full bg-brand-coral/15 px-2.5 py-1 text-xs font-semibold text-brand-coral-dark"
+                        >
+                            {{ card.moreLanguages }}
                         </li>
                     </ul>
 
