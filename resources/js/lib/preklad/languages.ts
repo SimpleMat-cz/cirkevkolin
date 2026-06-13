@@ -132,7 +132,13 @@ export const TRANSLATION_TARGETS: LangOption[] = LANGUAGES.filter(
 const LANG_BY_CODE = new Map(LANGUAGES.map((l) => [l.code, l]));
 
 export function langOption(code: CaptionLang): LangOption {
-    return LANG_BY_CODE.get(code) ?? LANGUAGES[0];
+    return (
+        LANG_BY_CODE.get(code) ?? {
+            code,
+            nativeName: code.toUpperCase(),
+            flag: '🌐',
+        }
+    );
 }
 
 /** Minimal UI dictionary (interface chrome only — not the captions themselves). */

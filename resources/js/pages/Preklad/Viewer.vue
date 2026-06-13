@@ -23,8 +23,11 @@ type Phase = 'loading' | 'no-session' | 'live';
 const MAX_SEGMENTS = 50;
 /** Kolik posledních vět teleprompter drží na obrazovce (zbytek odplyne nahoru). */
 const VISIBLE_SEGMENTS = 6;
-/** Session je živá jen s čerstvým heartbeatem — jinak (zavřený panel) ji pustíme. */
-const FRESH_MS = 35000;
+/**
+ * Session je živá jen s čerstvým heartbeatem — jinak (zavřený panel) ji pustíme.
+ * Tolerance pokrývá ~3 výpadky heartbeatu (15 s) i rozumný rozdíl hodin telefonů.
+ */
+const FRESH_MS = 45000;
 const FONT_STEPS = ['text-2xl', 'text-3xl', 'text-4xl'] as const;
 
 const phase = ref<Phase>('loading');
@@ -122,6 +125,7 @@ async function loadActiveSession(): Promise<void> {
         return;
     }
 
+    let hasHeartbeat = true;
     let result = await supabase
         .from('sermon_sessions')
         .select('id, title, status, last_seen_at')
@@ -131,7 +135,9 @@ async function loadActiveSession(): Promise<void> {
         .maybeSingle();
 
     if (result.error && /last_seen_at/i.test(result.error.message)) {
-        // Sloupec heartbeat ještě nemusí v DB existovat (před migrací).
+        // Sloupec heartbeat ještě nemusí v DB existovat (před migrací) — pak
+        // nemáme signál čerstvosti a session bereme jako živou.
+        hasHeartbeat = false;
         result = await supabase
             .from('sermon_sessions')
             .select('id, title, status')
@@ -142,10 +148,13 @@ async function loadActiveSession(): Promise<void> {
     }
 
     const data = result.data as SessionInfo | null;
+    // S heartbeatem je živá jen session s čerstvým razítkem; chybějící razítko
+    // (nikdy neproběhl heartbeat = mrtvá session) se nezobrazuje.
     const fresh =
         !!data &&
-        (!data.last_seen_at ||
-            Date.now() - new Date(data.last_seen_at).getTime() < FRESH_MS);
+        (!hasHeartbeat ||
+            (!!data.last_seen_at &&
+                Date.now() - new Date(data.last_seen_at).getTime() < FRESH_MS));
 
     if (data && fresh) {
         session.value = data;
@@ -162,6 +171,8 @@ function cycleFont(): void {
 
 function chooseLanguage(code: CaptionLang): void {
     selectedLang.value = code;
+    showAllLanguages.value = false;
+    langQuery.value = '';
 }
 
 onMounted(() => {
@@ -332,7 +343,7 @@ onUnmounted(() => {
                             class="w-full rounded-2xl border border-brand-ink/10 bg-white py-2.5 pr-3 pl-9 text-sm text-brand-ink focus:border-brand-coral focus:ring-2 focus:ring-brand-coral/20 focus:outline-none"
                         />
                     </div>
-                    <div class="mt-2 grid max-h-72 gap-2 overflow-y-auto pr-1">
+                    <div class="mt-2 grid gap-2">
                         <button
                             v-for="lang in filteredExtended"
                             :key="lang.code"

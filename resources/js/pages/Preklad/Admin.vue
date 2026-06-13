@@ -181,10 +181,12 @@ async function start(): Promise<void> {
         return;
     }
 
+    const now = new Date().toISOString();
     const base = {
         title: sessionTitle.value,
         status: 'live',
-        started_at: new Date().toISOString(),
+        started_at: now,
+        last_seen_at: now,
     };
 
     let insert = await supabase
@@ -263,13 +265,21 @@ async function startAudio(): Promise<void> {
         if (!paused.value && sessions.size > 0 && audioContext) {
             const chunk = encodePcmChunk(frame, audioContext.sampleRate);
 
+            // Účtujeme jen streamy, které opravdu posílají do Soniox (open) —
+            // sessions ve stavu connecting/reconnecting se neúčtují.
+            let openStreams = 0;
+
             for (const session of sessions.values()) {
                 session.sendAudio(chunk);
+
+                if (session.connectionState === 'open') {
+                    openStreams++;
+                }
             }
 
             const seconds = frame.length / audioContext.sampleRate;
             audioSecondsAcc += seconds;
-            streamSecondsAcc += seconds * sessions.size;
+            streamSecondsAcc += seconds * openStreams;
         }
     };
 

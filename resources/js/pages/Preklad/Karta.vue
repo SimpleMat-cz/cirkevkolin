@@ -10,7 +10,6 @@ import {
 
 /** Veřejná adresa živého přepisu — co host po naskenování QR otevře. */
 const TARGET_PATH = '/preklad';
-const DISPLAY_URL = 'cirkevkolin.vercel.app/preklad';
 
 const targetUrl = computed(() => {
     const origin =
@@ -20,6 +19,9 @@ const targetUrl = computed(() => {
 
     return `${origin}${TARGET_PATH}`;
 });
+
+/** Adresa pod QR — odvozená ze stejného originu jako QR (i na vlastní doméně). */
+const displayUrl = computed(() => targetUrl.value.replace(/^https?:\/\//, ''));
 
 /** Lokálně generované SVG QR — žádný externí požadavek, bezpečné pro v-html. */
 const qrSvg = computed(() =>
@@ -150,7 +152,7 @@ function handlePrint(): void {
                         <p
                             class="mt-2 font-mono text-xs tracking-tight text-brand-ink-soft"
                         >
-                            {{ DISPLAY_URL }}
+                            {{ displayUrl }}
                         </p>
                     </div>
 
