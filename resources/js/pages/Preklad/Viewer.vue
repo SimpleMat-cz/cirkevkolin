@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { useLocalStorage } from '@vueuse/core';
-import { Languages, Type } from 'lucide-vue-next';
+import { ChevronDown, Languages, Search, Type } from 'lucide-vue-next';
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import Blob from '@/components/Blob.vue';
 import { usePrekladChannel } from '@/composables/usePrekladChannel';
-import { LANGUAGES, langOption, UI_STRINGS } from '@/lib/preklad/languages';
+import {
+    EXTENDED_LANGUAGES,
+    FAVORITE_LANGUAGES,
+    langOption,
+    uiFor,
+} from '@/lib/preklad/languages';
 import type {
     CaptionEvent,
     CaptionLang,
@@ -18,6 +23,8 @@ type Phase = 'loading' | 'no-session' | 'live';
 const MAX_SEGMENTS = 50;
 /** Kolik posledních vět teleprompter drží na obrazovce (zbytek odplyne nahoru). */
 const VISIBLE_SEGMENTS = 6;
+/** Session je živá jen s čerstvým heartbeatem — jinak (zavřený panel) ji pustíme. */
+const FRESH_MS = 35000;
 const FONT_STEPS = ['text-2xl', 'text-3xl', 'text-4xl'] as const;
 
 const phase = ref<Phase>('loading');
@@ -27,13 +34,26 @@ const sessionId = computed(() => session.value?.id ?? null);
 const selectedLang = useLocalStorage<CaptionLang | null>('preklad-lang', null);
 const fontStep = useLocalStorage<number>('preklad-font', 1);
 
-const ui = computed(() => UI_STRINGS[selectedLang.value ?? 'cs']);
+const ui = computed(() => uiFor(selectedLang.value));
 const showPicker = computed(
     () => phase.value === 'live' && !selectedLang.value,
 );
 
-/** On-demand: hostovi nabízíme všechny jazyky; překlad se spustí, až si vybere. */
-const offeredLanguages = LANGUAGES;
+const showAllLanguages = ref(false);
+const langQuery = ref('');
+const filteredExtended = computed(() => {
+    const q = langQuery.value.trim().toLowerCase();
+
+    if (!q) {
+        return EXTENDED_LANGUAGES;
+    }
+
+    return EXTENDED_LANGUAGES.filter(
+        (l) =>
+            l.nativeName.toLowerCase().includes(q) ||
+            l.code.toLowerCase().includes(q),
+    );
+});
 
 /** Captions kept per language so switching languages preserves what arrived. */
 const byLang = reactive<Record<string, Map<number, CaptionEvent>>>({});
@@ -102,18 +122,36 @@ async function loadActiveSession(): Promise<void> {
         return;
     }
 
-    const { data } = await supabase
+    let result = await supabase
         .from('sermon_sessions')
-        .select('id, title, status')
+        .select('id, title, status, last_seen_at')
         .eq('status', 'live')
         .order('started_at', { ascending: false })
         .limit(1)
         .maybeSingle();
 
-    if (data) {
-        session.value = data as SessionInfo;
+    if (result.error && /last_seen_at/i.test(result.error.message)) {
+        // Sloupec heartbeat ještě nemusí v DB existovat (před migrací).
+        result = await supabase
+            .from('sermon_sessions')
+            .select('id, title, status')
+            .eq('status', 'live')
+            .order('started_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+    }
+
+    const data = result.data as SessionInfo | null;
+    const fresh =
+        !!data &&
+        (!data.last_seen_at ||
+            Date.now() - new Date(data.last_seen_at).getTime() < FRESH_MS);
+
+    if (data && fresh) {
+        session.value = data;
         phase.value = 'live';
-    } else if (phase.value !== 'live') {
+    } else {
+        session.value = null;
         phase.value = 'no-session';
     }
 }
@@ -170,10 +208,15 @@ onUnmounted(() => {
         <header
             class="relative z-10 flex items-center justify-between border-b border-brand-ink/10 px-4 py-3 backdrop-blur-sm"
         >
-            <span
-                class="font-display text-lg tracking-tight text-brand-ink lowercase"
-                >církev kolín</span
-            >
+            <div class="flex items-baseline gap-2">
+                <span
+                    class="font-display text-lg tracking-tight text-brand-ink lowercase"
+                    >církev kolín</span
+                >
+                <span class="text-sm font-semibold text-brand-coral">{{
+                    ui.tagline
+                }}</span>
+            </div>
             <div
                 v-if="phase === 'live' && selectedLang"
                 class="flex items-center gap-2"
@@ -235,32 +278,80 @@ onUnmounted(() => {
         <!-- Language picker -->
         <div
             v-else-if="showPicker"
-            class="relative z-10 flex flex-1 flex-col items-center justify-center gap-8 p-6"
+            class="relative z-10 flex flex-1 flex-col items-center overflow-y-auto px-6 py-8"
         >
-            <div class="text-center">
-                <span
-                    class="text-xs font-bold tracking-[0.2em] text-brand-coral uppercase"
-                    >Live translation</span
-                >
-                <h1
-                    class="mt-2 font-display text-3xl text-brand-ink sm:text-4xl"
-                >
-                    {{ UI_STRINGS.en.chooseLanguage }}
-                </h1>
-                <p class="mt-1 text-brand-ink-soft">Vyber si jazyk</p>
-            </div>
-            <div class="grid w-full max-w-md gap-3">
+            <div class="w-full max-w-md">
+                <div class="text-center">
+                    <span
+                        class="text-xs font-bold tracking-[0.2em] text-brand-coral uppercase"
+                        >Live translation</span
+                    >
+                    <h1
+                        class="mt-2 font-display text-3xl text-brand-ink sm:text-4xl"
+                    >
+                        {{ uiFor('en').chooseLanguage }}
+                    </h1>
+                    <p class="mt-1 text-brand-ink-soft">Vyber si jazyk</p>
+                </div>
+
+                <div class="mt-6 grid gap-3">
+                    <button
+                        v-for="lang in FAVORITE_LANGUAGES"
+                        :key="lang.code"
+                        class="hover-lift flex items-center gap-4 rounded-3xl bg-white px-5 py-4 text-left shadow-sm ring-1 ring-brand-ink/5 transition-all hover:ring-brand-coral/40"
+                        @click="chooseLanguage(lang.code)"
+                    >
+                        <span class="text-3xl">{{ lang.flag }}</span>
+                        <span class="text-lg font-semibold text-brand-ink">{{
+                            lang.nativeName
+                        }}</span>
+                    </button>
+                </div>
+
+                <!-- Rozšířený výběr -->
                 <button
-                    v-for="lang in offeredLanguages"
-                    :key="lang.code"
-                    class="hover-lift flex items-center gap-4 rounded-3xl bg-white px-5 py-4 text-left shadow-sm ring-1 ring-brand-ink/5 transition-all hover:ring-brand-coral/40"
-                    @click="chooseLanguage(lang.code)"
+                    class="mt-3 flex w-full items-center justify-center gap-1.5 rounded-2xl px-4 py-3 text-sm font-semibold text-brand-ink-soft transition-colors hover:bg-white/60"
+                    @click="showAllLanguages = !showAllLanguages"
                 >
-                    <span class="text-3xl">{{ lang.flag }}</span>
-                    <span class="text-lg font-semibold text-brand-ink">{{
-                        lang.nativeName
-                    }}</span>
+                    {{ ui.moreLanguages }}
+                    <ChevronDown
+                        class="h-4 w-4 transition-transform"
+                        :class="{ 'rotate-180': showAllLanguages }"
+                    />
                 </button>
+
+                <div v-if="showAllLanguages" class="mt-2">
+                    <div class="relative">
+                        <Search
+                            class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-brand-ink/40"
+                        />
+                        <input
+                            v-model="langQuery"
+                            type="text"
+                            placeholder="Hledat jazyk…"
+                            class="w-full rounded-2xl border border-brand-ink/10 bg-white py-2.5 pr-3 pl-9 text-sm text-brand-ink focus:border-brand-coral focus:ring-2 focus:ring-brand-coral/20 focus:outline-none"
+                        />
+                    </div>
+                    <div class="mt-2 grid max-h-72 gap-2 overflow-y-auto pr-1">
+                        <button
+                            v-for="lang in filteredExtended"
+                            :key="lang.code"
+                            class="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 text-left ring-1 ring-brand-ink/5 transition-colors hover:bg-brand-cream-deep"
+                            @click="chooseLanguage(lang.code)"
+                        >
+                            <span class="text-2xl">{{ lang.flag }}</span>
+                            <span class="font-medium text-brand-ink">{{
+                                lang.nativeName
+                            }}</span>
+                        </button>
+                        <p
+                            v-if="filteredExtended.length === 0"
+                            class="py-4 text-center text-sm text-brand-ink/40"
+                        >
+                            Nic nenalezeno.
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
 

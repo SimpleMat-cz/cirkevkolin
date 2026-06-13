@@ -1,7 +1,17 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { useEventListener, useWakeLock } from '@vueuse/core';
-import { Download, Mic, Pause, Play, Square, Users } from 'lucide-vue-next';
+import {
+    Coins,
+    Download,
+    Mic,
+    Pause,
+    Play,
+    Printer,
+    Square,
+    Users,
+    Volume2,
+} from 'lucide-vue-next';
 import { renderSVG } from 'uqr';
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import Blob from '@/components/Blob.vue';
@@ -72,6 +82,21 @@ const aggregators = new Map<CaptionLang, LanguageAggregator>();
 // Throttle broadcasts to ~4/s per language.
 const pending = new Map<CaptionLang, CaptionEvent>();
 let flushTimer: ReturnType<typeof setInterval> | null = null;
+let heartbeatTimer: ReturnType<typeof setInterval> | null = null;
+
+// --- spotřeba / odhad ceny --------------------------------------------------
+// Soniox účtuje ~$0.12/hod přepis a ~$0.18/hod překlad za každou běžící session;
+// bereme střední odhad. streamSeconds = součet času přes všechny běžící jazyky
+// (fakturační jednotka), audioSeconds = skutečná délka odvysílaného zvuku.
+const USD_PER_STREAM_HOUR = 0.15;
+const CZK_PER_USD = 23.5;
+let audioSecondsAcc = 0;
+let streamSecondsAcc = 0;
+const audioSeconds = ref(0);
+const streamSeconds = ref(0);
+
+/** Speech-to-speech (mluvený překlad) — zatím jen příprava, vypnuto. */
+const speechEnabled = ref(false);
 
 const {
     isSupported: wakeLockSupported,
@@ -185,6 +210,10 @@ async function start(): Promise<void> {
 
     sessionId.value = insert.data.id;
     connect();
+    audioSecondsAcc = 0;
+    streamSecondsAcc = 0;
+    audioSeconds.value = 0;
+    streamSeconds.value = 0;
 
     try {
         await startAudio();
@@ -201,6 +230,8 @@ async function start(): Promise<void> {
     reconcileTranslations();
 
     flushTimer = setInterval(flushPending, 250);
+    heartbeatTimer = setInterval(heartbeat, 15000);
+    void heartbeat();
     phase.value = 'live';
     paused.value = false;
 
@@ -235,6 +266,10 @@ async function startAudio(): Promise<void> {
             for (const session of sessions.values()) {
                 session.sendAudio(chunk);
             }
+
+            const seconds = frame.length / audioContext.sampleRate;
+            audioSecondsAcc += seconds;
+            streamSecondsAcc += seconds * sessions.size;
         }
     };
 
@@ -344,6 +379,8 @@ function flushPending(): void {
     }
 
     pending.clear();
+    audioSeconds.value = audioSecondsAcc;
+    streamSeconds.value = streamSecondsAcc;
 }
 
 function togglePause(): void {
@@ -377,12 +414,41 @@ async function stop(): Promise<void> {
         flushTimer = null;
     }
 
+    if (heartbeatTimer) {
+        clearInterval(heartbeatTimer);
+        heartbeatTimer = null;
+    }
+
     await endSession();
 
     void releaseWakeLock();
     phase.value = 'ready';
     sessionTitle.value = defaultTitle();
     activeLangs.value = [];
+}
+
+/**
+ * Heartbeat — pravidelně potvrzuje, že vysílání běží, a ukládá nasbíraný čas
+ * audia. Divácká stránka podle čerstvosti last_seen_at pozná, že je vysílání
+ * opravdu živé (po zavření panelu do ~30 s zmizí). Chyby ignorujeme, ať
+ * heartbeat nikdy nerozbije vysílání.
+ */
+async function heartbeat(): Promise<void> {
+    const supabase = accessToken.value
+        ? getBroadcasterClient(accessToken.value)
+        : null;
+
+    if (!supabase || !sessionId.value) {
+        return;
+    }
+
+    await supabase
+        .from('sermon_sessions')
+        .update({
+            last_seen_at: new Date().toISOString(),
+            audio_seconds: Math.round(audioSecondsAcc),
+        })
+        .eq('id', sessionId.value);
 }
 
 /** Označí session jako ukončenou a uvolní kanál (po Stopu i po chybě startu). */
@@ -394,7 +460,11 @@ async function endSession(): Promise<void> {
     if (supabase && sessionId.value) {
         await supabase
             .from('sermon_sessions')
-            .update({ status: 'ended', ended_at: new Date().toISOString() })
+            .update({
+                status: 'ended',
+                ended_at: new Date().toISOString(),
+                audio_seconds: Math.round(audioSecondsAcc),
+            })
             .eq('id', sessionId.value);
     }
 
@@ -436,6 +506,10 @@ onUnmounted(() => {
     if (flushTimer) {
         clearInterval(flushTimer);
     }
+
+    if (heartbeatTimer) {
+        clearInterval(heartbeatTimer);
+    }
 });
 
 const vuPercent = computed(() =>
@@ -447,6 +521,15 @@ const serverReady = computed(
         health.value?.soniox_key_configured &&
         health.value?.supabase_jwt_configured &&
         isSupabaseConfigured,
+);
+
+const audioMinutes = computed(() => audioSeconds.value / 60);
+const estimatedUsd = computed(
+    () => (streamSeconds.value / 3600) * USD_PER_STREAM_HOUR,
+);
+const estimatedCzk = computed(() => estimatedUsd.value * CZK_PER_USD);
+const translationCount = computed(
+    () => activeLangs.value.filter((lang) => lang !== 'cs').length,
 );
 </script>
 
@@ -694,6 +777,81 @@ const serverReady = computed(
                 </div>
             </div>
 
+            <!-- Spotřeba / odhad ceny -->
+            <div
+                v-if="phase === 'live'"
+                class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-brand-ink/5"
+            >
+                <div class="flex items-center gap-2">
+                    <Coins class="h-4 w-4 text-brand-coral" />
+                    <h2 class="font-display text-lg text-brand-ink">
+                        Spotřeba
+                    </h2>
+                </div>
+                <div class="mt-3 grid grid-cols-3 gap-3 text-center">
+                    <div class="rounded-2xl bg-brand-cream px-2 py-3">
+                        <p class="font-display text-xl text-brand-ink">
+                            {{ audioMinutes.toFixed(1) }}
+                        </p>
+                        <p class="text-xs text-brand-ink-soft">minut audia</p>
+                    </div>
+                    <div class="rounded-2xl bg-brand-cream px-2 py-3">
+                        <p class="font-display text-xl text-brand-ink">
+                            {{ 1 + translationCount }}
+                        </p>
+                        <p class="text-xs text-brand-ink-soft">
+                            streamů (cs + {{ translationCount }})
+                        </p>
+                    </div>
+                    <div class="rounded-2xl bg-brand-cream px-2 py-3">
+                        <p class="font-display text-xl text-brand-ink">
+                            ~{{ estimatedCzk.toFixed(0) }} Kč
+                        </p>
+                        <p class="text-xs text-brand-ink-soft">
+                            ≈ ${{ estimatedUsd.toFixed(2) }}
+                        </p>
+                    </div>
+                </div>
+                <p class="mt-2 text-xs text-brand-ink/50">
+                    Odhad podle Soniox (~$0,15/hod za jazyk). Zavřením panelu se
+                    vysílání i účtování zastaví.
+                </p>
+            </div>
+
+            <!-- Mluvený překlad (speech-to-speech) — příprava -->
+            <div
+                class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-brand-ink/5"
+            >
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <Volume2 class="h-4 w-4 text-brand-teal" />
+                        <h2 class="font-display text-lg text-brand-ink">
+                            Mluvený překlad
+                        </h2>
+                        <span
+                            class="rounded-full bg-brand-sunny/40 px-2 py-0.5 text-[10px] font-bold tracking-wide text-amber-800 uppercase"
+                            >Připravujeme</span
+                        >
+                    </div>
+                    <button
+                        type="button"
+                        disabled
+                        :aria-pressed="speechEnabled"
+                        aria-label="Mluvený překlad (zatím nedostupné)"
+                        class="relative h-6 w-11 shrink-0 cursor-not-allowed rounded-full bg-brand-ink/15 opacity-60"
+                    >
+                        <span
+                            class="absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow"
+                        />
+                    </button>
+                </div>
+                <p class="mt-2 text-sm text-brand-ink-soft">
+                    Kromě textu uslyší host i namluvený překlad ve sluchátkách.
+                    Technicky dosažitelné (Soniox TTS, ~$0,70/hod za jazyk) —
+                    zapneme po doladění latence a rozvodu zvuku.
+                </p>
+            </div>
+
             <!-- QR kód pro hosty -->
             <div
                 class="space-y-3 rounded-3xl bg-white p-5 shadow-sm ring-1 ring-brand-ink/5"
@@ -716,13 +874,23 @@ const serverReady = computed(
                         <p class="font-mono text-brand-teal">
                             {{ viewerUrl }}
                         </p>
-                        <a
-                            :href="qrDownloadHref"
-                            download="cirkev-kolin-preklad-qr.svg"
-                            class="inline-flex items-center gap-1.5 rounded-full bg-brand-cream px-3 py-2 text-xs font-semibold text-brand-ink ring-1 ring-brand-ink/10 transition-colors hover:bg-brand-cream-deep"
-                        >
-                            <Download class="h-3.5 w-3.5" /> Stáhnout QR (SVG)
-                        </a>
+                        <div class="flex flex-wrap gap-2">
+                            <a
+                                :href="qrDownloadHref"
+                                download="cirkev-kolin-preklad-qr.svg"
+                                class="inline-flex items-center gap-1.5 rounded-full bg-brand-cream px-3 py-2 text-xs font-semibold text-brand-ink ring-1 ring-brand-ink/10 transition-colors hover:bg-brand-cream-deep"
+                            >
+                                <Download class="h-3.5 w-3.5" /> Stáhnout QR
+                            </a>
+                            <a
+                                href="/preklad/karta"
+                                target="_blank"
+                                class="inline-flex items-center gap-1.5 rounded-full bg-brand-cream px-3 py-2 text-xs font-semibold text-brand-ink ring-1 ring-brand-ink/10 transition-colors hover:bg-brand-cream-deep"
+                            >
+                                <Printer class="h-3.5 w-3.5" /> Kartička pro
+                                hosty
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
