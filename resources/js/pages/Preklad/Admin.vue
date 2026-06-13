@@ -186,7 +186,20 @@ async function start(): Promise<void> {
         aggregators.set(lang, new LanguageAggregator(lang));
     }
 
-    await startAudio();
+    // Zvuk může selhat (zamítnutý mikrofon, nedostupný audio worklet) — chybu
+    // ukážeme a založenou session hned uzavřeme, ať v divácké stránce nezůstane
+    // viset „živé" vysílání bez titulků.
+    try {
+        await startAudio();
+    } catch (error) {
+        startError.value =
+            'Nepodařilo se spustit zvuk (mikrofon nebo audio worklet): ' +
+            (error as Error).message;
+        await endSession();
+
+        return;
+    }
+
     startSoniox();
 
     flushTimer = setInterval(flushPending, 250);
@@ -196,6 +209,24 @@ async function start(): Promise<void> {
     if (wakeLockSupported.value) {
         void requestWakeLock('screen');
     }
+}
+
+/** Označí rozdělanou session jako ukončenou a uvolní kanál (úklid po chybě startu). */
+async function endSession(): Promise<void> {
+    const supabase = accessToken.value
+        ? getBroadcasterClient(accessToken.value)
+        : null;
+
+    if (supabase && sessionId.value) {
+        await supabase
+            .from('sermon_sessions')
+            .update({ status: 'ended', ended_at: new Date().toISOString() })
+            .eq('id', sessionId.value);
+    }
+
+    leave();
+    sessionId.value = null;
+    accessToken.value = null;
 }
 
 async function startAudio(): Promise<void> {
