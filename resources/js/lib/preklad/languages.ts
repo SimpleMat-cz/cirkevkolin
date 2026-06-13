@@ -18,20 +18,24 @@ export const LANGUAGES: LangOption[] = [
     { code: 'sr', nativeName: 'Srpski', flag: '🇷🇸', targetLanguage: 'sr' },
 ];
 
-/**
- * Languages enabled in the current phase. Phase 1 ships Czech + English only;
- * widen this list in Phase 2 to enable the full fan-out.
- */
-export const ENABLED_LANG_CODES: CaptionLang[] = ['cs', 'en'];
-
-export const ENABLED_LANGUAGES: LangOption[] = LANGUAGES.filter((l) =>
-    ENABLED_LANG_CODES.includes(l.code),
-);
+/** Jazyky vysílané ve výchozím stavu (a u starších sessions bez uložené volby). */
+export const DEFAULT_BROADCAST_LANGS: CaptionLang[] = ['cs', 'en'];
 
 /** Target languages that require a dedicated Soniox translation session. */
-export const TRANSLATION_TARGETS: LangOption[] = ENABLED_LANGUAGES.filter(
+export const TRANSLATION_TARGETS: LangOption[] = LANGUAGES.filter(
     (l) => l.targetLanguage,
 );
+
+/** Resolve a session's stored language codes to display options (viewer picker). */
+export function languagesForCodes(
+    codes: readonly string[] | null | undefined,
+): LangOption[] {
+    const wanted = new Set(
+        codes && codes.length > 0 ? codes : DEFAULT_BROADCAST_LANGS,
+    );
+
+    return LANGUAGES.filter((l) => wanted.has(l.code));
+}
 
 export function langOption(code: CaptionLang): LangOption {
     return LANGUAGES.find((l) => l.code === code) ?? LANGUAGES[0];

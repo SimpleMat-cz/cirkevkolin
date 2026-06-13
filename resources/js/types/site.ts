@@ -19,3 +19,12 @@ export type Faq = {
     question: string;
     answer: string;
 };
+
+/** Vedoucí aktivity spravovaný v administraci (sekce Vedoucí). */
+export type PageLeader = {
+    name: string;
+    role?: string | null;
+    phone?: string | null;
+    email?: string | null;
+    photo?: string | null;
+};

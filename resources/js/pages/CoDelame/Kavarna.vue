@@ -1,13 +1,22 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import { Coffee, Calendar, Heart } from 'lucide-vue-next';
+import { computed } from 'vue';
 import Blob from '@/components/Blob.vue';
 import LeadersBlock from '@/components/LeadersBlock.vue';
 import PublicLayout from '@/layouts/public.vue';
+import type { PageLeader } from '@/types';
 
-const leaders = [
+const fallbackLeaders: PageLeader[] = [
     { name: 'Pája', role: 'Hlavní barista — stojí za nejlepší kávou v Kolíně' },
 ];
+
+const props = defineProps<{ leaders?: PageLeader[] }>();
+
+// Vedoucí z administrace; dokud tam žádní nejsou, platí původní statický seznam.
+const leaders = computed(() =>
+    props.leaders?.length ? props.leaders : fallbackLeaders,
+);
 </script>
 
 <template>

@@ -28,4 +28,6 @@ export interface SessionInfo {
     id: string;
     title: string;
     status: 'idle' | 'live' | 'ended';
+    /** Vysílané jazyky; starší sessions sloupec nemají → fallback cs+en. */
+    languages?: CaptionLang[] | null;
 }

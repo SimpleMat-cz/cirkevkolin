@@ -5,8 +5,8 @@ const SONIOX_MODEL = 'stt-rt-v4';
 const MAX_BACKOFF_MS = 16000;
 
 export interface SonioxSessionOptions {
-    /** Soniox translation target, e.g. "en". */
-    targetLanguage: string;
+    /** Soniox translation target, e.g. "en". Omit for a transcription-only session. */
+    targetLanguage?: string;
     /** Mints a fresh temporary API key (called on connect and before each reconnect). */
     getTempKey: () => Promise<string>;
     context?: string;
@@ -68,10 +68,14 @@ export class SonioxSession {
                     language_hints: this.options.languageHints ?? ['cs'],
                     enable_language_identification: true,
                     context: this.options.context,
-                    translation: {
-                        type: 'one_way',
-                        target_language: this.options.targetLanguage,
-                    },
+                    ...(this.options.targetLanguage
+                        ? {
+                              translation: {
+                                  type: 'one_way',
+                                  target_language: this.options.targetLanguage,
+                              },
+                          }
+                        : {}),
                 }),
             );
             this.backoff = 1000;

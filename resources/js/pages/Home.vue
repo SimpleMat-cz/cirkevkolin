@@ -234,14 +234,24 @@ const marqueeItems = [
         <section
             class="relative overflow-hidden bg-brand-cream pt-28 pb-16 sm:pt-36 sm:pb-20 lg:pt-40 lg:pb-24"
         >
-            <!-- Organic shapes (brand manual style) -->
+            <!-- Organic shapes (brand manual style). Na mobilu menší blob
+                 posunutý do rohu — velký ležel přímo pod nadpisem a korálový
+                 text na korálovém blobu nebyl čitelný. -->
             <Blob
                 color="#ff8c69"
                 :size="560"
                 variant="2"
                 float="slow"
                 :opacity="0.9"
-                class="-top-32 -right-32"
+                class="-top-32 -right-32 max-sm:hidden"
+            />
+            <Blob
+                color="#ff8c69"
+                :size="280"
+                variant="2"
+                float="slow"
+                :opacity="0.75"
+                class="-top-20 -right-24 sm:hidden"
             />
             <Blob
                 color="#4db6ac"
@@ -284,7 +294,7 @@ const marqueeItems = [
                     style="font-size: clamp(3.5rem, 13vw, 11.5rem)"
                 >
                     <span class="block">{{ heroTitle }}</span>
-                    <span class="block text-brand-coral">{{
+                    <span class="block text-brand-coral-dark">{{
                         heroTitleAccent
                     }}</span>
                 </h1>

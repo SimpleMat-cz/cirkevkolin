@@ -57,6 +57,27 @@ class PrekladRoutesTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_health_forbidden_without_role(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->getJson(route('preklad.health'))
+            ->assertForbidden();
+    }
+
+    public function test_health_reports_configuration_booleans(): void
+    {
+        config()->set('services.soniox.api_key', 'soniox-key');
+        config()->set('services.supabase.jwt_secret', null);
+
+        $this->actingAs($this->broadcaster())
+            ->getJson(route('preklad.health'))
+            ->assertOk()
+            ->assertExactJson([
+                'soniox_key_configured' => true,
+                'supabase_jwt_configured' => false,
+            ]);
+    }
+
     public function test_soniox_key_reports_misconfiguration_without_api_key(): void
     {
         config()->set('services.soniox.api_key', null);
