@@ -76,7 +76,8 @@ const cards: CardConfig[] = [
     {
         key: 'understand',
         title: 'Špatně rozumíte?',
-        subtitle: "Don't understand Czech? · Не розумієте? · ¿No entiendes?",
+        subtitle:
+            "Don't understand Czech? · Не розумієте? · Nie rozumiesz? · Не понимаете?",
         message:
             'Scan the QR code and read a live translation of the sermon in your own language.',
         chips: foreignFavorites,
